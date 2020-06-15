@@ -1,0 +1,41 @@
+#!/bin/bash
+
+marker=tiljob
+her=`pwd`
+
+if [ -z "$skipfile" ]; then
+kudir=/home/geirkp/kurs/mek4320
+
+for fil in ensolut solA enEng Engopp engBouss kompendium frontbem engSol kgbem wkbbem stokbem FDm; do
+    ext='.pdf'
+    case  $fil in
+	enEng) gdir=$kudir/themes/energy;;
+	engBouss) gdir=$kudir/themes/boussinesq;;
+	engSol) gdir=$kudir/themes/solitons;;
+	frontbem) gdir=$kudir/themes/wavefront;;
+	kgbem) gdir=$kudir/themes/KG;;
+	wkbbem) gdir=$kudir/themes/optikk;;
+	stokbem) gdir=$kudir/themes/Stokeswaves;;
+	Engopp) gdir=$kudir/oppgaver;;
+	FDm) gdir=$kudir/themes/wavemodel;;
+	solA|ensolut) gdir=$kudir/oppgaver/los;;
+	kompendium) gdir=$kudir/kompendium/kompendium201701;;
+    esac
+    cp $gdir/$fil$ext .
+    filH=$gdir/$fil'Hand'$ext
+    if [ -r $filH ]; then
+	cp $filH .
+    fi
+    
+done
+fi
+
+cd ..
+rsync -rLpDt -v v20 math.uio.no:/mn/sarpanitu/ansatte-u1/geirkp/www_docs/mek4320
+#ssh math.uio.no "chmod -R go+Xr www_docs/mek4320"
+
+cd ..
+rsync -rLpDt -v bouss math.uio.no:/mn/sarpanitu/ansatte-u1/geirkp/www_docs
+ssh math.uio.no "chmod -R go+Xr www_docs/bouss www_docs/mek4320"
+
+echo slutt $marker

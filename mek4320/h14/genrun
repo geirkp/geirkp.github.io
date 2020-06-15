@@ -1,0 +1,15 @@
+#!/bin/bash
+
+marker=tiljob
+her=`pwd`
+
+
+cd ..
+rsync -rLpDt -v h14 math.uio.no:/mn/anatu/ansatte-u1/geirkp/www_docs/mek4320
+#ssh math.uio.no "chmod -R go+Xr www_docs/mek4320"
+
+cd ..
+rsync -rLpDt -v bouss math.uio.no:/mn/anatu/ansatte-u1/geirkp/www_docs
+ssh math.uio.no "chmod -R go+Xr www_docs/bouss www_docs/mek4320"
+
+echo slutt $marker
