@@ -1,0 +1,42 @@
+textab.pe* table tex latex macro
+      A script that transform a set columns on an ASCII file to a latex table.
+      The ASCII file is read from standard input, while the  latex code is 
+      written on standard output. The number of column is specified by the
+      number of headings set by -anot. If no headings are given the column 
+      number equals the number of words in the first line that is read.
+      Use:
+textab.pe (option) (option) .... < 'input-file' > 'output-file' 
+      Parameters:
+     -align arg : defines alignment for columns in latex style, like arg='cccc'
+                  or arg='rccr'. If the number of columns exceeds the number of                   letters in arg the last given letter is used for the 
+                  remaining columns
+                  Default: arg=c
+     -tit arg:    defines a title line. 
+                  Default: no title
+     -anot arg: defines column headings. arg may either contain a list of 
+                headings  or have  the format arg=line:nt, in which case the 
+                heading list is read from line n. All lines until n are then 
+                skipped.
+                Default arg=line:1
+     -asep arg: defines separator for column headings.
+                Default: arg=' '
+     -verticals: turns on vertical bars between columns
+                Default: no bars
+     -macro arg: specifies a macro encapsulating the table.
+                 If arg=table:lab a latex table with label lab is generated.
+                 The title is the written at the beginning of the caption.
+                 Otherwise a user defined macro with two arguments is assumed.
+                 The latex code then reads 
+                 \arg{title}
+                     {tabular environment
+                      caption text}
+                 Default: no macro. The title, tabular environment and 
+                 caption text is written in this sequence.
+     -skip arg:  defines the number of lines to be skipped. Ignored if
+                 the -anot option points to a higher line number than arg. 
+     -cap arg:   defines a caption, or text, to follow the table.
+                 The format arg=les:file causes the text to be fetched from 
+                 the file.
+                 Default: no caption.
+
+

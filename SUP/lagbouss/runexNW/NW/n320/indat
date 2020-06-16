@@ -1,0 +1,60 @@
+nei
+ !regne dispersivt?/ja/
+yes
+ !gi form paa displedd/lin/
+linear
+!gi boelge input
+file-paddle
+ !Banale likninger?/ja/
+nei
+ !give paddle file/
+/home/info/SUP/geirkp/lagbouss/runexNW/pad.inp
+!gi boelgelengde/  10./
+   
+ !gi flatl/lambda    /  5./
+   -2
+30
+!gi helningen i grader/  20./
+10
+!gi glattingsgrad/  .25/
+0.25
+!gi brytgrense/1.0/
+-0.95
+!give diffusiontype
+none
+!give delta_b
+! 1.2
+!give relaxation distance
+!
+!give on- and offset steepness
+!
+ !gi diffp
+! -1  0  0
+  !gi diff-q
+ !
+  !gi glatt. av diffpar
+ !
+ !gi antall gridpunkter/ 100/
+320
+!gi ev, av og br
+ 1 -2 1
+!gi antall utskrifter
+10
+!gi tidsintervall (sek)
+3.00000000e+00
+!gi red.faktor
+1
+!gi beg. og slutt paa utsk./
+ ! 1
+ ! 200
+ !/
+
+ !gi antall iterasjoner i kontlikning/ 5/
+5
+ !gi tserpos/-1001.0/
+   
+ !skrive forrykningsfiler?/nei/
+j
+ !antall rader: 99
+ !gi gitternummere/10:*;10/
+  2 7 22 45 66

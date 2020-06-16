@@ -1,0 +1,92 @@
+
+  ddrun.pe
+
+  Script that organizes runs of the oblique, mixed Eulerian/Lagrangian run-up
+  model in the ddsta program. The data are put in directories:
+
+    A. If an Eulerian grid is used:
+      -sti-input/eq/a-amp_-heln_-theta_rf-rfak'f'-f'Ll'-Llim'El'-Elim/'nf'nf
+  where words preceded by - correponds to values set by options, the quoted
+  strings are text constants and the following ae computed
+         eq - equation type Bouss, LBouss, NLSW, LSW in outer region.
+         nf - resolution 
+   If the number of iterations is specified '_iit'-iit is added after -Elim.
+
+    B. If an Eulerian grid is not used:
+      -sti-input/eq/a-amp_-heln_-theta_rf-rfak/'nf'nf
+
+
+-input arg : Type of incident wave
+             default: sol
+-nf arg : Refinements as a series of numbers separated by blanks or commas.
+          In the first case the argument must be quoted.
+          default: 1,2,4
+-dx0 arg : Default Eulerian space increment
+      default : Wavelength/20
+-f arg : Fraction between Lagrangian and Eulerian space increment.
+          default: 1
+-Llim arg : End of Lagrangian grid, either as absolute number or 
+            fraction of depth. The latter is marked by an appended d. 
+           default: 0.5d 
+-Elim arg : Initial start of Eulerian grid. If arg > total tank length there is
+            only a Lagrangian grid. May be specified by an d, such as LLim.
+            The -dyn option causes points to be removed or added at the 
+            shoreward end according to the motion of the Lagrangian grid.
+           default: 
+-Eleft arg : Absolute shoreward limitation of Eulerian grid.
+        default:  -2.0
+-nut arg: number of outprints
+        default:  10
+-t arg: Total time
+       default: (In. peak p. + 2.6*(slope length))/(linear proj. cel.)
+-rfak arg: reduction fator for time step
+         default: left to program
+-xi arg: Position (peak) of incident waves
+         default: length of slope +0.5*wavelength + rimwidth 
+-lambda arg : Sets wavelength. For solitary wave the formal wavelength is 
+              set through -etru
+              default: 1.0
+-sti arg : sets path of output directory
+          arg=""
+-gl arg : Smoothing portion of slope
+          default: 0.125
+-iit arg: Number of iterations
+          default: left program (depends on angle of incidence)
+-dry : Runs script in dry mode. 
+-brytgren arg: breaking limit for dx/da ?
+            default: 0.01
+-heln arg : Slope angle, specified in degrees (single number) or
+            relative slope according to arg=n:m. 
+            default: 15 degrees
+-amp arg : amplitude of incident wave
+           default:  0.1
+-blockprint arg : Governs type of time-series print in gphov formatted file
+              Options fixg (fixed grid), flex (stretches the rows, 
+              non-uniform grid is defined through additional gphov file).
+              or non
+              default: non
+-blockint arg arg : sets interval for blockprint with fixg (fixed grid)
+              default: according to program
+-blockng arg : number of points in blockprint
+              default: according to program 
+-jbname arg : name of jobfile
+           default: ddjb.sh
+-rim  arg: Standard rimwidth
+           default: 0.15*wavelength
+-theta arg : Angle of inclination in degrees
+        default:  0.0
+-L  arg : Length of flat part of wave tank.
+        default: arg=(xi-length of slope)+0.5*wavelength+rimwidth
+
+-etru : Sets truncation limit for incident solitary waves as fraction 
+        of amplitude.
+        default: 0.001
+-hyd : Turn the outer model hydrostatic
+-lin : Turn the outer model linear
+-ver arg : Selects version of program 
+           default: ""  
+-dyn : Turns on dynamic extension of Eulerian grid.
+-sync arg : Govern type of synchronization in the overlap-zone
+           default: none 
+-maxstop : Makes the program stop when first maximum runup is reached
+-compile : Turn on compilation of the ddsta program

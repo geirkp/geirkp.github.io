@@ -1,0 +1,70 @@
+ /hom/geirkp/SUP/experiments/lagtser.pe
+
+The script produces  paddle motion  voltages for labview. unix2dos is run
+on the final output. The voltage distribution includes a forward motion,
+according to the input file, a period at rest and a slow backward motion to
+the reference position (at 0.8V). Files produced:
+
+  A one-column sampled dos file with voltages (name set by -o). This is the 
+  input-file for labview.
+
+  A two-column unix file with t,V. Name is the previous one, preceeded by
+  an extra D. 
+
+  Differensiated files for "voltage" velocity and acceleration. _der and
+  _der2 are appended to the filename of the above t,V file.
+
+  lagt.par is a parameter file that also contain maximum acceleration etc.
+ 
+
+
+use
+
+/hom/geirkp/SUP/experiments/lagtser.pe (options) inputfile
+
+Options:
+   -o arg : Name of outputfile. A file with name Darg is a two column 
+            file in unix format, suited for plotting etc . 
+            Default arg=pser.dat
+   -depth arg : Sets the depth. If arg=set we assume that the input is in
+                cm and seconds, otherwise input is assumed dimensionless with
+                depth as length scale.
+                Default arg=0.2
+   -hz arg : Sampling rate in output. Default arg=100
+   -padfile arg : arg is the name of the 'xV' file (cm and volt) that
+                  defines the relation between voltage and paddle-displacement.
+                  Default arg=/info/SUP/paddle/padV.x
+   -rest arg : Sets rest time, before the paddle return to reference position,
+               to arg seconds.
+               Default arg=5
+   -slfak arg : Makes time for restoring motion arg times that of first motion.
+                Default arg=4
+   -voltin :  makes the script assume that the input file is (time, volt) 
+              rather than (time, position).
+              Default: input in (time, position)
+   -tshift arg : Shifts time in output by amount arg seconds.
+                 Default arg=0
+   -t0 arg : Uses the input time series from time=arg.
+             Default arg=first time on file
+   -smooth arg : Number of pointwise smoothings applied to output.
+                 Default arg=0
+   -reg arg:  Defines regression type for output. Possible values are lin, 
+              kvad and kub, in addition to a blank argument that surpresses
+              regression of any kind.
+              default: arg='' 
+   -ibr arg :  Half number points used in regression.
+               default: arg=10 
+   -vamax arg: maximum acceleration allowed, in V/s^2 calculated by a mid-point
+               difference. A warning is given if this value is exceeded.
+               default arg=110
+   -vvmax arg: maximum velocity allowed, in V/s calculated by a mid-point
+               difference. A warning is given if this value is exceeded.
+               default arg=40
+
+
+
+
+
+
+
+

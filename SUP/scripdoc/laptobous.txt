@@ -1,0 +1,32 @@
+
+  laptobous.pe
+
+  A script that makes an alternative or subsequent Boussinesq runup simulation
+  from the data of a BIM simulation. The script must be invoked in the folder
+  where the data is located. Parameters and initial conditions are then fetched 
+  from the BIM data.
+ 
+  parameters:
+  -nt  nt : makes the Boussinesq model start from dataset nt
+          default: Start from the last BIM dataset
+  -nut nut : number of time intervals. 
+           default: as many as remains in BIM simulation, unless nt is the
+              last BIM dataset. Then default is nut=10            
+  -npoin n : number of points in Boussinesq simulation  
+            default is left to knaai program
+  -tint  tint : Sets length of time interval
+            default:  The length is the same as in BIM simulation.
+  -uvalg uvalg : Selects the way for construction of velocity data.
+               Options:
+                 mid : Use depth averaged velocity (felt.sh must be invoked)
+                 surf: use surface velocity
+                 soliton: Velocity is made from surface and celerity of 
+                          incident Tanaka-soliton
+            default: uvalg=mid  
+  -sdir  sdir : name-stem of subdir for Boussinesq simulation.
+            The full name of the subdirectory is
+               'sdir''dform''nt'(n'npoin')
+            where the last part is used only if npoin is set.
+            default: sdir=bouss  
+  -dispform dform : selects the dispersion term.
+            default: dform= sing 

@@ -1,0 +1,51 @@
+/hom/geirkp/SUP/experiments/timsenew.sh reads input from labview and 
+produce various outputfiles, with three points smoothing and regression.
+
+Options:
+         -sourcedir arg: directory with labview files
+                     default arg=.
+         -goaldir arg: directory for produced files
+                     default arg=.
+         -noadj*:
+         -depth|-dyp arg: set depth
+                     default arg=0.2
+         -trunk arg: Dimensionless truncation limit
+                     default arg=3.5
+         -ts arg: Offset of time series from labview
+                  default arg=0
+         -Uiw arg: Regression-types to be used for velocity calculations
+                   l=linear, k=quadratic, q=qubic
+                  default arg='l q'
+         -Piw arg: Regression-types to be used for position calculations
+                  default arg='l k q'
+         -sm|-smlist arg: number of 3 point smoothings to be applied
+                  default arg='2 8'
+         -ibr|-I|-Ibrlist arg: list of half-widths for regression
+                  default arg='2 4 6 10'
+ 
+
+#files produced:
+#
+#  tid.dat    - times for paddle data
+#  padle_ut.dat - Voltage sent in paddle signal 
+#  padlepos.dat - paddle position in cm
+#
+#  The corresponding unix formatted files have _unix appended
+#
+#  voltser.dat - voltage in genkurv format
+#  posser.dat - paddleposition in genkurv-format
+#  poscal.dat - paddleposition shifted with zero as start
+#  voltscal.dat - voltage rescaled as to have zero start and same maximum as 
+#                 paddle position
+#  posnons.dat - position nondimensional (depth=lengthdscale, sqrt(g*depth)
+#                as velocity-scale)
+#  uBRsN    - velocities found by various differentiation. B, R, N are 
+#               defined according to
+#               B = m   mid point differences
+#               B = l,k,q   linear, quadratic and cubic least square 
+#                   regression (k has no significance for derivation)
+#               R - half width of regression interval, for B=m identified
+#                   as 1
+#               N is number of piecewise smoothenings
+#   pBRsN   - posistions. Same codes as for u-files. However, B=m means that
+#             no regression is performed

@@ -1,0 +1,45 @@
+
+     slidmat.pe
+
+Purpose: Generation of matrices for seabed and slide-bodies from the output of
+         boslide.new
+
+Tools applied:
+       /hom/geirkp/bouss/slide/bin/$sdir/dgen
+         Fortran program reading slide shape, initial bottom matrix and 
+         positions from the outputfiles of boslide.new
+
+       /hom/geirkp/gitec/bin/getnew.pe
+         Reading the slide height from param.dat
+
+Main output files:
+        name                      format            contents
+       hbed.bin                   gphov/binary   The rigid seabed
+     slibod.bin slibod$N.bin      gphov/binary    Slide bodies and depth  
+       nvpos.dat                  genkurv          Positions of lower left 
+                                                   corners of slide body.
+                                                   
+
+File structure and function:
+      Script is invoked with the directory containing the boslide.new
+      output as current directory. Produced files put in the current
+      directory. 
+
+parameters:
+  -utform  arg  Defines the outputform for slide bodies, overlaid the depth.
+                values: (abbrevations allowed)   
+                       global:  same size as depth matrix, one file
+                       combined: local matrices for slide bodies in a
+                                 single file, lower
+                                 left corners given in nvpos.dat 
+                       local:   Separate files for each data set,
+                                slibod1.bin slibo2.bin ... 
+                default: global
+   -eps arg     Lowers the seabed contributions to slibod.bin etc. by
+                amount arg.
+                Def: arg equals one per cent of slideheight
+   -v0 arg      Defines decrease of lowering as function of slide height.
+                At slide height arg, the lowering is reduced to 1/e.
+                Def: arg equals one tenth of slideheight
+
+

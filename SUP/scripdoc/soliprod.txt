@@ -1,0 +1,36 @@
+soliprod 
+    Keyword: soliton
+    Genererer en solitonprofil og skriver resultatet til standard output som
+    to kolonner: 1:romlig posisjon 2:verdi av feltst|rrelse. Dyp er brukt som
+    eneste lengdeskala.
+    Bruk:
+    soliprod (-x) (-y) (-n) (-t) (-eta) (-hast) (-pot) (-komp) (-vink arg)\
+        (-eps arg) (-dx|-ds arg ) (-s0 arg) (-topp arg) (-"likning") (-keep)  -a arg
+    parametere:
+           -x,-y,-n,-t  angir snitt langs hhv x,y akse, normalt kam 
+                        og tidsserie. 
+                     Denne setting har mening pga -vink opsjonen.
+                     Def: -x
+           -eta,-hast,-pot,-komp  angir type feltst|rrelse ( komp er eta
+                                   sammentrykket en faktor 4/3 )
+                       Def: -eta
+           -vink arg: Setter vinkel mellom b|lgetall og x-akse til arg (grader)
+                      Def: vinkel = 0
+           -eps arg: setter relativ trunkeringsgrense til arg
+                      default: 0.001
+           -ds arg:  setter increment til arg
+                      default: gi 100 punkter pr halve boelge.
+           -s0 arg: Starter beregninger fra x=s0. def: -halve blengde
+           -topp arg: Legger maks eta til koordinatverdi arg.
+                      default: velges slik at serien starter ved eta/etamx=eps
+           -a arg: setter amplituden til arg ( m}lt i dyp). Dette argumentet
+                   m} settes ellers returnerer shellet uten output.
+           -u0 arg: setter grunnstrom til aa v[re arg.
+                    default 0 strom.
+           -"likning": der "likning" er Bouss, Serre, hoSerre, kSerre,
+                        kdv|KdV eller [Ll]ap|[Ll]aplace. Setter hvilken likning
+                        solitonen er løsning av.
+                        hoSerre and kSerre selects the Serre soliton with 
+                        Nwogu-like or exact k^4 correction, respectively.
+                        default: Bouss 
+           -keep: midlertidige filer fra kalte programmer fjernes ikke

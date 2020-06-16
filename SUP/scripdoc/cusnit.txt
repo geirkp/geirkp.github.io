@@ -1,0 +1,68 @@
+cusnit.pe*  snitt interpolasjon 
+The script employs the gsnitt programme (fortran) to extract the value
+from fields in the xy plane at curves in the xy plane.
+
+use:
+
+cusnit.pe (-n arg) (-os arg) (-fs arg) (-f arg) (-sec arg) (-msec arg) \
+ (-utform arg) (-int arg) (-x arg) (-y arg) (-xname) gpfile
+where
+   gpfile - the name of a file in gphov format
+   -n  - arg is a list of datasetnumber to be interpolated, as
+              in the pkat script. Def: all 
+   -os  - arg is name of stem for outputfiles. Def: gpfileS
+   -fs  - sets a common pattern for curve files in the genkurv fashion
+   -f - arg defines a list of files, separated by blanks or commas,
+         to be used for interpolation. If the -fs option is set the items
+         of the list replace the text ## in the pattern or, if ## is omitted,
+         is appended to the common stem. If the resulting text contain an $
+         this is subsequently replaced by the dataset numbers specified by -n.
+         The final filname must be the name a file in the format specified by 
+         genkurv and the two first columns are identified as x and y values.
+         For each file the script produce a file ostemNfilname (ostem set 
+         by -o, N datasetnumber, filname fileidentifier before substitution 
+         for $) containing coordinates  and interpolated values.  
+  -sec   Sets cross-sections by means of endpoints. arg may contain 
+         quartets of numbers ( x1,y1,x2,y2), separated by blanks or commas,
+         or les:filname, where filname is a file containing one quartet, 
+         separated by blanks, at each line. In the first case several 
+         sections may be specified by using ':' as separator.
+         The produced files are ostemN_ii, where ii is the number of
+         cross-sections.   
+         Default: empty list of cross-sections.
+   -msec The number of points, used for cross-sections defined by -sec,
+         is set to arg. Default: 100        
+   -int  Select arg as interpolation procedure
+           arg=spline  bi-spline
+           arg=lin     bi-linear 
+           arg=mask    bi-linear with masking of data according to -lim og -um
+          Default: arg=spline
+   -lim arg1 arg2  In case of masking only values between arg1 and arg2 are
+           allowed  
+          Default: -1000000.0 1000000.0
+   -um   In case of masking, nondefined entries are given this value 
+         in the output.
+         Default: arg=-666
+   -x     arg is interpreted as a list (separated by blanks or commas) of
+          x coordinates. A crossection (parallel to y) is defined for
+          each value, with max and min matching the 2D datafield.
+          Unless -xnam is set the files are named ostemN_ii, where ii is a
+          counter continuing from the number sections set by -sec.
+          If -xnam is set the file name is ostemN_xX, where X is the x-value.
+          Moreover, with this option the format is changed to two columns
+          (y z), while the dummy x column is deleted. 
+   -y     corresponds to -x. Interpret also -xnam
+   -xname  changes convention for naming of -x and -y files and removes 
+           redundant column.  
+  -utform  Selects between different output-options. At present two
+           alternatives are available:
+               arg=xyz yields three columns:  x y z
+               arg=sz  yields  two  columns:  s z, where s is the arclength
+               of the piecewise linear interpolant to the curve in the
+               x,y plane, measured from the first point.
+
+
+
+
+
+

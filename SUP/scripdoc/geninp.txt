@@ -1,0 +1,103 @@
+ geninp.pe
+       Produces input for solitary wave runup for rumain 
+       (and Boussinesq ) programs. If the orientation of the solitary
+       wave propagation is turned by the -reverse flag, we instead 
+       simulate runup on a vertical wall.     
+
+Parameters:
+ -a a : Sets initial condition.
+       a is a number starting with 0. : a is solitary wave amplitude,
+       otherwise a must contain two filenames (eta and potential) separated by
+        blank or comma. Normal velocity is assumed zero ?
+      Default: a=0.34  
+-eps arg : Sets the truncation limit for solitary wave input., 
+           in the sense that arg*a is the smallest value to be set
+           Default: arg=0.001
+-ostem arg : sets stem for input files; arg.eta, arg.f, arg.vn
+         Default: arg=inp  
+-rim arg : adds rim width to flat section  
+        Default: arg=0.0 
+-form arg : Sets output format for floats in the input files
+        Default:arg=%16.8e
+-vink arg : inclination angle in degrees
+         Default: arg=10.54 
+-n0 n0 : Basic number of points along surface
+       Default: n0=50 
+-nf arg : Refinement relative to n0, n=$nf*($n0-1)+1
+       Default: 1
+-sl arg: Transition length between beach and bottom. How defined ?
+       Default: arg=0.2 
+-nv0 arg : Basic number of points along vertical walls
+        Default: arg=5
+-ns0 arg: Basic number of points along vertical slopes
+       Default: arg=def , default is chosen by rumain program
+-gauss npu  ni: number of points in sub-interval (npu) and intervals (ni)
+                for integration of each boundary interval. 
+        Default: npu=5, ni=2
+-Mmeth arg : Extrapolation method for beach
+        Default: arg=quad
+-bpoint arg : Number of points used in beach extrapolation.
+        Default: arg=6
+-t t:  Simulation time. If t is a number followed by s, then t is in seconds
+       with d=0.2m
+        Default: def, the time is calculated based on the parameters   
+-nut arg: Number of intervals in time, followed by printing of fields
+        Default: 20
+-print arg : Selects times to be printed. arg is either 'alle' or 
+             a combination of numbers and intervals ('5:7;3')
+        Default: alle
+-red arg: Reduction factor for time step. arg=1 will not correspond to linear
+          stability limit such as for explicit LSW models.  
+        Default: 1
+-Gmeth arg : defines beach method for geometry 
+         Default: one
+-gpoint arg : Number of points for beach method for geometry
+         Default: 6
+-adap : Sets grid type to be adaptive
+         Default: not adaptive 
+-f arg: Used with -adap. Refinement at shore relative to deep water
+        at t=0    
+         Default: arg=0.3
+-dxb dxb: Sets grid increment on flat part of bottom  
+         Default: 0.5
+-nbouss arg: Sets number of grid points in Boussinesq-model input files. 
+          Default: Left to program
+-tstyle arg : Temporal resolution type. Either uniform or the name of 
+              a file containing  two columns
+                t1  r1
+                t2  r2
+                ...
+              Then a relative refinement of r1 is used for t<t1. This is then
+              changed linearly to r2 at t2 etc.  
+          Default: uniform
+-btol arg: defines tolerance for introduction of extra point at the shore 
+          Default: -1.0, meaning de-activated
+-bodisp arg : Type of dispersion in Boussinesq equation. 
+          Default: sing
+-glhypp arg: Number of 5-points smoothening at each time step 
+          Default: 1
+-mapr : Sets full printing of fields and matrices
+          Default: reduced printing 
+-reverse : Make the initial soliton  advance to decreasing x 
+           Default: propagation toward increasing x
+-flat arg : Length of flat part of bottom   
+          Default: def; computed from parameters 
+                  (soliton is centered in flat region)
+-tser arg : Lagrangian time series at nodes.
+             arg is either a list of numbers, separated by blanks or commas,
+            or les:file, where file contains the numbers 
+          Default: No Lagrangian time series
+-refdist arga argb : Sets  limits for refined portion of surface and transition zone to constant deep water resolution. (measured from beach) 
+          Default: blanks, left to program.
+-eulser type arg: Sets Eulerian time series
+                  type is in  
+                    none - no time series
+                    grid - arg is nn x0 dx separated by blanks or commas
+                    linspace - arg is nn xa xb separated by blanks or commas
+                    file - arg is the name of a file with x positions
+                    terminal - arg is a list of x-values separated by 
+                               blanks or commas
+         Default: none
+-undef arg : value to be used in Eulerian time series when they are 
+             outside the fluid 
+         Default: -666 

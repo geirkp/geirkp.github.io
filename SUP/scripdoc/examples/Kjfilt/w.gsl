@@ -1,0 +1,103 @@
+import_ascii("wf",1,1,,,,"head");
+/* Finn storleikar */
+xant=head[2];
+yant=head[3];
+dx=head[4];dy=head[5];xmin=head[6];ymin=head[7];
+xrange=(xant-1)*dx;yrange=(yant-1)*dy;
+xoff=0;yoff=0;xmin=xmin+xoff;ymin=ymin+yoff;
+zrange=2;ystretch=1;
+xmax=xmin+xrange;ymax=ymin+yrange;
+xpage=172.812;ypage=137.812;xa=15.00;ya=15.00;xb=100-xa;yb=100-ya;
+xscale=1;yscale=1;xinc = xrange/5;yinc = yrange/5;
+import_ascii("wf",2,,,,,"edel",,xant,yant);
+set displayoption
+   ( XuNautoRepaint = false
+   );
+
+set hardcopy
+   (  XuNdevice = "hcposteps",
+      XuNplotFileName = "w.ps"
+   );
+
+set page_1
+   ( XuNsize = (xpage,ypage)
+   );
+
+create Viewport page_1.viewport_1 
+   ( XuNfirstDiagonalPoint = (xa,ya),
+     XuNsecondDiagonalPoint = (xb,yb),
+     /*XuNobliqueAngle = 40,
+     XuNangleInXYPlane=0,*/
+     XuNzRatio = zrange,
+     XuNxRatio = xrange,
+     XuNyRatio = yrange*ystretch
+   );
+
+/* Create domain  1 for contour plot */
+create Domain page_1.viewport_1.domain_1
+   ( XuN3DPlane=false,
+     XuNxMinimum = xmin,
+     XuNxMaximum = xmax,
+     XuNyMinimum = ymin,
+     XuNyMaximum = ymax,
+     XuNclassType = "limits",
+    /* XuNundefinedColor = 23, */
+     XuNshadingScale ="blueWhiteRed" 
+   );
+set page_1.viewport_1.domain_1.legend
+   ( XuNbackgroundColor= 7 ,
+     XuNentryHeight = 6.5, 
+     XuNframeWidth = 0.353774,
+     /* XuNintervalStep= 2 , */
+     XuNlegendOrigin = (100,0),
+     /* XuNnumDecimals= 2 , */
+     XuNobjectEnabled = true,
+     XuNoriginAlignment = "lowerLeft"
+  /*   XuNtitleBoldness = 1.50943, */
+    /* XuNundefinedText = "land"*/ 
+,
+     XuNtitleColor = 1,
+     XuNtitleHeight= 9 ,
+     XuNtitleText = "w"
+ );
+create Graph page_1.viewport_1.domain_1.graph_1
+   ( XuNcolorDataGrid = "edel",
+     /*XuNzDataGrid = "edel",*/
+     XuNcontourShading = true , 
+     XuNgraphType = "2DContour",
+     XuNmesh=false,
+     /* XuNmeshMajorReference=5,
+     XuNmeshMajorStep=,
+     XuNmeshMajorWidth=,
+     XuNmeshMinorWidth=,*/
+     XuNisolineIsolineType  = "unshaded",
+     /*XuNisolineMajorWidth  = 0,*/
+     XuNpriority = 2
+   );
+set page_1.viewport_1.domain_1.xaxis1
+   ( XuNaxisLabelsScaleFactor = xscale,
+     XuNaxisTextText = "x",
+     /* XuNaxisLabelsDecimals= 2 , */
+     XuNaxisTextHeight = 5,
+     XuNtickmarksMajorStepValue = xinc,
+     XuNaxisLabelsHeightActual = 4
+   );
+set page_1.viewport_1.domain_1.yaxis1
+   ( XuNaxisLabelsScaleFactor = yscale,
+     XuNaxisTextText = "y",
+     /* XuNaxisLabelsDecimals= 2 , */
+     XuNaxisTextHeight = 5,
+     XuNtickmarksMajorStepValue = yinc,
+     XuNaxisLabelsHeightActual = 4
+   );
+set page_1.viewport_1.domain_1.xaxis2
+   (XuNaxisLabelsLabels= false,
+    XuNaxle=true,
+    XuNtickmarksMajor = false
+   );
+set page_1.viewport_1.domain_1.yaxis2
+   (XuNaxisLabelsLabels= false,
+    XuNaxle=true,
+    XuNtickmarksMajor = false
+   );
+if batch() print;

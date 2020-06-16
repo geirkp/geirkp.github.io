@@ -1,0 +1,64 @@
+!Example from jul  8 20:35:01  with extra comments
+!give type of input grid 
+!geographical# grid in degrees
+!cartesian# input in units
+!normalized# non-dimensional cartesian
+geog
+!lenunit ( m is meter)
+!all input must be in the units now specified
+!Internally the program is working dimensionless
+m
+!tunit ( s is second)
+s
+!gi dybdematrise
+/work/geirkp/Tsunamis/LaPalma/bathymetry/Abred.dat
+!modifisere grid ?
+yes
+!give new lower left corner (original corner i default etc.)
+ -2.76172905e+01  2.17163495e+01
+!give new upper right corner
+ -1.16507835e+01  3.60162065e+01
+!give number of gridpoints
+479 429
+!give land treshold (depth nodes smaller than value is masked)
+0.0
+!gi initiell hevn (surface elevation)
+/work/geirkp/Tsunamis/LaPalma/newinbet/eta600.dat
+!Read initial velocity fields
+yes
+!give time for in. velocities
+! The program computes velocities at -0.5*dt by a kind of half step.
+! The time specified is the time of input velocities relative to the input
+! surface. Second order accuracy should be assured as long as the time read
+! is of order dt. 
+-1.61291
+!gi initiell u (answer stop would abondon this)
+/work/geirkp/Tsunamis/LaPalma/newinbet/u600.dat
+!gi initiell v
+/work/geirkp/Tsunamis/LaPalma/newinbet/v600.dat
+!regne disp
+yes
+!regne ulin
+no
+!korrigert dispersjon
+no
+!give number of iterations (two numbers required, or default)
+ 
+!give width of sponge layers (0 with yield no no sponge layers)
+0
+!give height scale
+
+!Include Coriolis effect?
+  yes
+!give file for eta time series
+stop
+!give file for u time series
+stop
+!give file for v time series
+stop
+!gi tidsintervall 
+300
+!gi red.faktor
+1.0
+!give number of intervals
+7

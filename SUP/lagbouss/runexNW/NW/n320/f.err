@@ -1,0 +1,39 @@
+ skal dialogen protokolleres?/yes/
+ regne dispersivt?/yes/
+ gi form paa displedd/linear/
+ gi boelge-input/carrier-greenspan/
+ Banale likninger?/yes/
+ give paddle file/urand/
+ gi boelgelengde/  29.6969681/
+ gi flatl/lambda    /  5./
+ javel,saa gi naa flatl direkte da
+ gi helningen i grader/  20./
+ gi glattingsgrad/  0.25/
+ gi brytgrense/ -1./
+ give diffusiontype/none/
+ l=  0.
+ gi antall gridpunkter/ 100/
+ epsett: 320  0.116084829  1.  0.  0.  0.
+ gi ev, av og br/  1. -1.  1./
+ gi antall utskrifter/ 0/
+ dt_default=  0.116084829 =   0.116084829 sek.
+ gi tidsintervall (sek)/  7.41782093/
+ gi red.faktor/  1./
+ gi beg. og slutt paa utsk./ 1 260/
+ gi antall iterasjoner i kontlikning/ 5/
+ gi tserpos/ -1001./
+ skrive forrykningsfiler?/no/
+ antall rader: 319 
+ gi gitternummere/32:*;32/
+ iprint= 1
+ iprint= 2
+ iprint= 3
+ iprint= 4
+ iprint= 5
+ iprint= 6
+ iprint= 7
+ iprint= 8
+ iprint= 9
+ iprint= 10
+0.10user 0.00system 0:00.11elapsed 99%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+453minor)pagefaults 0swaps

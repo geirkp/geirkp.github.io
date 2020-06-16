@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Synolakis case  runup</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>data for Synolakis case runup 1987</h1>
+<h3>This page</h3>
+     First version posted June 2015. Data are supposed to support study on 
+     runup of breaking solitary waves on a slope. An addition made for an unbrearking wave September 2016.
+<h3>The basics</h3>
+    The numerical models in use are a  <a href="../../rusource/index.html">BIM (Boundary integral Model) for full potential theory </a>, 
+a   <a href="../../lagbouss/index.html">Lagrangian Boussinesq type model</a>,
+ the <a href="../../globouss/index.html"> Globouss tsunami propagation 
+model</a>, and an extended <a href="http://folk.uio.no/geirkp/bouss/index.html">educational Boussinesq model. </a><br>
+Extra information on the output etc. may be found on these pages.<p>
+    These models are run through a set of shell code snippets given in
+    /hom/geirkp/lab/Erika/genrun and /hom/geirkp/runup/SynolakisCase/genfig. These snippets are executed by
+the <a href="../../scripdoc/newrun.html">newrun</a> facility.<p>
+ 
+
+<h3>The data</h3>
+Data are given in folders, for instance, 
+<pre>
+Dataa0.28slope2.884
+</pre>
+where amplitude/depth = 0.28, slope angle = 2.884.<br>
+Tar files are inflated by
+<pre>
+tar -xz < Dataa0.28slope2.884
+</pre>
+
+
+<p>
+All data are dimensionless with d, the depth, as length scale, and time and velocity scaled by means of d
+and g. 
+<p>
+Datafiles are named after the  convention
+<pre>
+eta<eq>cn<cn>n<n>_<nt>
+</pre>
+as in the example etaSerrecn0.1n2400_0180.
+Here 
+<ul>
+<li><eq> Denotes equation/setting
+<li><cn> A maximum Courant number
+<li> <n> resolution (either no. grid points or relative measure in case of BIM)
+<li> <nt> Time interval after reference t=0. Each interval is 0.1 
+</ul> 
+<h4> Equation descriptor </h4>
+The <eq> may have one of the values
+<ul> 
+<li> BIM : Boundary integral model (full potential theory)
+<li> Serre<spes> Lagrangian Serre-type equations where <spes> may be
+   <ul>
+   <li>
+   </ul>
+<li> Serre<spes> Lagrangian Serre-type equations where <spes> may be
+   <ul>
+   <li>void : A moderately nonlinear version 
+   <li> reg : Fully nonlinear, no singularity when contact angle is 90 deg.
+   <li> sing : Fully nonlinear, singular when contact angle is 90 deg.: 
+   <li> <..>ho-lin : with ... as lin, reg or sing. First three options
+with a Madsen and Scaeffer type correction term.
+   </ul>
+<li> Pg<spes> Peregrine type equations in eduactonal models where <spes> may be
+   <ul>
+   <li> void: Just standard Peregrine equation
+    <li>lin : linear dispersive Peregrine
+    <li>ho0 : Madsen and Schaeffer
+    <li>SeS0 : Madsen and Schaeffer with Serre initial soliton
+    <li>LSW : LSW equation
+   </ul>
+<li> Glob: Peregrine from GloBouss
+</ul>
+
+<p>
+<h3>Some results</h3>
+<h4> The BIM solution and breaking </h4>
+The evolution of the <a href="divgraf/bryt/BRYT.pdf"> surface </a>
+for slope 2.885 deg and amplitude 0.28 times the depth
+ <ul> 
+     <li> An ampliude of 0.8 times depth is reached at t=14.8 , when the
+          crest is at 8.17 with h=0.411 (snippet BIMh0.8). <br>
+          Corresponding data for Serre solution is
+          t=14.7, position x=8.175 (snippet Serreh0.8)  
+     <li> A vertical front appears at t=18.6, x=4.02,  y=0.358, when the 
+          crest is at x=4.09 and y=0.414.
+     <li> The breaking is still a little sensitive to grid refinement. 
+</ul>
+<h4> Graphs </h4>
+<ul>
+<li> Comparsion of equations at <a href="divgraf/eqs/eqs150_1.ps"> t=15 </a>
+and <a href="divgraf/eqs/eqs170_1.ps"> t=17 </a>.
+<li> Another comparsion of equations at <a href="divgraf/chkeq/chkeq150_1.ps"> t=15 </a>.
+<li> <a href="divgraf/conv/Conver.pdf"> Grid refinement </a>.
+<li> <a href="divgraf/FunSol/TFunSol.pdf"> Solitons from Funwave run  20ish/6 2015 </a>.
+</ul> 
+<hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>

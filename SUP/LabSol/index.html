@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Comparison of soliton experiments with theory</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>Procedure for doing boundary layer simulations for comparison with experiments on solitary waves</h1>
+<h3>This page</h3>
+     A first version written in Oct./Nov 2013. 
+<h3>The basics</h3>
+    In the following $Geirkp referes to the home directory of
+    the user geirkp. At 30 Oct. 2013 this is /mn/anatu/ansatte-u1/geirkp.<br>
+    The programs in use are 
+<ol>
+<li><a href="../scripdoc/fullsol.txt">fullsol</a> is  a script that computes solitary wave solutions. Either Tanaka's method is used for full potential theory, or Grimshaw's/Fenton's perturbation solution for small amplitudes.<p>
+<li><a href="../rusource/index.html">BIM (Boundary integral Model)</a> for full potential theory. This is used to compute the velocity distributions for solitary waves at the 
+bottom and  of the fluid. The program does not perform any time-stepping, but  prepares
+the input for its postprocessor.<p>
+<li><a href="../scripdoc/felt.txt">felt.sh </a> invokes the post-processor 
+for the BIM model. This is used to compute the velocity distributions in 
+the inner part of the fluid, as well as pressures, accelerations etc.<br>
+These quantities are not stricly required for the boundary layer computations, 
+but may be useful when larger FOVs are employed.<p>
+<li><a href="../scripdoc/solfelt.html">solfelt.sh </a> is a combination of the three preceding entries. This is used to compute the velocity distributions for solitary waves. <p>
+<li><a href="../bounlay/index.html">Boundary layer model.</a> This is a more 
+general model than what is needed in the present context.<p>
+bottom and in the inner of the fluid<p>
+<li> A number of  general purpose applications (scripts and compiled programs)
+<br>
+</ol>
+    These models/scripts are mainly run through a set of shell code snippets given in
+    $Geirkp/lab/Heidi/genrun. These snippets are executed by
+the <a href="../scripdoc/newrun.html">newrun</a> facility.
+It is not recommended to modify these snippets.
+<h3>Preparation</h3>
+<ol>
+  <li> Create a new folder. Then make a softlink, copy and execute a file
+      according to (use bash)
+  <pre>
+   ln -s $Geirkp/lab/Heidi/genrun .
+   cp $Geirkp/lab/rprep.sh .
+  </pre>
+<h3>Initialization</h3>
+  Always use bash. Go to the work folder and do
+  <pre>
+   . rprep.sh
+  </pre>
+  The code in rprep.sh defines Geirkp as an environment variable and 
+  modifies the path. The following will not work unless this is invoked.
+
+<h3>Obtaining solitary wave profiles</h3>
+The command line
+<pre>
+fullsol -a 0.2 -dx 0.5 -eps 0.001 -o ffff
+</pre>
+produces a file ffff0.2, which contains surface elevations, velocities etc., and
+a parameter file fullsol.par which, among other things, gives the wave celerity c. <a href="../scripdoc/fullsol.txt">Click for more details on fullsol.</a>
+
+<h3> Computing Boundary layers</h3>
+<h4> Running the snippet</h4>
+The outer flow, from a solitary, and the boundary layer are coputed by invoking the "snippet-command" Gsolb as is shown in the examples below. The snippet
+is essentially a wrap of <a href="../scripdoc/solfelt.html">solfelt.sh,
+ <a href="../scripdoc/fullsol.txt">fullsol</a> or  <a href="../scripdoc/soliprod.txt">soliprod</a>, and
+the boundary layer program.
+<pre>
+newrun -pre 'mode=nonlin;sol=Tanaka;L=50;a=0.3;d=0.2;dx=0.2;nz=100;' Gsolbl
+newrun -pre 'mode=nonlin;sol=Fenton;L=50;a=0.3;d=0.2;dx=0.2;nz=100;' Gsolbl
+</pre>
+where the specified parameters are
+<ul>
+<li>mode: specifies the kind of boundary value model to be used <br>
+Values: nonlin, lin or Vittori. The last assumes a spatially uniform
+outer flow, with a time history like that of the flow from the solitary wave,
+and a separate program is then used. <br>
+  Default: nonlin
+<li>sol: chooses solitary wave solution<br>
+     Values: Tanaka, Fenton, Serre or Bouss.
+<li> L: Approximate length of computation domain in depth.<br>
+     Default: 50
+<li> a: amplitude to deth ratio.<br>
+    Default: 0.3
+<li>d: depth in meter<br>
+    Default: 0.2
+<li>dx=0.2: spatial resolution (in depths)<br>
+    Default: 0.2
+<li>nz: number of points in the vertical<br>
+    Default: 200
+</ul>
+Lists separated by commas are accepted for mode and  dx.
+<h4> The data</h4>
+<ol>
+<li> File structure<br>
+    The examples above produce the folders
+<pre>
+Gsolbld0.2/a0.3Tanakanonlin/dx0.2nz100
+Gsolbld0.2/a0.3Fentonnonlin/dx0.2nz100
+</pre>
+whith the files
+<ul>
+<li> uinNT vinNT uxNT : Fields for the parallell velocity (u), normal velocity 
+(v) and the along-bottom derivative of u<br>
+    These are ascii files in a specific <a href="../gpxyconv/index.html"> format </a>.
+For solitary waves there is a huge redundancy in the data; the same profiles 
+ are inherent in many datafiles for different values of x.
+<li> U.out: the outer velocities which are input to the boundary layer program.
+<li> zcord: two column file with vertical grid node and position.
+<li> soliprod.par, param.dat, skyv.dat : parameter files
+<li> Many other files which are unexplained; for now.
+</ul>
+<li>Scaling<br>
+<ul>
+<li> All compuations are done in dimensionless coordinates with
+     the depth as length scale and d/sqrt(g*d) as time scale.
+<li> At t=0 the peak of the solitary wave is at x=0. We may then define
+     a phase as xi=x-ct, where c is given in the file soliprod.par. 
+<li> The file uinNT contains u at time level NT. The time is NT*nbet*dt
+     where nbet and dt are parameters from the file param.dat.<br>
+     The first line of uinNT contains
+<pre>
+*   nz+1   nx   dz_av  dx   *    x0     *
+</pre>
+where * marks dummy value (in the present context), nz+1 is the number of
+grid points in the z-direction. dz_av is average increment in z direction (file
+zcord defines the real node positions) , dx is x-increment, and x0 is x 
+position of leftmost nodes. The phase of column k then becomes
+<pre>
+xi=x0+(k-1)*dx-c*NT*nbet*dt
+</pre>
+</ul>
+</ol>
+<h3> A simple tool to check the data</h3>
+The Nspreadplot snippet compares profiles for different combinations of 
+parameters. This may be utilized to check the data qualitatively, as well
+as quantitatively with respect to resolution, choice of model and 
+presence of end effects. The latter is due to the finite computational domain.
+<a href="fas2Na0.3.pdf"> Example</a>
+<pre>
+newrun -pre 'a=0.3;d=0.2;times=25,22;ymax=0.015;modeliste=Fentonnonlin,
+Tanakanonlin;fase=2;nzliste=100,200' Nspreadplot
+</pre>
+where the lineshift is edited and should not be used in the shell command. 
+Default values are available for all parameters. The times variable, and all that ends with liste, takes a series of comma-separated values as input. 
+The times correspond to NT as defined above.
+Graphs appear in separate windows, while data and graphical code (.eps)
+are found in the folder divgraf/Nspreadplot.
+<p>
+   <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>

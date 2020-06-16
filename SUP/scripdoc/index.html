@@ -1,0 +1,327 @@
+<html>
+<head>
+<title>Scripts</title>
+ </head>
+ <body bgcolor="#FFFFFF">
+ <h1>List of scripts and programs</h1>
+   <table  width="100%" CELLPADDING="5" BORDER="2">
+<tr><td> <b>Program </b><td> <b> Directory </b> <td> <b> Purpose  </b></tr>
+
+<tr><td> <a href="apbonew.txt">apbonew.sh </a>  <td>/hom/geirkp/bouss/trappe/bin
+<td>Reproduces a boslide simulation
+</tr>
+<tr><td> <a href="bounl.txt">bounl.sh </a>  <td>/hom/geirkp/lagbouss/bin
+<td>Computes boundary layers from a knaai simulation.
+</tr>
+
+<tr><td> cleansepar.pe </a>  <td>/hom/geirkp/bin
+<td>Use (example): cleansepar.pe gg.par > res.par. Reads parameterfile gg.par
+and write it to res.par omitting multiple settings of parameters. The last
+setting is the one kept.
+</tr>
+
+<tr><td> <a href="Com.txt">Com.pe </a>  <td>/hom/geirkp/bouss/trappe/bin
+<td>Produces  COMMIT propagation files from propagation files created in gglo simulation
+</tr>
+
+<tr><td> <a href="../netCDF/comtogp.html">comtogp </a>  <td>/hom/geirkp/lib/i386
+<td>Translates COMMIT propagation files to gphov format
+</tr>
+
+<tr><td> <a href="cusnit.txt">cusnit.pe </a>  <td>/hom/geirkp/bin
+<td>Extract general transects from gphov files.
+</tr>
+
+<tr><td> <a href="derv.txt">derv </a>  <td>/hom/geirkp/bin 
+<td>Computes derivatives by polynomial regression.
+</tr>
+
+<tr><td> <a href="dfi2txt.html">dfi2txt, dfi2txt32 </a>  <td>/hom/geirkp/lab/bin or /mn/anatu/hydrolab-data/josteiko/digiflow
+<td>Converts binary digiflow files to ascii.
+</tr>
+
+<tr><td> <a href="diffil.txt">diffil.pe </a>  <td>/hom/geirkp/bin 
+<td>Makes linear combinations of data rom two files by means of spline
+interpolation
+</tr>
+
+<tr><td> <a href="ddrun.txt">ddrun.pe </a>  <td>/hom/geirkp/lagbouss/bin
+<td>Makes oblique run-up simulations by ddsta* programs
+</tr>
+
+<tr><td> <a href="Dsor.txt">Dsor.pe </a>  <td>/hom/geirkp/bouss/trappe/test
+<td>Makes test source for gglo program
+</tr>
+
+<tr><td> <a href="../ETOPO/etpcN.html">etpcN </a>  <td>/hom/geirkp/bouss/lib/i386
+<td>Fortran program that extracts a <a href="../gpxyconv/index.html">gphov </a>depth matrix from a downloaded ETOPO1 dataset in netCDF. 
+</tr>
+
+<tr><td> <a href="felt.txt">felt.sh </a>  <td>/hom/geirkp/laplace/rusource/bin
+<td>Produces velocity fields from the output of the boundary integral program.
+</tr>
+
+<tr><td> <a href="Fprod.txt">Fprod </a>  <td>/hom/geirkp/solitons/i386
+<td>Fortran program that produces solitary wave profiles from Fenton's fourth order solution.
+</tr>
+<tr><td> <a href="fullsol.txt">fullsol </a>  <td>/hom/geirkp/bin
+<td>Shell script that produces solitary wave profiles from the Tanaka solution, 
+by <a href="solp.txt"> solp</a>, or Fenton's solution, by  <a href="Fprod.txt"> Fprod</a>.
+</tr>
+
+<tr><td> <a href="gbimpar.txt">gbimpar.pe </a>  <td>/hom/geirkp/laplace/rusource/bin
+<td>Synchronization of Lagrangian and BIM runup models with
+    data from experiments or other models.
+</tr>
+
+<tr><td> <a href="genkurv.txt">genkurv </a>  <td>/hom/geirkp/bin/
+<td>Swift plotting of 2D curves by plotxy or gnuplot. Can be combined 
+    with pakk.pe to make latex figures with legends and labels in latex code.
+ <a href="PHsymb.png">List of symbols in plotxy mode.</a> 
+</tr>
+
+<tr><td> <a href="genpil.txt">genpil.pe </a>  <td>/hom/geirkp/bin/
+<td>Invokes pilplott.pe, genkurv,peplot.pe and pakk.pe to produce
+    vector plots
+</tr>
+<tr><td> <a href="getnew.txt">getnew.pe </a>  <td>/hom/geirkp/gitec/bin/
+<td>Extracts parameters from a parameterfile
+</tr>
+
+<tr><td><a href="../globouss/index.html">gglo* </a><td>/hom/geirkp/bouss/trappe/i386
+<td> Fortran program for global Boussinesq solver.
+</tr>
+
+<tr><td><a href="gglparse.txt">gglparse.pe </a><td>/hom/geirkp/bouss/trappe/bin
+<td> Script for running global Boussinesq solver.
+</tr>
+<tr><td><a href="ggrestart.html">ggrestart.pe </a><td>/hom/geirkp/bouss/trappe/bin
+<td> Prolongation of Boussinesq solver run through <a href="gglparse.txt">gglparse.pe </a>.
+</tr>
+<tr><td> <a href="gkontur.txt">gkontur.pe </a>  <td>/hom/geirkp/bin/
+<td>Uses Gsharp to produce countour and 3D plots
+</tr>
+<tr><td><a href="gparvar.txt">gparvar.pe </a><td>/hom/geirkp/bin
+<td> Extracts lists ov values from parameter files inn distributed folders.
+</tr>
+<tr><td><a href="gpdiff.txt">gpdiff.pe </a><td>/hom/geirkp/bin
+<td> Linear combinations on single-dataset gphov files.
+</tr>
+<tr><td><a href="gpmask.txt">gpmask.pe </a><td>/hom/geirkp/bin
+<td> Transfer a mask from one single-dataset gphov file to another.
+</tr>
+<tr><td><a href="gpregrid.txt">gpregrid.pe </a><td>/hom/geirkp/bin
+<td> Employ refgp to regrid a field.
+</tr>
+<tr><td><a href="gpslag.txt">gpslag.pe </a><td>/hom/geirkp/bin
+<td> Probes the format of a gphov file.
+</tr>
+
+<tr><td> <a href="gp2xyval.txt">gp2xyval.pe </a>  <td>/hom/geirkp/bin
+<td>Converts a gphov formatted file to a column format
+x y 'fieldvalue'
+</tr>
+
+
+
+<tr><td> <a href="../netCDF/gptocom.html">gptocom </a>  <td>/hom/geirkp/lib/i386
+<td>Translates gphov files to COMMIT propagation files
+</tr>
+
+<tr><td> <a href="gsersplit.txt">gsersplit.pe </a>  <td>/hom/geirkp/lagbouss/bin
+<td>Split time series from knaai (Lagrangian Boussinesq model)
+</tr>
+<tr><td> <a href="gskred.txt">gskred.pe </a>  <td>/hom/geirkp/bouss/slide/bin
+<td>Runs series of simulations of slide generated waves(boslide model)
+</tr>
+
+<tr><td> <a href="gsplit.txt">gsplit </a>  <td>/hom/geirkp/bin
+<td>Extracts columns in genkurv style, but without plotting
+</tr>
+
+<tr><td><a href="initialperf.txt">initialperf.sh</a>   <td>/hom/geirkp/SUP/experiments
+<td> Initiation of paddle iteration
+</tr>
+
+<tr><td> <a href="itperf.txt">itperf.sh </a><td>/hom/geirkp/SUP/experiments
+<td> Paddle iteration
+</tr>
+
+<tr><td> <a href="Kjfilt.html">Kjfilt </a><td>/hom/geirkp/lib/i386
+<td> Fortran program for surface respons to earthquake sources.
+</tr>
+
+<tr><td> <a href="../lagbouss/index.html">knaai* </a><td>/hom/geirkp/lagbouss/i386
+<td> Lagrangian Boussinesq model with runup on sloping beaches
+</tr>
+
+
+<tr><td> <a href="../rusource/index.html">lru* </a><td>/hom/geirkp/laplace/rusource/i386
+<td> Boundary integral model
+</tr>
+
+<tr><td> <a href="lagsersplit.txt">lagsersplit.pe </a>  <td>/hom/geirkp/lagbouss/bin
+<td>Split Lagrangian time series from knaai (Lagrangian Boussinesq model)
+</tr>
+
+<tr><td><a href="lagtser.txt">lagtser.pe </a>   <td>/hom/geirkp/SUP/experiments
+<td>
+Produces  paddle motion  voltages for labview from 'tx' or 'tV' input.
+</tr>
+
+<tr><td><a href="laptobous.txt">laptobous.pe </a>   <td>/hom/geirkp/lagbouss/bin
+<td>
+Makes Boussinesq simulation from BIM data.
+</tr>
+<tr><td><a href="linset.txt">linset.pe </a>   <td>/hom/geirkp/bin
+<td>
+Converting irregular, but monotonic, xy files to regular xy files or gphov files.
+</tr>
+
+<tr><td> <a href="../bounlay/index.html">mulprf </a><td>/hom/geirkp/boelge/bounlay/i386
+<td> Boundary layer model
+
+<tr><td> <a href="minterpol.txt">minterpol.pe </a><td>/hom/geirkp/bin
+<td> Linear interpolation in data-file
+</tr>
+<tr><td> <a href="msquare.txt">msquare.pe </a><td>/hom/geirkp/bin
+<td> Linear regression applied to a file with irregular data.
+</tr>
+
+
+</tr>
+<tr><td> <a href="newrun.html">newrun </a><td>/hom/geirkp/bin
+<td> A script to run snippets of bash code associated with a project.
+</tr>
+
+<tr><td><a href="../tracacc/index.html">nDut </a><td>/hom/geirkp/SUP/experiments/i386
+<td> Fortran program for acceleration calculations. Compiled only for linux.
+</tr>
+
+<tr><td><a href="onetotwo.html">onetotwo </a><td>/hom/geirkp/lib/i386
+<td> Extend a plane profile to a toD gphov file
+</tr>
+
+<tr><td> <a href="pakk.txt">pakk.pe </a>  <td>/hom/geirkp/gitec/bin
+<td>Arrange one ore more ps figures, or latex text files, into a picture
+    environment.
+</tr>
+
+<tr><td> <a href="peplot.txt">peplot.pe </a>  <td>/hom/geirkp/bin/graf
+<td>Enkelt plotteverkt&oslash;y.
+</tr>
+
+<tr><td> <a href="pilplott.txt">pilplott.pe </a>  <td>/hom/geirkp/bin/graf
+<td>Creates inputfiles for peplot.pe that produce vector-field plots
+</tr>
+
+<tr><td> <a href="pdatpros.txt">pdatpros.pe </a>  <td>/hom/geirkp/SUP/experiments
+<td>Converts a xyuv file to gphov format.
+</tr>
+
+<tr><td> <a href="pkat.txt">pkat </a>  <td>/hom/geirkp/bin
+<td>Concatenates and manipulates on gphov files. Invokes akop from main program
+/hom/geirkp/lib/kopsource/genkop.f.
+</tr>
+<tr><td> <a href="../polygon/index.html">poly </a>  <td>/hom/geirkp/lib/i386
+<td>Fortran program that computes smooth data from et polygon by means of 
+splines.
+</tr>
+
+
+<tr><td> <a href="reorfig.txt">reorfig.pe </a>  <td>/hom/geirkp/bin
+<td>Extracts the picture environment from a file generated by pakk.pe.
+    Produce a single ps file from everything in this environment and 
+    wraps the new ps with original caption into a new tex file by pakk.pe
+</tr>
+
+<tr><td> revert.pe  <td>/hom/geirkp/bin
+<td>Shift the sequence of lines in a file . Use: revert.pe oldfile > newfile 
+</tr>
+
+<tr><td> <a href="roterser.txt">roterser.pe </a>  <td>/hom/geirkp/bin
+<td>Rotates and transformes column files.  
+</tr>
+
+<tr><td> <a href="rotxy.txt">rotxy.pe </a>  <td>/hom/geirkp/lagbouss/bin
+<td>Rotates and transformes xy files from Boussinesq or BIM runup models
+    to  coordinates pararallel and normal to the beach plane.
+    Origin for the rotated system in the equilibrium shoreline position.  
+</tr>
+
+<tr><td> <a href="rurun.txt">rurun.pe </a>  <td>/hom/geirkp/lagbouss/bin
+<td>Sets up simulations with knaai*.
+</tr>
+
+<tr><td> <a href="slidmat.txt">slidmat.pe </a>  <td>/hom/geirkp/bouss/slide/bin
+<td>Generation of matrices for seabed and slide-bodies from the output of
+         boslide.new.
+</tr>
+
+<tr><td> <a href="../netCDF/sniffcdf.html">sniffcdf </a>  <td>/hom/geirkp/lib/i386
+<td>Browses netCDF files.
+</tr>
+
+<tr><td> <a href="solcomp.txt">solcomp </a>  <td>/hom/geirkp/bin
+<td>Shell script that compares the data on a specified file with solitary wave profiles. Invokes <a href="soliprod.txt">soliprod</a>
+</tr>
+
+<tr><td> <a href="solfelt.html">solfelt.sh </a>  <td>/hom/geirkp/laplace/rusource/bin
+<td>Shell script that produces velocity and pressure fields for a solitary 
+wave from full potential theory.</a>
+</tr>
+
+<tr><td> <a href="soliprod.txt">soliprod </a>  <td>/hom/geirkp/bin
+<td>Generates solitary wave data.
+</tr>
+<tr><td> <a href="solp.txt">solp </a>  <td>/hom/geirkp/solitons/i386
+<td>Fortran program that generates solitary wave data from Tanaka's solution.
+</tr>
+
+<tr><td> <a href="splitl.txt">splitl.pe </a>  <td>/hom/geirkp/bouss/trappe/bin
+<td>Extracts rows and columns from gphov files.
+</tr>
+
+<tr><td> <a href="splitser.txt">splitser.pe </a>  <td>/hom/geirkp/bouss/trappe/bin
+<td>Processes time series from gglo.
+</tr>
+
+<tr><td> <a href="textab.txt">textab.pe  </a>  <td>/hom/geirkp/bin
+<td>Converts a txt table into latex.
+</tr>
+
+<tr><td> <a href="timsenew.txt">timsenew.sh </a>  <td>/hom/geirkp/SUP/experiments
+<td>Produces unix 2-column files from labview output. Applies smoothing and regression to make time series suitable for
+    calculation of paddle velocities for input in models. 
+</tr>
+
+<tr><td><a href="tserslice.txt">tserslice.pe </a><td>/hom/geirkp/lagbouss/bin
+<td> Interpolation of time-series for given times.
+</tr>
+
+<tr><td><a href="ufromg/index.html">ufromg* </a><td>/hom/geirkp/labproj/progs/i386
+<td> Fortran program for generaton of velocity series from surface elevations.
+</tr>
+
+<tr><td><a href="../uls/index.html">uls </a><td>/hom/geirkp/tsunamisource/okada/i386
+<td> Fortran program for Okadas formula.
+</tr>
+
+<tr><td><a href="unslopgp.txt">unslopgp.pe </a><td>/hom/geirkp/bin
+<td> Produces gphov ascii file from sloppy file with wrong number of blanks in records.
+</tr>
+<tr><td><a href="Uturn.txt">Uturn.pe </a><td>/hom/geirkp/bin
+<td> Swaps a  gphov file for velocity.
+</tr>
+
+</table>
+<p><b>Author of page: </b> Geir Pedersen &lt;<a href="mailto:geirkp@math.uio.no">geirkp@math.uio.no</a>&gt;
+</address>
+</body>
+</html>
+
+
+
+
+
+

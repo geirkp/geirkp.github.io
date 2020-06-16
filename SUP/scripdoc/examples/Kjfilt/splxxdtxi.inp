@@ -1,0 +1,13 @@
+ yz 
+ ! x-snitt ? 
+ nei
+!give coordinate option
+ head
+! gi radnummere 
+ 60
+! gi navnestamme for outputf 
+ 
+! skal linj.nr. brukes? (ellers fortloep.) 
+ j 
+!gi datnummer 
+ -1 

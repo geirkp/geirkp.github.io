@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>The gphov format</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>The gphov format</h1>
+
+
+    <h2>The gphov files</h2>
+    The gphov format is a naive format for two-dimensional arrays that 
+    was designed for use
+    on various computers in the 1980s.  A ghov file is either plain ascii or binary  and contains a header.<br>
+    <h4>The header</h4>
+    The 
+    header record comprises<br><p>
+
+     nc n m dx dy x0 y0 ndat
+    <br><p>
+    where
+
+   <table  width="100%" CELLPADDING="5" BORDER="0">
+   <tr><td>  nc <td> is a controle parameter whose interpretation is optional</tr>
+   <tr><td>       n m <td>  number of columns and rows</tr>
+   <tr><td>       dx dy <td> grid increments</tr>
+     <tr><td>     x0 y0 <td> position of (1,1) for the dataset(s)</tr>
+    <tr><td>      ndat <td> number of datasets </tr>
+</table>
+    <ul>
+    <li><em>Ascii files</em><br>The format of the headerline in fortran is  (3I6,4F12.6,I6)
+    (I6 is %6d and f12.6 is %12.6f in C-like syntax)
+    <li><em>32 bits binary format</em><br>
+      Each item in the header fills in 4 byte in the first record. The begin 
+      and end-of recordmarks are 32 bits inters containing the value 32.
+      When reading the header by the Perl "read" command in binmode or
+      the C fread command the header record, including the recordmarks, then 
+      contains 10 times 4 bytes. 
+    <li><em>64 bits binary format</em><br>
+      The floats in the header use 8 byte, while the integers still 
+      use 4  in the first record. The begin 
+      and end-of recordmarks are 32 bits inters containing the value 48.
+    </ul>
+    <h4> The data body</h4>
+    Then the rows of datasets are written subsequently. In ascii 10 numbers 
+    are written to each line (a record in binary form). If the number of
+    colums are not an integer times ten the reminder, R, is written on a separate
+    line (record). One point is to retain the option to read and write
+    line by line in a fortran program. 
+    <ul>
+    <li><em>Ascii files</em><br>The ascii format used is 10f12.6 for the
+       full record and Rf12.6 for the "rump" records. 
+    <li><em>32 bits binary format</em><br>
+      The 32 bits recordmarks contain the value 40 for the full records
+      and R*4 for the remainder records. 
+    <li><em>64 bits binary format</em><br>
+      The 32 bits recordmarks contain the value 80 for the full records
+      and R*8 for the remainder records. 
+    </ul>
+  
+    <h2> Reading and writing gphov files </h2>
+      <ul>
+     <li><em> Fortran </em><br>
+           Routines in /hom/geirkp/lib/les.f (/hom/geirkp/lib/i386/bibl.a).<br>
+           Selected routines for reading<br>
+           <ul>
+           <li>headles -- reads a haeding, skips introductory comment if 
+                          data are in ascii format. 
+           <li>headskip -- skips a heading with introductory comments
+           <li>SKIPHODEG -- skips a heading
+           <li>SKIPDATG -- skips a data set
+           <li>LESGG -- reads a full data set; no checking
+           <li>sjekkles -- reads a whole or incompletely written dataset.<br>
+               In ascii mode it is also checked for erroneous data.
+           </ul>
+           Selected routines for writing<br>
+           <ul>
+           <li>listexpl -- writes introductory comments
+           <li>SKHODEG -- writes a heading
+           <li>KRYMP -- reads a part of a dataset ino an array
+           <li>SKRIVG -- writes a dataset
+           <li>gphovpri -- open numbered file and write a heading and 
+                a dataset.            
+           <li>gpprscal -- open numbered file and write a heading and a 
+               scaled dataset. 
+           </ul>
+     <li><em> C </em><br>
+      <li><em> Perl </em><br>
+          Routines for single dataset files in /hom/geirkp/bin/rotdat.pe
+          <ul>
+         <li> sub Qread - reads 32 and 64 bits binary files 
+         <li> sub Mread - read ascii files 
+         <li> sub Qprint - writes 32 and 64 bits binary files 
+            (last argument f and d respectively) 
+          <li>sub Mread - write ascii files 
+         </ul>
+      <li><em> Python </em><br>
+      <li><em> Matlab </em><br>
+        Writing of ascii files <a href="field2gphov.m">field2gphov.m</a><br> 
+        Reading of ascii files <a href="gphov2field.m">gphov2field.m</a><br> 
+     </ul>
+
+
+    <h2> Operations on gphov files </h2>
+<ul>
+    <li> Concatenation etc. <a href="../scripdoc/pkat.txt"> pkat </a>
+    <li> Subtracting and adding files <a href="../scripdoc/gpdiff.txt"> gpdiff.p    <li> Making conforming ascii gphov files from "sloppy" ones <a href="../scripdoc/unslopgp.txt">unslopgp.pe </a>
+</ul>
+<p>
+
+
+
+    <h2> Conversion scripts</h2>
+    <h4>Extraction of transects</h4>
+    <ul>
+     <li><a href="../scripdoc/cusnit.txt"> cusnit.pe</a>
+     <li><a href="../scripdoc/splitl.txt"> splitl.pe</a>
+    </ul>
+    <h4>Conversion between gphov and Netcdf</h4>
+      <ul>
+        <li> Fortran programs for conversionfrom/to COMMIT format<a href="../netCDF/comtogp.html"> comtogp</a> and
+        <a href="../netCDF/gptocom.html"> gptocom</a>
+         <li> Python scripts:
+      </ul>
+<p>
+    <h4>gphov and xyuv</h4>
+    <ul>
+    <li>From gphov to xyuv <a href="../scripdoc/gp2xyval.txt"> gpxyval.pe </a> 
+     <li>From xyuv to gphov<a href="../scripdoc/pdatpros.txt"> pdatpros.pe </a> <br>
+         This a slightly complicated process as an xyuv file may be organized 
+        in different ways (rows first, columns first), and regularity may be
+        obscured by limited accuracy in the x and y coordinates. In general
+        an unstructured format like xyuv should not be used for general storage
+        of structured data.  
+     </ul>
+
+ <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>
+
+

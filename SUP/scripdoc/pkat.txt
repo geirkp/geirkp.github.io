@@ -1,0 +1,41 @@
+pkat* array gphov kopiering
+   kopierer datasett fra gphov-format filer. bruk
+     pkat  (-t) (-x) (-y) (-xgl arg) (-ygl arg) (-m'arg') (-s'arg') (-nc'arg')\
+     (-asc) (-bin) ( -o arg )  [kilde-beskr] [kilde-beskr] ...
+   der -asc -bin angir bin{rt eller ascii format p} outputfil 
+       -o arg setter arg som navn p} outputfil, standard er res.bin
+       -f : Forces script to overwrite existing file with the same name as the
+            output file.
+       -x speiler data om x-akse
+       -y speiler data om y-akse
+       -t transponerer ( etter evt. speiling )
+       -xgl arg utforer arg antall trepunkts-glattinger i x-retning, def: arg=0
+       -ygl arg utforer arg antall trepunkts-glattinger i y-retning, def: arg=0
+       -m'arg' der arg bestaar av 4 heltall med blank eller komma i mellom
+             gir klipping som i gphov
+       -s'arg'  der arg bestaar av 2 heltall med blank eller komma i mellom
+             gir siling som i gphov
+       -nc'arg' setter kontrollparameter ( tall f|rst i heading) for outputfil
+             til arg. Default er verdien i foerste inputfil.
+    -ver arg:
+    -addsym arg1 arg2 :
+    -gittsym: 
+    -ncu'arg' :
+    -scal arg : Scales the field by arg (new value= arg*(old value))
+                Default: no scaling
+    -pos'arg' : Sets new origin (x=,y0). Arg must then contain two reals
+                Default orgin is set consistently with input
+    -inc'arg' : Sets new increments. Arg must then contain two reals
+                Default orgin is set consistently with input
+    -tru'arg' : Sets lower and upper limit for data.
+    -th'arg' :  Sets upper limit for data.
+    -tl'arg' : Sets lower limit for data.
+    -asc: sets input format to ascii
+    -bin: sets input forma to binary
+
+
+   kilde beskrivelser har format:
+         (-asc) (-bin) (-n'arg') inputfil
+   der -n'arg' gir valg av datasett som feks: -n'7 2:4 6:12;3 *'
+   som gir datasett 7  2,3,4   6,9,12  og det siste settet p} fila.
+   standardverdi for utvalg er alle datasett

@@ -1,0 +1,33 @@
+.../geirkp/bin/fullsol
+
+Computes solitary wave solutions by Tanaka's method or the fourth order
+approximation by Fenton (1972). (solp program or Fprod program, the latter
+not yet available at Blindern).
+The output is a
+file $pre$amp, where $amp is the amplitude/depth and $pre is an optional 
+prefix ( set with -o option), with 4 columns: 
+
+       x eta surface-potential  normal-derivative-surface-potential
+
+The maximum surface elevation is located at x=0 and the data are dimensionless
+with the depth (h) as length scale and sqrt(h/g) as time scale. 
+In addition the script produces the file fullsol.par, with some
+key parameters.
+
+
+options:
+
+     -dx arg : x increment is set to arg. Default arg=0.05
+      -o arg : arg is used as prefix in output-filname. Default arg=fsol
+      -n|-nmax arg: number of points used calculation. Default=3000
+                    This will not equal the number in the output and
+                    the number will not affect the results when sufficiently
+                    large.
+      -a|-amp arg : set amplitude/depth to arg. Default: arg=0.5 
+      -eps|-tru arg: truncation limit for data. Default: arg=0.0003
+                     No data are given for eta/h less than this limit
+      -prog|-meth arg: arg must be either Tanaka or Fenton. If a>=0.1
+                       Tanaka is default, for lower values Fenton is 
+                       default.
+      -keep : Intermadiate results from the Tanaka program is kept.
+ 

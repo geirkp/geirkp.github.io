@@ -1,0 +1,30 @@
+solcomp
+    Keywords: soliton sammenlikning comparison plots plott plotxy
+    Compares the data on a two column (x,y - equidistant x) file with
+    analytic soliton shapes. The data are truncated and translated as to 
+    have maximum at zero in the file "zzzkapp". Analytic data are produced
+    by the script "/hom/geirkp/bin/soliprod" and are stored in "ssamm.zzw".
+    A plot with comparison is then produced by the "/hom/geirkp/bin/genkurv"
+    script. Unless the -keep flag is employed the produced datafiles are 
+    removed.
+    Use:
+      solcomp (-keep) (-nopl) (-likop arg) (-Bouss) (-Serre) (-hoSerre)
+       (-kSerre) (-lap)  (op1 op2  ...) filnavn
+      parametere:
+         -keep: The produced files are not deleted at the end of the script.
+         -nopl: same effect as -keep, apart from no plot being produced.
+         -likop arg: arg may be -Serre, -Bouss or -lap (see below)
+         -Bouss: Selects the Boussinesq soliton.
+         -Serre: Selects the Serre soliton.
+         -hoSerre: Selects the Serre soliton with Nwogu-like correction.
+         -kSerre: Selects the Serre soliton with disp correction to O(k^4).
+         -kdv: Kdv Soliton
+         -lap: Selects the  soliton from full potential theory.
+         op1 op2 ... is a list of parameters that is transferred to 'soliprod'.
+                Most allowable parameters for "soliprod" may be included,
+                except the  -a opsjonen and options defining the equations 
+                behind the analytic solution. Warning: this feature may be
+                a bit buggy. The list then includes
+                -t
+                -eta,-hast,-pot
+                -eps arg

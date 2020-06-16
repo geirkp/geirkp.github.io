@@ -1,0 +1,86 @@
+               gbimpar.pe
+
+The script is designed to assist the synchronization of runup models
+with other simulations, or experiments, on solitary wave runup, where 
+the available parameters are
+
+      1. A location, xm, in the constant depth region where we know
+         the maximum surface elevation A and the time, tm, when it occurs.
+         This information may stem from a time series at x=xm or the
+         surface profile at t=tm. xm is measured from the equilibrium 
+         shoreline. 
+
+      2. The beach angle.
+
+      3. The maximum time (compatible with tm) for simulation and the
+         time increment, tinc, between printouts.
+
+Solitary wave propagation speeds, c, and half-lengths are 
+calculated by the script.
+The numerical tank-length and initial solitary wave position are chosen 
+according to:
+
+       i) The distance from the beach is at least a half-length.
+      ii) The simulations starts at a time corresponding to t0 (must be added 
+          to the time written by the runup programs). t0 is the largest time
+          reconcilable with i) and such that t0+(an integer)*tinc equals
+          ts.
+     iii) The initial position of the wave is c*(tm-t0) away from xm, such that
+          the maximum at t=tm should be x=xm. 
+
+Use
+
+  gbimpar.pe (options)
+Allowable options
+   -a A: Sets the amplitude (dimensionless, cm or m) 
+     default: A=0.487  
+   -xm xm:   Sets the distance from eq. shoreline to
+              Normalization position (dimensionless, cm or m)
+     default: xm=3.16217m  
+   -vink arg:  Sets inclination angle in degrees.
+     default: arg=7.18  
+   -tm tm:   Sets the time of max elevation at xm (dimensionless or s) 
+     default: tm=3.95s  
+   -eps arg:  Set truncation height for solitons relative to amplitude.
+              This will decide the width of flat region.
+     default: arg=0.0005  
+   -d arg: Depth in meter used with input data with scaling
+     default: arg=0.20  
+   -ts arg: The maximum time to simulate (dimensionless or s).
+     default: arg=5.78s 
+   -tinc arg: Increments between printout (dimensionless or s).
+     default: arg=0.01s  
+   -eq arg:  Chose equation. Options are lap, Bouss or Serre.
+     default: arg=lap
+
+
+
+Produced file is parameter-file gbimp.pa that may look something like
+(may be changed slightly in future)
+xm = 10.5
+tm = 36.9893
+d = 20cm
+ts = 70
+a = 0.098427
+eq = Serre
+eps = 0.0005
+vink = 10.0
+tinc = 1
+halvl = 1.65388954e+01   c = 1.0480586815632
+knekk = 5.67128182e+00   impos = 4.82871818e+00   flatl = 3.47884163e+01
+nut = 45  displace = 1.25654900e+01  x0 = 2.30654900e+01 
+tsimul = 4.50000000e+01   tinc = 1.00000000e+00    t0 = 2.50000000e+01
+tscal = 1.42784312e-01  ntm = 11
+tsimulsec = 6.42529405e+00     tincsec = 1.42784312e-01     t0sec = 3.56960781e+00
+
+Important parameters are (all dimensionless):
+
+ flatl - length of flat region. Initial wave must be centered within this 
+         region.
+ tsimul - simulation time
+ nut - number of simulation intervals 
+ ntm - approximate number where crest passes xm
+ knekk - horizontal distance from start of sloping bottom to eq. shoreline.
+ t0 - time corresponding to t_local=0 in simulations.
+ x0 - distance from eq. shoreline to initial crest. 
+ The parameters with sec appended to their name are in seconds

@@ -1,0 +1,20 @@
+iser =      1
+dispv =     1.000000   ahyd =    -2.000000     abr =     1.000000
+utslag =    -0.957816E+00
+disp =   1.0
+ carrier =  F
+a =         0.139828    l =        27.089102   lambda =        22.672600
+flatl =    20.000000      heln =     0.176327    glatt =     0.250000
+n =   160   da =       0.16983762E+00    dt =       0.16666667E+00
+ntot =    180    nper =     18    iit =      5
+ipstart =      1    ipstop =    180
+ fforyk =  T
+ear =  0.0  skf =  0.0
+ilikn =     1  ilump =    0  iclamp =     0
+ldamp =     0.0000E+00   rdamp =     0.0000E+00
+brygren =    -0.9500E+00
+bbd1 =     0.0000E+00   bbd2 =     0.0000E+00    bbd3 =     0.0000E+00
+qval =     0.0000E+00   igdiff =     0
+urfile = /info/SUP/soldata/amp0.15/Serre.lag
+ngauge =     1
+nprint =     10

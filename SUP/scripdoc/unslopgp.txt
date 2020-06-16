@@ -1,0 +1,13 @@
+/hom/geirkp/bin/unslopg.pe reads sloppy gphov files and corrects for wrong
+number of whitespaces by means of free format input in perl. Headerline 
+must be unbroken in input, but subsequent lines may be freely formatted.
+
+Use:
+
+
+ unslopg.pe -o outfile infile
+
+Options:
+    -o arg: arg is name of outputfile
+            Default: arg=gp.dat
+

@@ -1,0 +1,20 @@
+iser =      2
+dispv =     1.000000   ahyd =    -2.000000     abr =     1.000000
+utslag =    -0.109281E-03
+disp =   1.0
+ carrier =  F
+a =         0.038036    l =        37.089104   lambda =        29.696968
+flatl =    30.000000      heln =     0.176327    glatt =     0.250000
+n =   320   da =       0.11608483E+00    dt =       0.11538462E+00
+ntot =    260    nper =     26    iit =      5
+ipstart =      1    ipstop =    260
+ fforyk =  T
+ear =  0.0  skf =  0.0
+ilikn =     1  ilump =    0  iclamp =     0
+ldamp =     0.0000E+00   rdamp =     0.0000E+00
+brygren =    -0.9500E+00
+bbd1 =     0.0000E+00   bbd2 =     0.0000E+00    bbd3 =     0.0000E+00
+qval =     0.0000E+00   igdiff =     0
+urfile = /home/info/SUP/geirkp/lagbouss/runexNW/pad.inp
+ngauge =     0
+nprint =     10

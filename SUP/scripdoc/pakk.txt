@@ -1,0 +1,143 @@
+
+pakk.pe* tex postscript ps grafikk picture figure
+   monterer sammen postscript figurer og tex-kode  i picture
+   environment i tex. ps filer includeres vha includegraphics 
+   eller psfig med spesifisert hoyde
+   bredde, mens filer med tex code innkapsles i et minipage environment med
+   vertikal sentrering. tex-koden skrives paa standard output.
+   bruk:
+   pakk.pe (-pp arg) (-cap arg) (-ypage arg) (-xpage arg) (-label arg) (-tag)\
+           (-tfile arg) (-exdeg arg) (-mid) (-xadj) (-yadj) (-slide) \
+           (-stit arg) (-lett) (-path) (-center) (-old) (-nofig) (-off 2) \
+           fil1 fil2 fil3 ....
+   der fil1... er enten er postscript-filer med korrekt explisitt boundingbox,
+   eller tex-filer med ekstensjon '.tex'.
+   Opsjoner: 
+       -pp arg  setter antall plott per side. Er arg et enkelt tall
+                mellom 1 og 6 svarer deles opp i rader automatisk.
+                Dersom arg er en serie tall adskilt av komma tolkes
+                disse som antall figurer i hver rad. Eksempler:
+                arg    rad1    rad2    rad3   rad4  ....
+                 2      1       1
+                 3      1       1       1
+                 4      2       2 
+                 5      2       2       1
+                 6      2       2       2
+               2,3,1    2       3       1
+                 default: arg=min('antall spesifiserte filer',6)
+      -posfil arg   Henter posisjoner og størrelser (i units) for
+                    de ulike elementene. Hver linje har form
+                       xa ya xsize ysize
+                    Dersom nødvendig økes ypage og xpage.  
+             Default ingen eksplisitt posisjonssetting
+      -cap arg  teksten arg brukes som caption. dersom arg har utseende
+                les:filnavn  leses teksten fra denne fila.
+     -ypage arg  setter storrelsen vertikalt i mm. Gis ett tall
+                 fordeles plassen likt paa alle rader, gis en sekvens med      
+                  kommaer mellom tolkes de som hoyder av hver rad. Er 
+                 sekvensen kortere enn antall rader gjentas den syklisk.
+                def: arg=200
+     -xpage arg  setter storrelsen horisontalt i mm.
+                 Gis ett tall fordeles det gitte antall mm likt paa
+                 alle figurer i raden. Flere tall adskilt av kolon tolkes
+                 som plass pr figur i raden. Gis flere slike sekvenser
+                 adskilt av komma, gjelder de fortlopende for ulike rader.
+                 def: arg=140
+    -label arg  setter arg som label. Dersom det er mer enn en side
+                adderes nummere til arg.
+    -tag        angir at merker settes over figurene. Disse spesifiseres
+                med (a) etc. dersom ikke annet settes med tfile opsjon.
+    -tfile arg  leser overskrifter over figurer, en paa hver linje, fra 
+                fila arg.
+    -exdeg arg  Utnyttetelsegrad, u, settes til arg. Via argumenter til -ypage
+                etc. er det satt av et rektangel A x B ( i mm) til en gitt
+                figur. Maksimal bredde er da A x u, maksimal hoyde B x u.
+                def: arg=0.85
+    -mid        (med -old bare) Gir midt-justering av figur i sitt rektangel. 
+                 Default er  plassering nederst til venstre.
+    -xadj       (med -old bare)Plasser overskrift sentrert i bredde over 
+                omraadet som faktisk er fylt av figur. 
+                Default er midt over omhyllningsrektangel.
+    -yadj       Plasserer overskrift rett over figur. Ulike overskrifter
+                i samme rad behover da ikke komme paa linje.(med -old bare)
+    -path       Adderer til pathen til spesifiserte filer som er gitt med
+                lokal path. Default: off
+    -slide      Gir output i beamer format (tidligere lslide). 
+                Dvs. at det ikke defineres figure
+                environments, men at ett frittstaende picture environment
+                etterfoelges av caption i form av ordinaer tekst.
+                Hver figur blir ett lysark i beamer.
+    -stit arg   Brukes sammen med -slide og gir en subsection heading
+                med tittel arg paa toppen av siden.
+    -nofig      Fjerner det omgivende figure-environment. Uten virkning 
+                dersom -slide er satt. Default: off
+    -old        Velger gamle defaulter for -center, -mid, -xadj og -yadj
+                Default: off
+    -center     (bare med -old) Sentrerer den totale figuren. (def: off)
+    -pcen arg   Setter sentrering av minipage for tex-code
+            Default: c
+    -toff arg1 arg2  Setter offset for tekst-tags over delfigurer
+            Default: 0 0
+    -clpg       Legger in clearpage mellom hver montert figur
+                Default: ingen eksplitte sideskift 
+    -texrim arg   Setter bredde av blank bord runt tekst for monterte
+                  tex-filer
+                Default: 2
+    -incom arg  Setter kommandor for inkludering av postskriptfiler.
+                Vanlige alternativer includegraphics, psfig
+                Default: includegraphics
+    -offset  arg1 arg2  Gir arg1 og arg2 i offset for total-figur i hhv
+                x og y retning. Nyttig med feks. figurer som ligger nær
+                total størrelse på en slide. Deafult: arg1=arg2=0    
+    -lett       For hver av filene fil1 .. sokes filer med navn fil1.txt ..
+                som inneholder tex kode som skal legges opp} postscript-koden
+                i picture-environmentet. Hver fil bestaar av et vilkaarlig
+                antall linjer som ikke begynner med tall etterfulgt av 
+                linjer i format:
+                .....
+                x y xoff yoff <tex-kode>
+                .....
+                dvs. 4 tall etterfulgt av en tex-kode som avsluttes med 
+                newline. x,y (x-horisontal, y-vertikal) er en posisjonen i 
+                det aktuelle koordinatsystemet
+                og tex-koden skrives xoff mm til hoyre og yoff mm over denne
+                posisjonen.
+                   Default koordinat-system er standard ps-system slik de 
+                leses av i  feks. ghostview og er brukt i boundingboxen i 
+                postscript-fila. Et annet koordinat-system kan spesifiseres
+                ved at en av de innledende tekst-linjene har formen:
+                     -kbox xa ya xb yb
+                tallene xa ya xb yb tolkes da som koordinatomraadet som 
+                avbildes paa et omraade i ps-koordinater. Dette omraadet er 
+                default lik boundingboxen i ps-fila,men kan ogsaa settes med
+                kommandoene: (opsjon + 4 tall)
+                     -pspoint XA YA XB YB   # omraade gitt i sta. ps-kord
+                     -psinch XA YA XB YB    #   ""     ""  i tommer
+                     -psred  XA YA XB YB    # omraade gitt i tommer/uten fordr.
+                Ved -psred antas at vi fyller stoerste nedre venstre omraade
+                slik at vi ikke faar ulik skalering i x og y retning.
+                ---------------------------
+                Eksempler:
+                   1. Vi har en ps-fil, med.ps, med et kart over middelhavet og
+                      onsker aa sette p} navnene Kartago og Roma. 
+                      Ved } bruke musa i Ghostview finner at disse maa 
+                      plasseres  ved hhv. ps-koordinater 211 126 og
+                      234 240.   Vi kan da lage fila med.ps.txt:
+                          211 126 0 0 Kartago
+                          234 240 0 0 Roma
+                   2. Vi har laget et konturplott, k.ps, i et omraade 
+                      0<x<3,0<y<5.
+                      Ved x=2.1, y=4.4 onsker vi aa skrive (x,y)=(x_0,y_0)
+                      i mattemode, forskjovet 2mm til hoyre. k.ps.txt blir naa:
+                           -kbox 0 0 3 5
+                            2.1 4.4 2 0 $(x,y)=(x_0,y_0)$
+
+                            
+
+
+
+
+
+
+
+

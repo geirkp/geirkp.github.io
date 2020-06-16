@@ -1,0 +1,29 @@
+Uturn.pe* velocities gphov
+      Turn around a file with velocities in x-direction, un the sense that
+      the first column is swapped by the last etc. With standard options
+      this corresponds to a change of sign in the x coordinate.
+      Also scaling and transformation may be included by setting the 
+      appropriate options.
+      Can automatically handle all types of gphov files.
+      
+      Use:
+             Uturn.pe (option option ..)  file1 
+      parameters:
+            -o arg : output file is named arg. If the name in arg  
+                     end with .bin a binary file is made.
+                     default: gpdiff.dat
+            -fkod arg: In case of binary output file
+                        arg=d yields 64 bit floats, otherwise 32 bits are
+                        used. 
+                        default arg=f
+            -xstretch xs: the x coordinate is stretched by xs.
+                        default xs=-1
+            -tstretch ts: time is stretched by ts. This affects the output 
+                        velocities that are stretched by xs/ts
+                        default ts=1
+            -ystretch ys: the y coordinate is stretched by ys.
+                        default ys=1
+            -x0 arg: New lower left x.
+                        default: as obtained from transformation by xs 
+            -y0 arg: New lower left y.
+                        default: as obtained from transformation by ys 

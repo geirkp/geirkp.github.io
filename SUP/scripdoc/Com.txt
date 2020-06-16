@@ -1,0 +1,35 @@
+Com.pe* Production of Commit propagation files
+
+The script converts propagation files for eta, u and v from 
+gphov to netCDF as used in COMMIT. To do this the script is
+run in a folder with data from a gglo (32 bit) simulation. It
+invokes the gptocom conversion program. The
+following files are being  read
+
+ param.dat, yprop.ext, uprop.ext and vprop.ext    
+
+where ext is bin (binary) or dat (ascii). The produced files are
+ stem[yuv]a.nc, where stem is set as an option. Temporary files are ind[yuv] 
+that are input files to gptocom and shstem.sh that contains shell code. Preferably, the gglo 
+simulation should use spherical coordinates. Otherwise extra options are
+needed. In addition to turning the data into netCDF format the script also
+scales the data. Grid is in degrees, time in secons and length in cm.
+
+Use /hom/geirkp/bouss/trappe/bin/Com.pe ( -ostem stem  -latitude x0 -longitude y0 -hchar arg -xchar arg  -vlow arg -vrep arg -dry)
+
+Parameters:
+-ostem stem: sets stem in names  for output
+ -latitude x0 -longitude y0 : Used if the simulation is not in sperichal 
+                coordinates. (x0,y0) is then the lower left corner 
+                of the simulation grid 
+               (not the part selected for propgation files). The precise 
+               definition of (x0,y0) is given in the gglo report.
+               The map factors are assumed constant if these options are
+               used.
+ -hchar arg : For dimensionless simulations, this sets the characteristic 
+              depth in m. Is then also used for the grid.
+ -vlow arg : sets lower treshold for data. If this is surpassed the value
+             set by -vrep is invoked.
+             default: arg=-500
+ -vrep arg : replacement value
+             default arg=0.0

@@ -1,0 +1,64 @@
+!give type of input grid
+normalized
+!give bathymetry choice
+depth-matrix
+!gi dybdematrise
+ dyp.dat
+!modifisere grid ?
+no
+!give land treshold
+
+!gi initiell hevn
+ eta.dat
+!Read initial velocity fields
+yes
+!give time for in. velocities
+0.0
+!gi initiell u
+ u.dat
+!gi initiell v
+ v.dat
+!Add oscill to the initial conditions?
+yes
+!give source-file format
+none
+!regne disp
+
+!regne ulin
+
+!korrigert dispersjon
+no
+!Numerical corrections/yes/
+no
+!give number of iterations
+2 2
+!give init. of mom. iter.
+previous
+!give no. 5 point smothing
+0
+!give width of sponge layers
+0.0
+!give output format for grid
+Input
+!give output format for fields/Nascii/
+Nascii
+!Specify fields to be printed
+y u v ut vt
+!give Coriolis parameter
+  0.0
+!give file for eta time series
+xypos
+!give file for u time series
+stop
+!give file for v time series
+stop
+!gi tidsintervall
+5
+!gi red.faktor
+ 
+!give number of intervals
+5
+!give legal eta span
+ 
+!give pro-mat-output
+none

@@ -1,0 +1,114 @@
+      program gglob
+
+ ..
+
+Establish grid type: ivis (1: geograph, 2: cart., 3 nondim.) 
+      nivis=3
+      call lesfrareg('give type of input grid#',1,txlis,nivis,ivis)     
+
+Read units
+      if(ivis.le.2) then
+        call lesunit(lunit,tunit)
+      else
+        lunit=0
+        tunit=0
+      end if 
+
+cc
+cc
+cc    We start with systematic use of consistent units as specified
+cc
+
+Read depth matrix
+      call beolesfelt(h,np2,mp2,dx,dy,xa,ya,nc,ns,'gi dybdematrise#',
+     %                'dyp.dat#',dnavn,kff,ierr)
+      if(ierr.gt.0) stop
+
+Refine or clip in grid
+      if(ja(.false.,'Modify grid ?#')) then
+       call gridref(h,yw,np2,mp2,dx,dy,xa,ya,ns,.false.,19,ierr,wrk)
+       if(ierr.gt.0) stop
+      end if
+...
+Find extrema in depth
+      call ekstr2d(h,0,np,0,mp,imin,kmin,imax,kmax,hmin,hmax)
+
+Read treshold for land: grense
+      grense=rtall(grense,'give land treshold#')
+
+...
+Read initial eta
+      call innfelt(eta,yw,ns,np2,mp2,dx,dy,xa,ya,'gi initiell hevn#',
+     %                'eta.dat#',snavn,kff,.false.,.false.,ierr,wrk)
+...
+Read tinu and initail vels
+        tinu=rtall(tinu,'give time for in. velocities#')
+        call innfelt(u,yw,ns,np2,mp2,dx,dy,x0,ya,'gi initiell u#',
+     %                'u.dat#',unavn,kff,.false.,.false.,ierr,wrk)
+        call innfelt(v,yw,ns,np2,mp2,dx,dy,xa,y0,'gi initiell v#',
+     %                'v.dat#',vnavn,kf,.false.,.false.,ierr,wrk)
+
+Add noise to avoid floating point underflows
+      call noise(u,np,n,m,1,ep1)
+      call noise(v,np,n,m,1,ep1)
+      call noise(eta,np,n,m,1,ep1)
+
+  
+....
+Setting of dispersion and nonlinearities: mu, eps
+Corrected dispersion: kappa,ibon,iglk
+Read number of iterations
+
+....
+Find wet patches: inu,inv
+        call GU(h,n,m,inu,lu,grense,'x',ierr)
+        ...
+
+Set everything ouside fluid to zero
+        call blankvel(u,n,m,inu,lu,0.0,'x')
+        call blankvel(eta,n,m,inu,lu,0.0,'e')
+        call blankvel(v,n,m,inv,lu,0.0,'y')
+
+Set sponge layers: spongw, isv
+      ....
+      call setsponges(xspon,yspon,n,m,dx,dy,spongw,isvmp,ispg,cohfun)
+
+Dimensionless parameter  are calculate
+      ....
+
+Read coriolis (input still with dimensions)
+      ....
+
+Points for time series
+      ....
+
+Remaining dimensions are removed
+    
+Time integration parameters are read (with dimensions)
+        ...
+        call gesper(dtn,ndt,nut,5000,tscal,reddef,tidef)
+        ....
+
+Half step adjust initial velocities, wheter raed or set to zero, to -0.5*dt
+      ...
+      call grhalvskritt(u,v,ut,vt,eta,h,yw,cu,cv,rcy,n,m,dxn,dyn,dtp,
+     %    inu,inv,lu,iit,eps,mu,kappa,ibon,iglk,
+     %    fu,fv,wrk)
+
+        do 330 i=1,nut
+Advance by ndt time steps
+        if(triv)
+         call trivskritt(u,v,ut,vt,eta,h,cv,rcy,n,m,dxn,dyn,dtn,
+     % inu,inv,lu,t,x0n,y0n,iit,ndt,fu,fv,ispg,xspon,yspon,.false.,wrk)
+        else
+          call grskritt(u,v,ut,vt,eta,h,yw,cu,cv,rcy,n,m,dxn,dyn,dtn,
+     %    inu,inv,lu,t,x0n,y0n,iit,kit,ndt,eps,mu,kappa,ibon,iglk,
+     %    fu,fv,ispg,xspon,yspon,rim,.false.,wrk)
+        end if
+     ....
+330     continue
+
+
+      ....
+
+      end

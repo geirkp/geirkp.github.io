@@ -1,0 +1,63 @@
+Dsor.pe* Produces source input for gglo*
+
+
+This script produces input files for the gglo program.
+Invoked perl libraries and additional source code files:
+   /hom/geirkp/bin/rotdat.pe
+   /hom/geirkp/gitec/bin/lpf_inc.pe
+   /hom/geirkp/gitec/bin/lesopt_inc.pe
+
+Use:
+
+/hom/geirkp/bouss/trappe/test/Dsor.pe \#DEF=<input-file> (options)
+
+Where specifications are given in the input-file or as command line options.
+A command line option of the form '-opt arg' correponds to a line in the file
+containing "opt = arg". The blanks around = is mandatory and several
+settings may be combined in a single line provided arg contains no whitespaces.
+If a parameter is set both in the input-file and the command line the latter
+has presedence. A parameter may also be set more than once in the file; 
+the last setting being the one in effect.
+  
+The sources are specified on rectangular grid, with maximum source strength in (0,0).
+The following files are generated (stem is set by option -stem and ext is .bin in binary mode, empty otherwise)
+ stem.tim: Times. There are one more line in stem.tim than the number of
+           source files.
+ stem1, stem2 ... : Files in gphov format with source strengths.
+ U0ext, V0ext : initial velocities (discrete mode only). 
+ ets'ext' : surface elevation at the end of source duration
+ hint'ext' : modified bottom 
+
+parameters for script:
+-x0 arg : Sets x-coordinate of lower left corner 
+         default: -20
+-y0 arg : Sets y-coordinate of lower left corner 
+         default: -20
+-t arg : Sets source duration.
+         default: 10
+-k arg1 arg2  : Sets decay rates of source strength
+        default: 0.1 0.2
+-L arg : Length of source region (x-direction)
+        default: 40
+-B arg : Width of source region (y-direction)
+        default 40
+-n arg : Number of points in x-direction
+        default: 80
+-m arg : Number of points in y-direction
+        default: 80
+-nt arg: Number of time intervals
+        default: 10
+-stem arg: Sets common stem for flux and time files.
+        default: qqq
+-a arg : Set strength of source
+        default: 0.002
+-bin :  Gives binary output for source files, surface elevations and 
+        initial velocities.
+        default: ascii is used
+-fkod arg: Used with -bin. arg=f corresponds to 32 bit precision, arg=d 
+           to 64 bit
+       default: f
+-analog : Computes the non-discrete fluxes and surface elevation. The discrete
+          mode enables exact reproduction of surface elevation by gglo*, save 
+          for round-off errors.
+       default : discrete mode

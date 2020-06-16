@@ -1,0 +1,22 @@
+
+ msquare.pe
+
+Linear regression is applied to selected columns of a file. 
+If the file has name AAA two new files are produced
+
+   AAA.reg with parameters
+    a, b : linear fit is y=ax+b
+    E : root mean square deviation from line
+    xmin,xmax : limitations of data read and used
+    xa, xb : limitations set by script
+    coord, col : column number for coordinate and value
+                 if a line contains too few columns it is discarded
+    NR, N : number of lines read from file and number of values used
+
+   AAA.app contains data for the straight line from xa to xb
+
+Command line with defaults as arguments
+
+  msquare.pe  -coord 1  -col 2  -lin 100  -xa def  -xb def
+      argument of lin is maximum number of lines used, counted from the
+      start of the file

@@ -1,0 +1,35 @@
+gsersplit.pe
+
+Reads and splits the time series in ugauge, hgauge and agauge.
+Undefined entries may be removed and the data may be given
+dimensions. The produced files are
+
+      $pre$type$nr 
+
+where pre is a common prefix specified in the invokation of the script
+type denotes the field variable:
+        u - horisontal velocity
+        eta - surface elevation
+        ut - acceleration (material acceleration)
+        H - total depth
+        v - material derivative of H
+
+Use
+
+ gsersplit.pe (-nser arg) (-d arg)  (-undef arg) (-glist arg) (-t0 arg) (-pre arg)
+   -nser arg: sets number of time series. arg is a sequence of numbers or the 
+              text 'all'.
+              Default: arg=1
+    -d arg:   Gives depth in meter for scaled output
+              Default: no scaling (arg is empty)
+    -undef arg: Lower limit for existing values 
+              Default: arg=-100
+    -glist arg: List prefixes, separated by blanks or commas, 
+                for gauge files. 
+              Default: arg='u h a'
+    -t0 arg:  Redefines starting point of time series: arg is added
+              to the time (after scaling)
+              Default: arg=0.0
+    -pre arg: Prefix in names opf output-files
+              Default: arg=S
+

@@ -1,0 +1,36 @@
+lagsersplit.pe
+
+Reads and splits the Lagrangian time series in lagser.
+The data may be given
+dimensions. The produced files are
+
+      $pre$type$nr 
+
+where pre is a common prefix specified in the invokation of the script
+type denotes the field variable:
+        x - horizontal position
+        u - horisontal velocity
+        eta - surface elevation
+        H - total depth
+        v - material derivative of H
+
+Use
+
+ lagsersplit.pe (-nser arg) (-d arg)  (-undef arg) (-glist arg) (-t0 arg) (-pre arg)
+   -nser arg: sets number of time series. arg is a sequence of numbers or the 
+              text 'all'.
+              Default: arg=1
+    -d arg:   Gives depth in meter for scaled output
+              Default: no scaling (arg is empty)
+    -undef arg: Lower limit for printed values. May be surpassed due 
+                to breaking or instability. 
+              Default: arg=-100
+    -glist arg: List prefixes, separated by blanks or commas, 
+                for gauge files. 
+              Default: arg='x u H eta v'
+    -t0 arg:  Redefines starting point of time series: arg is added
+              to the time (after scaling)
+              Default: arg=0.0
+    -pre arg: Prefix in names opf output-files
+              Default: arg=L
+

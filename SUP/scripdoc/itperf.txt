@@ -1,0 +1,68 @@
+  /hom/geirkp/SUP/experiments/itperf.sh
+
+  Performs an iteration on the paddle-input. The initial and final files are in
+  volt, cm and seconds, while some intermediate ones are dimensionless.
+  Everything is performed within a rigid filestructure (see below).
+  Documentation on the structure is given in the script. 
+
+  options
+         -case arg: Sets case identifier
+               default arg=IV
+         -remove|-fjern arg: Forces the script to remove files produced
+                  from the given number of iteration and exit 
+               default arg=''
+         -depth|-dyp arg: set the depth
+               default arg=0.1
+         -trunk arg: Truncation limit in dimensionless timeseries
+               default arg=3.5
+         -mid: Turn of regression in timsenew.sh
+         -lin:  Sets regression type to linear for position in timsenew.sh 
+               This is default
+         -kvad:  Sets regression type to quadratic for position in timsenew.sh 
+         -ulin:  Sets regression type to linear in lagtser.pe
+                 default: no regression
+         -ukvad: Sets regression type to quadratic in lagtser.pe 
+         -ukub:  Sets regression type to quadratic in lagtser.pe
+          -glatt arg: Number of pointwise smoothenings used in final production
+                of new voltage (conveyed to lagtser.pe)
+               default arg=0
+         -sm arg: Number of pointwise smoothenings used in timsenew.sh
+               default arg=4
+         -fasit arg: name of file with the desired ("prescribed") 
+                     paddle-displacement (in cm and s).  
+               default arg='wave.dat'
+         -hz arg: sampling rate for output voltage
+               default arg=500
+         -ibr arg: Number of points for regression in timsenew.sh
+               default arg=3
+         -uibr arg: Number of points for regression in lagtser.pe
+               default is the default of lagtser.pe
+ 
+
+    Filstructure:
+      Starting at the current directory, where the script is run, we
+      have the following folders and subfolders ($case is the case identifier)
+
+      ./case$case
+         contains intermediate and final files from script
+
+      ./labview/case$case/$ni
+         contains labview ouput for iteration $ni
+
+      ./prescribed/case$case/$fasit
+         contains the desired paddledisplacement as tx in file $fasit
+
+      The ./case$case has subdirectories and files
+          nn.dat - file with present iteration step at last line  
+ 
+          $fasit - file with the desired paddledisplacement
+
+          AS$ni - directory with output from timsenew.sh for iteration $ni
+         
+
+          STEP$ni - directory that review all iteration up to $ni. The most
+                    important files are the 
+                    volt1 .. volt"$ni+1" (t,voltage)
+                    and the
+                    padin2$depth ..padin"$ni+1"$depth (sampled voltage for 
+                                                       input to labview)

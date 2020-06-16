@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Computation of velocities from surfaces for uniderictional waves.</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>Surface to velocity filter</h1>
+
+    This page is a documentation of a f77 code for employing the Boussinesq/KdV
+    theory to convert either a time series or a snapshot of the surface 
+    elevation to corresponding data for the depth averaged velocities. 
+<h3>The formulation</h3>
+     The program Boussinesq equations with standard
+     dispersion.
+     Details and instructions for further use is found in a separate <a href="boussprof.pdf" > note</a> from /hom/geirkp/bouss/notes/vel-profiles.
+<h3>Properties and features</h3>
+<ul>
+<li> The model employs only non-dimensional coordinates with the maximum depth 
+as lengthscale. The depth in the flat bottom part of the tank is then 1 and the
+ nondimensional time unit is the time used to travel one  length unit with the
+linear long wave speed.   
+All input and ouput is scaled this way.
+<li> Read either a (t eta) or a (x eta) file, where t=time, 
+     x=spatial coordinate, and eta is surface elevation. The coordinates
+     (x or t) may have variable spacing.    
+<li> The input is assumed to correspond to a unidiectional wave in the
+     positive x-direction.(u and eta generally have similar signs) 
+<li> The program produces files with velocities (umid) and double derivatives
+     of velocities (uxx). The latter is subjected to a specified number of 5
+     point smoothing.
+<li> The algorithm itself surpress noise. Still the input velocities should
+     be filtered and not over-sampled (too high sampling rate in relation to
+     noise level.)
+</ul>
+<p>
+<h3>The input and execution</h3>
+        Two lines are read in a dialogue from standard input. 
+         Lines starting with !
+         are recognized as parameters.
+         An example
+<pre>
+    !give eta-data/eta.in/
+     inpfil
+    !give number of 5 point smoothenings/ 0/
+     0
+</pre>
+    This means that the input file with eta data is named inpfil and that
+    0 smoothing will be employed. 
+  <h3> The code</h3>
+   <table  width="500" CELLPADDING="5" BORDER="2">
+<tr><td>
+   directory: <td>/hom/geirkp/labroj/progs</tr>
+   <tr><td>
+   main program<td> etatilu.f </tr>
+   <tr><td>
+   additional files:<td>bibrut.f
+</tr>
+   <tr><td>
+   files from other projects:<td> 
+</tr>
+   <tr><td>
+   additional libraries:<td> /hom/geirkp/lib/i386/bibl*.a /hom/geirkp/lib/i386/dia*.a</tr>
+   <tr><td>
+   makefile:<td> i386/mufromg* </tr>
+   <tr><td>
+   executable: <td> i386/ufromg* </tr>
+   <tr><td>
+   scripts: <td> </tr>
+</table>
+    <p>
+  <h3> Example </h3>
+    An example is given in <a href="solcmp.sh"> a shell code</a> that
+    first uses rurun.pe and then reproduces an U time series by ufromg. 
+   <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>

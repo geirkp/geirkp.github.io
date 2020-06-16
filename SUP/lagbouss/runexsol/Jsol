@@ -1,0 +1,9 @@
+#!/bin/sh
+cd soliton/n80
+time /hom/geirkp/lagbouss/i386/knaai.new < indat 1> f.log 2> f.err
+cd /home/info/SUP/geirkp/lagbouss/runexsol
+
+cd soliton/n160
+time /hom/geirkp/lagbouss/i386/knaai.new < indat 1> f.log 2> f.err
+cd /home/info/SUP/geirkp/lagbouss/runexsol
+

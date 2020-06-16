@@ -1,0 +1,332 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Lagrangian Boussinesq runup model.</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>Wave tank program</h1>
+
+    This page is a documentation of a (mainly) f77 code for solving the 
+    Boussinesq 
+    equations in Lagrangian coordinates in a wave tank with a piston-type 
+    wave paddle
+    and a sloping beach at the other end. 
+    The program has a long and winding history and a complex 
+    organisation. The present documentation may be insufficient to
+    design a simulation from scratch. The use of the script  <a href="../scripdoc/rurun.txt">rurun.pe </a>  is recommened.
+
+    In February 2013 an extension was made to include simplified slides and
+    other bottom sources, through a F90 module. In the autumn of 2013 
+    obsolete features
+    were removed and a stretched grid introduced, in the fashion of the <a href="../rusource/index.html">BIM model </a>. As part of the revision in late 2013
+    the grid is by definition non-uniform also in the Lagrangian coordinate.  
+    
+<h3>The formulation</h3>
+     The program is based on Boussinesq equations with full non-linearity. Such a set is sometimes denoted
+     as Serres' equation. The dispersion is either a standard one or improved to
+     give similar linear dispersion properties as the Nwogu model. This is 
+     obtained by adding a higher order term as is done in the  <a href="../globouss/index.html"> Globouss </a>model,
+     except that the term now is nonlinear to preserve full nonlinearity.
+     Some information on the model and benchmarking is found in an <a href="Geir.pdf" > abstract</a> from the Catalina Island 2004 meeting and references therein. In the <a href="../../geirtalks/Toronto2011/talk.pdf"> presentation, pages 30-41, </a>the model including the improved dispersion and extra nonlinearity is 
+given( page 35).
+<h3>Main features</h3>
+Features included
+<ul>
+<li> Full nonlinearity 
+<li> Dispersion with extra nonlinearities and optimisation with 
+respect to dispersion properties in constant depth.
+<li> Fully Lagrangian coordinates
+<li> The shoreline is automatically tracked.
+<li> A moving wave paddle of piston type. Input from a given profile or 
+file.
+<li> Solitary waves as initial conditions. The solitary wave solution is fully 
+     consistent with the Boussinesq equations employed.
+<li> Velocities and surface read as initial conditions and interpolated on
+     the computational grid.
+<li> One particular form of sub-aerial slide from the Catalina benchmark no. 3.
+     The implementation of a slide as a time dependent bottom in the 
+     equations is general, but
+     this particular slide shape is the only one supported.
+<li> (Only new version) Simplified bottom sources, subaerial or submarine, corresponding to slides
+     (or uplift) by means of general shape functions read from file.
+<li> Obsolete: Comparison with analytical solution of Carrier and Greenspan on an inclined plane. This feature is still present in the old version, but must be
+  regarded as untested. Last used in the 1990s. 
+<li> Two different gradient-dependent diffusion schemes. One is supposed to
+     correspond to that of FUNWAVE.
+<li> (Only new version) A refined  grid near the shore. The grid is specified
+     by a simple formula, but does not provide a constant CFL number during
+     shoaling. Hence, it is most useful for increased accuracy in the
+     vicinity of the shoreline. Initial conditions are first computed on
+     a uniform grid and then interpolated, as in a re-gridding procedure. 
+<li> Output of fields and time series.
+</ul>
+
+<h3> Geometry and coordinate system </h3>
+ In its present form the model requires a smooth bottom profile. Only
+     a numeric wave tank with a piston to the right (maximum x) and a beach to
+     the left is now available. The equilibrium shoreline is at x=0 and there 
+     is smooth transition between the constant depth region and the inclined
+     plane (beach).<p>
+ The model employs only non-dimensional coordinates with the maximum depth 
+as length scale. The depth in the flat bottom part of the tank is then 1 and the
+ non-dimensional time unit is the time used to travel one  length unit with the
+linear long wave speed.   
+All input and output is scaled this way.
+<h4>Refined grid nearshore</h4>
+A new feature from September 2013 with a non-uniform grid
+  defined as for the surface in the <a href="../rusource/shelfgrid.html">BIM model </a>.
+<p>
+<h3>The input and execution</h3>
+    <ul>
+    <li> Parameters are read in a dialogue from standard input. 
+         Lines starting with !
+         are recognised as comments, there are some checks on the input
+         and default values are generally offered. The program is occasionally 
+         modified with implications for the dialogue.
+         The interface script 
+        <a href="../scripdoc/rurun.txt">rurun.pe </a> 
+         provides backward compatibility and
+         extra functionality and should be preferred to direct application
+         of input files.
+    <li> Initial/boundary conditions may specified in the following manners
+       <ol>
+        <li>carrier-greenspan: test simulations on analytic solution from
+            Carrier and Greenspan 1958
+        <li>cohat-paddle: A pulse of predefined shape is made by the paddle.
+                          Amplitude and length (approximately) on produced
+                          waves are read.
+         <li>file-paddle: paddle motion is read from file
+         <li>soliton-felt: initial condition is set to a solitary wave
+         <li> full-felt: initial conditions are read from files. Filenames 
+               have the form stem.eta and stem.u, where the stem is specified.
+         <li>Catalina-slide: Benchmark 3 from Catalina meeting
+         <li>Earthquake: Bottom sources. Physical significance is yet doubtful.
+         <li>Slide: slide of permanent height and shape. Shape functions read 
+             from file.
+        </ol>
+         The different options may not be combined.
+ </ul>
+    <h3> Output </h3>
+      <ol>
+       <li> param.dat -- file with parameters in particular format. 
+            In addition to the input parameters also some output parameters 
+            are included.
+       <li> Runup files (data from beach region)
+         <ul> 
+              <li>beach.dat -- time,xbeach,x(1),x(2),u(1),u(2),ybeach,h(1),h(2)<br>
+                  xbeach,ybeach defines the position of the beach. 
+                  The numbered quantities are field variables adjacent to beach; x=position, u=velocity, h=total water depth. 
+              <li>R.dat -- time,xbeach,rerr,rerr2,rerrl - the latter 3 is only 
+              meaningful for Carrier and Greenspan type simulations 
+              <li>GR.dat -- Used for control only
+              <li> bgradH.dat, bgradx.dat - files with derivatives of
+                  H and x, espectively, at the shoreline.<br>
+                  Columns: t Fad Faad Fc Fac Faac Fq Faq Faaq Fl Fal<br>
+                  where F is x or H, Fad and Faad are a FD approximation to 
+                  dF/da and the second derivative, respectively;
+                  F*c, F*q, F*l are approximations by cubic, quadratic and 
+                 linear 
+                  regression, respectively.
+          </ul>
+       <li> At selected intervals the the field variables are printed. 
+            N is the number of time for output that corresponds to N*nper*dt, 
+            where  nper and dt are given in param.dat. The data files are not 
+            equidistant in the first column that is the horizontal
+             position.<br>
+             etaN :  surface positions (xy)<br>
+             HN : total water depth<br>
+             vN : time derivatives of total water depth<br>
+            UnumN : horizontal velocities <br>
+            udN : horizontal accelerations<br>
+            udhN : hydrostatic part of horizontal acceleration -- corresponds to the gradient of the surface elevation. <br>
+            dkN : if diffusion is activated the coefficient is written.   <br>
+        <li> At max runup no. I the surface is printed in maxI, at max drawdown
+ corresponding files minI are generated. When the simulation is stopped due to 
+breaking files with BRYT in their names are generated.
+        <li> Time series are extracted at specified, fixed, x positions.
+             Number of time series is ngauge in param.dat. The positions in found in file<br>
+         
+             gaugpos: x, Ho, h, dHo/dx, dh/dx, h_xx, h_xxx (h -depth function, _xx double derivative)<br>
+             The field value are foun either in gphov files, where each 
+             row corresponds to a single time or an ad-hoc format.<br>
+             gphov files: ES$slag with slag in eta, u, v or ut. 
+             From these two-column files may be obtained by CEulsplit.sh<br>
+             Ad-hoc files: <br>
+             ugauge: time, u ,v, dv/dx (v is time derivative of H)<br> 
+             agauge: time, du/dt <br>
+             hgauge: time, eta, H, dH/dx (H is total depth) <br>
+             Here Ho denotes the initial fluid height at the position.
+             When more that one point is specified  the sequence of the field 
+             values is repeated, but with maximum ten numbers per line.
+             A single time will then span several lines. Individual two-column
+             time series files may be produced with <a href="../scripdoc/gsersplit.txt"> gsersplit.pe</a>. 
+        <li> Lagrangian time series are written for specified nodes.
+             Number of time series is nserlag in param.dat
+             files: <br>
+             lagspos: nodenumber, Ho<br>
+             lagser: For each time step the nodal values are written 
+                     subsequently. The number of lines in the file is thus the 
+                     number of series times the number of time steps computed.
+                     Each line contains
+                     time, x, u, hu, xH , H, v, hH<br>
+                     Here time is time for x and H, xH is x positon at H node,
+                     hu and hH are equilibrium depths at x and xH, respectively.
+                   Individual two-column
+                  time series files may be produced with <a href="../scripdoc/lagsersplit.txt"> lagsersplit.pe</a>.
+      <li> Misc:
+      <ul>
+      <li> max.dat: time, xmax, etamax, h <br>
+           Time series f maximum surface elevation. h is the equilibrium depth
+           at the maximum point.
+      <li> wall.dat -- paddle position
+      </ul>
+      <li> Files for variable grid
+        <ul>
+        <li> xg_or -- The basic grid on the unity interval (0 is shoreline)
+         <li> xg -- The smoothened version of the basic grid 
+         <li> xxi -- Grid interpolated onto x-nodes, still on unit interval  
+         <li> *regr0 -- with * equal to x, v, h, eta, hin, Unum and wx. 
+             The initial fields on the non-uniform grid. wx is initial x used
+             for h nodes. 
+ 
+       </ul> 
+   </ol>
+<p>
+  <h3> The code</h3>
+<h4> The old version</h4>
+  The star indicates nothing, or GF8 (LF8, IN8 are obsolete).
+   <table  width="500" CELLPADDING="5" BORDER="2">
+<tr><td>
+   directory: <td>/hom/geirkp/lagbouss</tr>
+   <tr><td>
+   main program<td> hov.f </tr>
+   <tr><td>
+   additional files:<td>pertf.f randinp.f invlin.f  Nlinjediff.f diffu.f bdatf.f eu.f errf.f getinbf.f printarr.f 
+formfun.f 
+</tr>
+   <tr><td>
+   files from other projects:<td> /hom/geirkp/runup/car_green.f /hom/geirkp/runup/elem.f /hom/geirkp/lagbouss/helge/initcg.f  /hom/geirkp/lagbouss/helge/tidssteg.f  /hom/geirkp/bouss/slide/inprut.f
+</tr>
+   <tr><td>
+   additional libraries:<td> lagr*.a  /hom/geirkp/lib/i386/bibl*.a /hom/geirkp/lib/i386/dia*.a /hom/geirkp/gitec/source/i386/gsource*.a</tr>
+   <tr><td>
+   makefile:<td> i386/mcnoi* </tr>
+   <tr><td>
+   executable: <td> i386/knaai* </tr>
+   <tr><td>
+   scripts: <td> <a href="../scripdoc/rurun.txt"> bin/rurun.pe</a></tr>
+</table>
+    <p>
+<h4> The new version</h4>
+   <table  width="500" CELLPADDING="5" BORDER="2">
+<tr><td>
+   directory: <td>/hom/geirkp/lagbouss</tr>
+   <tr><td>
+   main program<td> nvghov.f  nhov.f (until Sep. 13)</tr>
+   <tr><td>
+   additional files:<td>pertf.f randinp.f invlin.f  Nlinjediff.f diffu.f bdatf.f eu.f errf.f getinbf.f printarr.f nslmod.f kildemod.f90 
+formfun.f 
+</tr>
+   <tr><td>
+   files from other projects:<td> /hom/geirkp/runup/car_green.f /hom/geirkp/runup/elem.f /hom/geirkp/lagbouss/helge/initcg.f  /hom/geirkp/lagbouss/helge/tidssteg.f  /hom/geirkp/bouss/slide/inprut.f /hom/geirkp/laplace/rusource/kildemod.f90
+</tr>
+   <tr><td>
+   libraries:<td> nlagrGF8.a  /hom/geirkp/lib/i386/biblGF8.a /hom/geirkp/lib/i386/diaGF8.a /hom/geirkp/gitec/source/i386/gsourceGF8.a</tr>
+   <tr><td>
+   makefile:<td> i386/mvaglo  i386/msloi (until Sep. 13)</tr>
+   <tr><td>
+   executable: <td> agi386/vaglo i386/sloi </tr>
+   <tr><td>
+   scripts: <td> <a href="../scripdoc/rurun.txt"> bin/rurun.pe</a></tr>
+</table>
+   <p>
+  <h3>Scripts supporting simulations, pre- or post processing  </h3>
+   <table  width="700" CELLPADDING="5" BORDER="2">
+<tr>
+   <td> script <td> directory <td> purpose 
+</tr>
+<tr>
+   <td> <a href="../scripdoc/rurun.txt">rurun.pe </a> <td> /hom/geirkp/lagbouss/bin  
+   <td> General interface to program. Backward compatible
+</tr>
+<tr>
+   <td> geninp.pe  <td> /hom/geirkp/laplace/rusource/bin  
+   <td> Makes compatible inputfiles to BIM and Boussines(present) models.
+</tr>
+<tr>
+   <td> boussad.sh <td> /hom/geirkp/laplace/rusource/bin  
+   <td> Runs geninp.pe and Boussinesq model to mimic, allowing for certain modifications, an exisiting 
+       BIM simulation. The BIM simulation must be made by geninp.pe
+</tr>
+<tr>
+   <td> <a href="../scripdoc/laptobous.txt" >laptobous.pe </a><td> /hom/geirkp/lagbouss/bin  
+   <td> Extracts parameters and initial conditions from a BIM simulation and
+        runs Boussinesq model.
+        Used for continuation of BIM simulations in swash zone and tsesting of 
+        long wave assumption.<br>
+        Septembre 2008: a revision is probably needed; May 2011 works fine ?
+</tr>
+<tr>
+   <td> <a href="../scripdoc/tserslice.txt"> tserslice.pe</a> <td> /hom/geirkp/lagbouss/bin  
+   <td> Extracts and scales time series data at a given time. Also computes 
+        coefficients in velocity profile.  
+</tr>
+<tr>
+   <td> <a href="../scripdoc/gsersplit.txt"> gsersplit.pe</a> <td> /hom/geirkp/lagbouss/bin  
+   <td> Extracts individual Eulerian time series in separate files. Also offer 
+        scaling of output.
+</tr>
+<tr>
+   <td> <a href="../scripdoc/CEulsplit.txt"> CEulsplit.sh</a> <td> /hom/geirkp/lagbouss/bin  
+   <td> Extracts individual Eulerian time series in separate files from gphov formatted time series.
+</tr>
+<tr>
+   <td> <a href="../scripdoc/lagsersplit.txt"> lagsersplit.pe</a> <td> /hom/geirkp/lagbouss/bin  
+   <td> Extracts individual Lagrangian time series in separate files. Offers also 
+        scaling of output.
+</tr>
+<tr>
+   <td> lagUxser.pe <td> /hom/geirkp/lagbouss/bin  
+   <td> Computes time series of du/dx from other time series.
+</tr>
+<tr>
+   <td> fluxser.pe <td> /hom/geirkp/lagbouss/bin  
+   <td> Computes time series of depth integrated fluxes from other time series.
+</tr>
+<tr>
+   <td> <a href="../scripdoc/gbimpar.txt"> gbimpar.pe</a> <td> /hom/geirkp/laplace/rusource  
+   <td> Synchronization of simulations. Provides parameters that can be 
+        extracted and used with, for instance, rurun.pe.
+</tr>
+<tr>
+   <td> <a href="../scripdoc/bounl.txt"> bounl.sh</a> <td> /hom/geirkp/lagbouss/bin  
+   <td> Computation of boundary layers from time series.
+</tr>
+<tr><td> <a href="../scripdoc/rotxy.txt">rotxy.pe </a>  <td>/hom/geirkp/lagbouss/bin
+<td>Rotates and transformes xy files 
+    to  coordinates pararallel and normal to the beach plane.
+    Origin for the rotated system in the equilibrium shoreline position.  
+</tr>
+</table>
+
+<p>
+  <h3> Examples using <a href="../scripdoc/rurun.txt">rurun.pe </a></h3>
+    Two examples are provided
+    <ol>
+    <li>The shell command given in <a href="exsol.sh"> exsol.sh </a> feeds in
+        a solitary wave with data from the paddle input file <a href=../../soldata/index.html > /info/SUP/soldata</a>.
+     <li>The shell command given in <a href="exinsol.sh"> esinsol.sh </a> specifies
+        a solitary wave with data from initial conditions.
+     <li>The shell snippet given in <a href="exNW.sh"> exNW.sh </a> feeds in a 
+         an N-type related to Carrier et al, benchmark 3 in
+         <a href="Geir.pdf" > the abstract.</a> 
+     </ol>
+      Results from the examples, obtained by sh ../exX.sh are found in directories runexX. 
+   <p>
+   <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>

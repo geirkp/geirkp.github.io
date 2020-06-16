@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Script for generation of solitary wave data from full potential theory</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>solfelt.sh: solitary wave data from full potential theory</h1>
+     The script utilizes <a href="../scripdoc/fullsol.txt"> fullsol</a>,
+     geninp.pe through the script solrup.sh and <a href="../scripdoc/felt.txt"> felt.sh </a>.
+     A simpler version that omits solrup.sh might have been an advantage. 
+     <p>
+    <h3>What is produced</h3>
+      The script must be invoked in a folder for which the user has writing 
+      privileges. An temporary sub-folder is the produced and removed, unless
+      a flag is set to indicate otherwise, and a final folder with name <br>
+                    $gstem$a_$n_$m                         <br>
+      is made where $gstem is atag set by the user of the script, $a is the 
+      amplitude and $n, $m define the resolution. 
+      <ul>
+<li> p,u, v : files for dynamic pressure and velocity components <br>
+     full pressure is then p-y (vertical) + const.<br>
+     Files are in <a href="../gpxyconv/index.html"> gphov </a> format.
+<li> surf : contain surface elevations for each column in the p, u and v 
+     matrices. Format is xy
+<li> fullsol.par : contains output from the fullsol implementation, in 
+     particular a value for the wave celerity.
+<li> A set of files contain values at the nodes of the BIM simulations.
+     For these data no extra interpolation is involved.
+<ul>
+<li> ubott: a two column file with x,u at the bottom
+<li> ubspcoff: a one column file with cubic B spline coeffcients for u at the bottom. Note: this file contains the extra coeff. at the boundaries.
+<li> uv*surf and uv*bott: four columns x y u* v* files for surface and bottom.
+       The * is void (velocities), t (temporal derivatives) or d (material derivatives).
+</ul> 
+</ul>
+  All files are written in dimensionless coordinates with the equilibrium 
+  depth     as length scale and the linear shallow water celerity as 
+    velocity scale. The peak of the solitary wave is located at x=0, unless 
+    otherwise is specified by the -xpeak option.
+    <h3> Parameters </h3>
+      <pre>
+Use:
+/hom/geirkp/laplace/rusource/bin/solfelt.sh (options)
+</pre>
+Options
+     <pre>
+         -var arg : selects compiled version of applied fortran programs
+                 default: corresponds to gfortran with double as standard
+                          length of floats   
+         -a a : sets amplitude to a
+                default: 
+         -xpeak arg : sets position of peak to arg
+                default: arg=0.0
+         -nber  arg : sets number of time intervals before extraction of
+                      fields for potential program.   
+                default: arg =0
+         -nf  nf : sets resolution in potential program    
+                default: nf = 5
+         -t  t : sets integration time in potential program  
+                 default: 0.1
+         -B  B : sets half width of solitary wave field.  
+                default: Width is computed on basis of eps and a
+         -gstem  gstem : Sets the name of produced folders   
+                default: gstem = solit
+         -Vrim  Vrim : sets rim-width above crest in the fields  
+                default: Vrim =0
+         -eps  eps : sets truncation height, relative to a, for the outskirts
+                     of the solitary wave.  
+                default: 0.001
+         -grid  n  m : sets the size of the grid to n x m points.
+                default: 100 x 30
+         -keep : This flag preserves intermediate folders (for debug purposes) 
+                default: intermediate folders are erased.
+         -f : Allow re-writing of existing folders
+                default: existing folders are not over-written, but script 
+                         aborts when this is attempted.
+     </pre>
+   <p>  
+   <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>

@@ -1,0 +1,6 @@
+Fprod
+
+Fortran program that invokes the fourth order solution of Fenton (1972)
+and also calculates the velocity potential. The main source code is 
+/hom/geirkp/solitons/Fprod.f and /hom/geirkp/lib/solny.f. The executable 
+is in /hom/geirkp/solitons/i386 and is used in fullsol.

@@ -1,0 +1,22 @@
+     rotxy.pe
+
+    The script rotates and transformes xy files from Boussinesq or BIM 
+    runup models to  a system , sz, with coordinates pararallel and normal 
+    to the beach plane.
+    The origin for the rotated system in the equilibrium shoreline position.
+    The necessary parameters are fetched from the param.dat file that must 
+    reside in the same diretory as the datafile. From the content of param.dat
+    (existence of parameter mvert) the script decies whether the data in 
+    question are produced by the BIM or the Boussinesq model and transforms
+    accordingly.
+
+    Use:
+
+       rotxy (-o arg) (-form arg) xyfile
+    where
+     -o arg: Sets the name of the outputfile
+          default: .sn is added to the name of the xy-file.
+     -form arg: Sets the fomat in the output for easch column to arg 
+                (not including the '%')
+           default: arg=18.8e
+     xyfile - name of file in xy format with path. 

@@ -1,0 +1,13 @@
+#!/bin/sh
+cd NW/n80
+time /hom/geirkp/lagbouss/i386/knaai.new < indat 1> f.log 2> f.err
+cd /home/info/SUP/geirkp/lagbouss/runexNW
+
+cd NW/n160
+time /hom/geirkp/lagbouss/i386/knaai.new < indat 1> f.log 2> f.err
+cd /home/info/SUP/geirkp/lagbouss/runexNW
+
+cd NW/n320
+time /hom/geirkp/lagbouss/i386/knaai.new < indat 1> f.log 2> f.err
+cd /home/info/SUP/geirkp/lagbouss/runexNW
+

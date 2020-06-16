@@ -1,0 +1,24 @@
+minterpol.pe* interpolation genkurv
+     The script performs linear interpolation in a datset of form
+                       x y1 y2 ..
+                       x y1 y2 ..
+                         .
+     to yield an equally spaced dataset with a specified increment. The
+     x values must be in increasing order.
+     Use
+       minterpol.pe (-dx dx) (-x0 x0) (-npoints n) (-x1 x1) < fil1 >fil2
+     Where:
+        -x0 x0 : truncates data with coordinate less than x0
+                  default: x0= value at first line (no truncation)
+                 Warning: values outside the range of the original file
+                 will not be computed.
+        -x1 x1 : truncates data with coordinate larger than x1
+                  default: x1= value at last line
+        -npoints n: Set the number of points in output. 
+                   default:  integer part of (x1-x0)/dx+1 if dx is explicitly 
+                                  set.
+                             number of points in the input otherwise.
+        -dx dx : sets the new increment to dx.
+                   default: (x1-x0)/(npoints-1) if npoints >1
+                            arbitrary otherwise (just one point)
+

@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Script for restart of Boussinesq model</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>Restart and prolongation of global Boussinesq runs</h1>
+     Documentation of the script ggrestart.pe that automizes a continuation
+     of runs made by <a href="../scripdoc/gglparse.txt">gglparse.pe </a>. 
+     <p>
+    <h3> Requirements for use</h3>
+     The script must be run in the directory of the mother simulation and 
+     reads the parameter files param.dat (made by gglo) and 
+     ggl.par (made by gglparse.pe) which must be present. Also the fields 
+     (u, v and eta) of the time from which we desire a restart must be present.
+     In addition the original bathymetry file of the mother simulation must be 
+     available or another must be specified.  
+    <h3> Parameters </h3>
+      <pre>
+Use:
+/hom/geirkp/bouss/trappe/bin/gglrestart.pe \#DEF=<input-file> (options)
+</pre>
+     Essentially ggrestart.pe shares the options of gglparse.pe. Default values
+     are copied from the mother simulation (through param.dat and ggl.par) and
+     the parameters may be redefined through the input-file or command line 
+     options. Exceptions from the copying of options are the '-run' and 
+     '-compile' options that are turned off (and must be turned on explicitly 
+     if they are wanted) and '-t0' for which the argument is computed from
+     '-nstart'(below) and the parameters of the mother simulation. Besides, the
+     '-noosc' option is employed (the mother job may already added what is 
+     needed), but can be overruled a blank value in the input-file.  <br>   
+     In addition three extra options are defined
+     <pre>
+-nstart arg: arg is the number of outprint from which a restart is made
+             Default: the last dataset computed
+-subdir arg: the subdirectory in which the new simulation is performed
+             Default: restart$i for the lowest number $i for which no such 
+             subdirectory exists ($i is maximum 9)
+-trunk arg:  Set surface elevations with values less than arg to zero.
+             This is imporatnt if the bathymetry is redefined
+             Default: arg=-400
+     </pre>
+   The presedence of the parameters is as follows
+   <ol>
+    <li> All other settings are overruled by command-line options
+    <li> The parameters set in input-file
+    <li> The parameters as recomputed in ggrestart.pe (-t0 etc.)
+    <li> Parmeters inherited from the mother simulations
+    <li> The default values from gglparse.pe for parameters that have been
+         introduced later than the mother simulation. This is to enable
+         backward compatibility. 
+   </ol>
+   <p>  
+   <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>

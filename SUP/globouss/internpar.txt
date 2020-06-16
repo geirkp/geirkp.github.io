@@ -1,0 +1,62 @@
+
+The meaning of some of the internal parameters as 
+written in param.dat
+
+
+Array limit parameters
+-------------------------
+
+ns - maximum number of unknowns in fields, including 
+     a rim of fioctitous points.
+nlin - maximum number of points in one direction (including fictitous)
+lu -  maximum number of wet patches in each row or line
+ntmax - maximum number of time steps in each interval (see ndt below)
+ntps - maximum number of time series points 
+nnz - maximum size of bottomflux arrays
+ntz - maximum number of times for integration of bottom fluxes.
+
+Scaling parameters
+-------------------
+
+Due to geographic grid there is both an length scale (used in relation to
+surface elevation etc) and a grid scale.
+
+lunit - length unit conversion factor(in m) used in input etc.
+        If km is used then lunit=1000
+tunit - time unit conversion factor (in seconds) used in input etc.
+hchar - height scale in lunit, used to make the depth and surface elevation 
+        dimensionless.
+xchar - grid length scale in lunit.
+        If cartesian coordinates are used this is simply hchar,
+        otherwise it is the number of degrees latitude that an arc-length equal
+        to hchar corresponds to.  
+tchar - sqrt(hchar/gunit), where gunit is acceleration of gravity in 
+        the set units
+uchar - The ratio hchar/tchar, the scale of velocities
+utsceta - conversion factor between non-dimensional eta and eta in output.
+          kept for backward compability
+lcut, tcut - conversion factors between non-dimensional length, time and
+           those of output.
+
+
+Grid parameters
+-----------------
+ x0,y0,dx,dy - lower left corner and increments as given in input
+ x0n,y0n,dxn,dyn - Dimensionless grid parameters (x0n=x0/hchar...) 
+ x0u,y0u,dxu,dyu - Grid parameters  as used in ouput of fields
+ x0g,y0g,dxg,dyg - Grid parameters from depth matrix
+
+ n,m - grid size in simulation
+ ng,mg - grid size correponding to depth matrix, rim points not
+         included
+ 
+
+Temporal parameters
+---------------------------------------------------------
+dt,dtn - time steps, as in input and dimensionless
+nut - number of intervals between outprints
+ndt - time steps in each interval
+
+Time series
+-----------------------------------------------------
+ntpu,ntpv,ntpy - number of points for u, v and eta, respectively.

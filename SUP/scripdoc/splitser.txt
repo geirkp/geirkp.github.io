@@ -1,0 +1,24 @@
+splitser.pe* conversion of time series
+
+
+Converts a gglo output files to (time,value) files. The use of the
+script requires the presence of ggl.par and param.dat in addition to
+the raw time series files.
+Use:
+
+/hom/geirkp/bouss/trappe/bin/splitser.pe (-nser arg ) (-field arg)  (-oscal)
+
+parameters:
+    -nser arg : Selects which time series to extraxct.
+                arg is a list of number (corresponding to *xy files) or the
+                text all
+                default: arg=1 
+    -field arg: arg is eta, u or v and defines field to be extracted
+                default: arg=eta
+    -oscal : Use of this flag yields scaled output 
+             (same scaling as in input til gglo)
+Produced files
+ spl*N for unscaled and spl*DN for scaled series. * is eta, u or v, while 
+ N is the number of the time series.
+
+

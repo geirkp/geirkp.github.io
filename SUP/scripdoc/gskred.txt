@@ -1,0 +1,150 @@
+gskred.pe
+
+Purpose: Generation of series of simulations of slide generated waves.
+         The bathymetry is a shelf and an abyssal plain connected with 
+         a slope. A slide, of prescribed form and celerity, moves 
+         perpendicular to the depth contours.
+
+Tools applied: (hhost is a variable related to HOSTNAME)
+
+      1: /hom/geirkp/bouss/slide/$hhost/boslide.new
+         Fortran program simulating waves by hydrostatic or Boussinesq
+         theory.
+
+      2: /hom/geirkp/bin/splitl.pe 
+         (implicit    /hom/geirkp/bin/$hhost/splitdat )
+         Extracts rows from file in gphov format, ready for use by genkurv     
+
+Main output files:
+                   
+                          3D  MODE 
+
+     From boslide.new: 
+         
+               file:           format:               contents:
+              mach.bin        gphov/binary         surface elevation, 
+              fix.dat         gphov/ascii          slide body, original 
+                                                   position.
+              bat.bin         gphov/binary         depth at t=0
+              pos.dat          genkurv             slide positions (t x y)
+              param.dat        parameter           input parameters to
+                                                   boslide.new
+
+         See also comments in the head of 
+             /hom/geirkp/gitec/source/skredp.f 
+
+    In addition:
+               file:           format:               contents:
+              indat          ascii            input to boslide.new
+              yy$N_1         genkurv          surface elevation; cross sections
+                                               at centerline of slide
+          N is an integer referring to the data set number (time),
+          consistent with dataset N in mach.bin
+
+
+                         2D MODE
+
+     From boslide.new: 
+         
+               file:           format:               contents:
+              eta$N           genkurv             surface elevation, 
+              fix.dat         genkurv             slide body, original 
+                                                  position.
+              h$N             genkurv             depth at N'th time
+              param.dat       parameter          input parameters to
+                                                  boslide.new
+
+
+----------------------------------------------------------
+File structure and function:
+   Results are put in directories:
+   $stem/$eq$hg/$formfun/n$n
+   where stem is set by -sti option, eq describes equation (-likn),
+   hg depth of shelf (-hg), formfun slide shape (-form) and n 
+   grid refinement factor (-n) (grid increment proportional to 1/$n)
+   
+   The directory tree, with input files, are generated together with a
+   sh file (at current directory) with name "$job"_$eq, containing the
+   shell commands.
+    
+
+parameters:
+-plan      selects 2D mode
+           def: off 
+-nf  arg   sets the grid refinement factors sequentially to the numbers
+            (separated by blanks or commas) in the list given in the single
+            argument arg. A value N yields roughly grid increments 1/N
+            def: arg=1   
+ -rfak  arg  reduction factor of time step relative to spatial increment
+            def: arg=1 for dispersive, arg=sqrt(0.5) for hydrostatic case
+ -nut  arg  sets number of output fields, at regular time intervals, to arg
+            def: arg=10
+  -t  arg   Sets maximum simulation time to arg. Def: duration of slide event
+  -likn  arg   Selects equation type. Valid options for arg:  
+                      hyd - linear hydrostatic  
+                      disp - linear dispersive
+                      airy - nonlinear hydrostatic  
+                      bouss - Boussinesq equations
+  -korr   Turns hydrostatic correction on. Default: off       
+  -iit  arg Sets number of ADI iterations for Bernoulli (momentum)
+             equation to arg. 
+            (insignificant for equation type hyd) Default  arg=3  
+  -kit  arg Sets number of ADI iterations for continuum equation to arg. 
+            (insignificant for equation type hyd) Default  arg=2  
+  -print  arg  Chooses the actual datasets to be printed. Values for
+               arg may be, for instance:
+                   '1 4 5' yielding sets 1, 5 and 7
+                    '1:8;3' yielding sets 1, 4, 7
+                    alle   yielding all sets 
+               A star corresponds to the last set in the computed sequence
+               Default arg=alle
+  -lx  arg Sets length of domain in x-direction
+           default arg=40  
+  -ly   arg Sets length of domain in y-direction
+           default arg=50  
+  -dob  Defines the slide in the middle of the domain, rather than at the 
+        rightmost boundary.
+        Default: off       
+  -uskred  arg   Sets maximum slide velocity to be arg
+                default arg=0.4  
+  -bras  arg  Sets width of slide. Interpretation depends on form.
+              default arg=6  
+  -lras  arg  Sets length of slide. Interpretation depends on form.
+              default arg=6  
+  -dras  arg  Sets height of slide.
+              default arg=0.1  
+  -form  arg   Selects shape function from slab, tilt, ellipse, bell etc
+              default: bell 
+  -shelfw  arg    Sets shelf width to arg
+           def arg=20  
+  -hg arg  Sets shelf depth to arg. ( Deep water depth equals 1)
+           def arg=0.3  
+  -lheln  Sets slope length to arg.
+          def arg=10  
+  -lindyp Selects a linear rather than a sinusoidal slope that yields
+          continuous bottom gradients everywhere.
+          def: off   
+  -rpy0  arg Defines initial y-position of slide.
+         def: at shelf margin 
+  -rpy1  arg Defines final y-position of slide.
+         def: at end of slope 
+  -out  arg Sets name of outputfile for surface-elevations.
+         def: mach.bin  
+  -gg  arg Selects type of Boussinesq equations (3D mode only)
+         def: arg=1  
+  -job  arg  Sets the start of the name of the sh file. Used to avoid
+             that several simultaneous calls to the script produces
+             job-files of identical names.
+             def: arg=J  
+  -sti  arg  Defines a path for the file directories.
+             def: arg=.  
+  -trig      Causes the produced sh file to be executed.
+             def: off
+  -hm arg    (2D mode only) selects minimum depth for adaptation of 
+             nonuniform grid, in the sense that the grid points are
+             re-distributed as to give similar crossing times for
+             each grid box. arg=1 corresponds to a uniform grid.
+             def: arg=1
+  -igl arg   (2D mode only) sets number of smoothings in re-distributed
+             grid.
+             def: arg=4

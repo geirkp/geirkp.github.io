@@ -1,0 +1,86 @@
+genpil.pe
+
+Wrapping of pilplott.pe, genkurv and pakk.pe
+that produces a series of vectorplots, 
+curves and legends in a coordinate system. The script produces a
+series of files with generic names derived from a specified stem:
+
+  gen'stem'.def  - input parameters for genkurv
+ 'stem'.ps   -  ps file with graphics
+ 'stem'.ps.txt - file with lettering (in latex) to ps file.
+  P'stem'.pil - input to peplot.pe for generation of arrows and legend boxes
+                with reference arrows
+  'stem'.sh - a shell script that produce the ps-plot when run.
+  pil'stem'.def - input parameters for pilplott.pe
+  T'stem'.tex - name of tex file, if the pakk option is invoked
+
+In addition
+LP* are work files for individual datasets
+There are additional files in temporary use.
+Additional pre-existing input-files may be defined.
+
+Parameters are conveyed to
+invoked scripts in also as command-line options that takes presedence over
+the parameters in input files. Parameters that are transferred either
+way are marked with {script option}
+in list below. 
+
+use:
+/hom/geirkp/bin/pilplott.pe [ \#DEF:fil ] [ options..] [ data-spec. ]
+
+ -dry   -- The parameter files etc are produced, but the shellcode is not run.
+           default: Shell-code is run.
+ -stem arg --  stem for generic names
+           default:"gppi" 
+ -pilss arg --  {pilplott.pe -pilop}
+           default: ''
+ -scal arg arg --  {pilplott.pe -scal}
+           default: data from first file used
+ -tit  arg -- {genkurv -t}
+           default:
+-nrow  arg --  number ow rows in legend matrix.
+           default: 1  
+-font  arg -- Font used for arrow legends
+           default: latex's default  
+-tranpil arg -- file with extra settings for pilplott.pe
+           default: no extra settings   
+-trangen arg  --  file with extra settings for genkurv
+           default: no extra settings 
+-xs arg   --  x coordinate range, conveyed to pilplott.pe and genkurv
+           default: found from data
+-ys arg --   y coordinate range, conveyed to pilplott.pe and genkurv
+           default: found from data
+-off arg arg --    coordinate offsett, conveyed to pilplott.pe and genkurv
+           default: 0.0 0.0  
+-stretch arg arg -- coordinate stretch, conveyed to pilplott.pe and genkurv
+           default: 1 1  
+-k   arg --  Arrow types are read from the file arg. The corresponding 
+             option to genkurv must enter via -trangen. Example to line:
+             -fig finpil -style fill -sat 1  -linewidth 0.7 -b 0.033 -col blue
+           default: A predefined set is used
+-data  arg --  File with one dataset per line. In addition to or instead of
+           trailing command-line options.
+           default:  No file
+-xinch  arg -- size of x-range in inches, ysize is found by aspect ration. 
+           default:5  
+-refpos arg arg -- {pilplott.pe -refpos}
+           default:  
+-pakk  -- produces a tex-file by pakk.pe
+           default: no tex-file 
+-pakkopt -- additional options to pakk.pe
+           default: '' 
+-xpage --  {pakk.pe}
+           default:160 
+-ypage --  {pakk.pe}
+           default:100  
+-curlist -- List of additional curves for genkurv
+           default: none  
+-s   --    template for velocity files, as defined for genkurv. 
+           A template for genkurv may be specified through -trangen
+           default: ''
+-rim arg arg arg -- {pilplott.pe}  
+           default: 0.25 0.25 1 
+
+[ data-spec. ] either ufile,vfile#legend   (gphov)
+               or     xyuvfile#legend (xyuv)  
+               The #legend is optional and filenames cannot contain commas.

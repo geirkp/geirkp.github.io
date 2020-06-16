@@ -1,0 +1,46 @@
+apbonew.sh
+
+Reproduces a 2HD simulation performed with the boslide program with
+the gglo program. The script is made for testing purposes.
+The script reuires the accessability of the files 
+   param.dat h0 eta0 u0
+in a specified directory. From param.dat the following parameters are
+extracted:
+  alpha eps    (-eq arg)
+  ndt       (-int arg)
+  nut          (-nut arg)
+  dt
+The parantheses contain options that make the parameters redundant.
+
+ use:
+
+ /hom/geirkp/bouss/trappe/bin/apbonew.sh (options)
+
+ options:
+         -sdir arg: sets directory for boslide simulation to arg
+                default: this option must be specified
+         -dtcopy: cause also time step to be copied
+                  default: only intervals are copied
+         -tint arg:  overides the time interval from boslide simulation
+                  default: interval copied
+         -nut arg:  overides the number of intervals from boslide simulation
+                  default: number copied  
+         -n arg: overides the number of grid points from boslide simulation
+                  default: number copied 
+         -m arg: sets the number of  grid points in the transverse direction.
+                  Intended for code testing since all rows should be identical
+                  default: 1
+         -addpar arg : Appends a file (name=arg) in parameter format to the
+                       input file to gglparse.pe
+                       default: no file is appended 
+         -eq arg: sets the equation in gglparse style
+                  default: cpoied from boslide simulation
+         -grid arg: type of grid
+                  default: normalized
+         -correct|-corrcorr: employes corrected dispersion
+                             default: no such correction
+         -numcorr|-numc: employs numerical correction
+                            default: no such correction
+         -compile|-comp: forces a compilation of gglo
+                  default: n compilation
+

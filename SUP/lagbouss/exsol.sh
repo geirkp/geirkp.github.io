@@ -1,0 +1,1 @@
+/hom/geirkp/lagbouss/bin/rurun.pe -nodefpath -l A20 -input file-paddle -randfile /info/SUP/soldata/amp0.15/Serre.lag -nut 10 -t 30  -jbname Jsol -sti soliton -bryt -0.95  -tser 15 -heln 10 -n 80,160

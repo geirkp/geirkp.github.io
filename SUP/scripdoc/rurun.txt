@@ -1,0 +1,136 @@
+
+     rurun.pe
+
+Runs the knaai program in different modes.
+
+Use:
+
+     /hom/geirkp/lagbouss/bin/rurun.pe  (options..)
+
+Command line arguments:
+-nodefpath: flag that prevents old and often inappropriate setting of the 
+            path 
+-input arg: Input/start mode ar is one of
+        cohat-paddle: A pulse of predefined shape is made by the paddle.
+                          Amplitude and length (approximately) on produced
+                          waves are read.
+         file-paddle: paddle motion is read from file
+         soliton-felt: initial condition is set to a solitary wave
+         full-felt: initial conditions are read from files
+         Catalina-slide: Benchmark 3 from Catalina meeting
+    default: cohat
+-n arg : set number f grid points. arg may be a list separated by commas or 
+         blanks.
+    default: 40 (very coarse) 
+-nut arg : set the number of printing of field variables
+     default: 10
+-t arg : set the total simulation time
+     default: time is tentatively computed and simulation is stopped at max 
+              runup.
+-rfak arg: maximum ratio dt/da, where da is average spatial step,
+          corresponding to a Courant number. 
+      default=1. Should be reduced for hydrostatic simulations
+-gradd : adds rf$rfak to the folder path (after no points)
+        default: no inclusion of the maximum Courant number
+-l arg : Sets length of flat bottom part of wave tank. If arg is number, then
+         the length is arg*wavelength. If the number is preceded by A the
+         length is absolute.
+      default: 0.5
+-lamb arg : Wavelength, only meaningful for some simulation modes
+      default 10
+-spos arg : Sets distance from wall to spos for soliton-felt input.
+      default: Blank argument that will center the soliton in flat region ? 
+-sti arg : adds arg in the data path. Provided the -nodefpath is used
+      data from simulation with 20 points then is put in arg/n20 
+      default: no path
+-gl arg : sets fraction of the beach, measured from junction to equilibrium 
+          shoreline, that is replaced by a kind of spline to make a smooth 
+           transition. A to small arg may cause noise.
+      default: 0.25 (rather large)
+-iit arg: number of iterations in governing equations 
+     default: 5
+-dry : No simulation is performed, but folders and input file is generated
+-xpos arg : List of a-values to be traced  
+       default: 0.05 0.15 0.45  0.9 1.3 ,
+-bryt arg: Breaking criterion on dx/da
+-hyd: Chooses the NLSW equation
+       default: Boussinesq
+-heln arg: sets the slope angle in one f the forms:
+            single number - angle in degrees
+            number1:number2 - a number1 in number2 slope 
+-amp arg : amplitude of incident (initial) wave
+            default: 0.1
+-jbname arg : Sets name of shell code
+             default: JBpost, where post is made up by the script
+-utdata arg : which interval for which fields are to be printed.
+              must be given either as digits or as text 'alle'
+         default: alle
+-bbd arg1 arg2 arg3: parameters that governs 
+          diffusion in bbdsetstyle(-1 ... turns off diffusion) 
+         default: -1 0 0,
+-igdiff arg: Number of smoothings on diffusion coefficients.
+         default: program default 
+-ar : chooses a (more) nonlinear form for the dispersion terms
+      in the  Boussinesq equations
+     default: off
+-reg : used with -ar to pick Boussinesq equation.
+       If this flag is set, then a regular form is used, otherwise a
+       form that is singular when the contact point angle is 90 deg is
+       invoked.
+     default : regular form
+-hodisp : adds a correction term for dispersion, similar to the one used in 
+          GloBouss.
+     default: no correction
+-randfile arg: Sets name of file for input a offshore boundary (wave paddle).
+          default: urand.dat
+-tser arg: sets Eulerian time series positions. 
+           The prefix Blokk: indicates that the time series should be
+           written as a gphov file. Otherwise an ad-hoc packed 
+           format is used. Time series are set either as
+           a sequence of numbers, divided by blanks or commas) or les:file
+           where file contains the numbers.  
+     default: no time series
+-lagser arg: sets Lagrangian nodal time series positions. Time series 
+          are set in the same manner as above, except 
+          that the location is an integer node number.
+     default: no time series
+-vext arg: selects compiled version of knaai: knaai'arg'
+      default: arg=.new
+-dtu arg: temporal offset between initial velocities and surface 
+      default: 0.0
+-inpstem arg: Common prefix for initial data. Files are arg.eta
+              and arg.u
+      default:inp
+Special options not explained
+-usync,,
+-oldver,,
+-mu,0.01,
+-totl,2,
+-ihst,0,
+-dispar ev av br : Turns off dispersion close to beach (a<av), introduces an
+        interval (br) with gradual increseas untiol deep water value is 
+        attained (set to ev).
+        Default: 1 -2 1 (Boussinesq al through)
+-fun : selects Funwave style diffusion with material D\eta/Dt in criterion.
+       Comment: settings should preferably be cleaned up and generalized.
+-qval arg: Sets value of funwave diffusion coefficient
+      default: 1
+-delb arg: sets coeff. delta_b for  Funwave style diffusion. 1.2
+       default: 1.2
+-chz arg: sets value on Chezy constant in bottom drag
+         default: 0.0
+-hsh arg: adds arg to depth in Chezy term to avoid singularity
+         default: 0.0
+-grid arg: Either uniform or linear. Abbrevations accepted.
+          default: uniform.
+-agl arg1 arg2: end of inner fine region and start of outer coarse 
+                (in initial positions).
+              default: as defined by program
+-f arg: stretch factor (finest/coarsest) 
+         default: 0.2
+-ng arg:  number of grid points in coarse grid.
+        Default: defined by program
+-smogrid arg : number on 3 point smoothings on coarse stretched grid.
+         default: 4
+-splgrid : Applies splines to interpolation in coarse stretched grid.
+       default: linear interpolation

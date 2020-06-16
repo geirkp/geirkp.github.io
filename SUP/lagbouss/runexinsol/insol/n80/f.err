@@ -1,0 +1,40 @@
+ skal dialogen protokolleres?/yes/
+ regne dispersivt?/yes/
+ gi form paa displedd/linear/
+ gi boelge-input/carrier-greenspan/
+ Banale likninger?/yes/
+ gi amplitude/  0.0250000004/
+ gi flatl/lambda    /  5./
+ gi sol.pos. (fra vegg)/  15.1427927/
+ gi helningen i grader/  20./
+ gi glattingsgrad/  0.25/
+ gi brytgrense/ -1./
+ give diffusiontype/none/
+ l=  0.
+ gi antall gridpunkter/ 100/
+ epsett: 80  0.470121861  1.  0.  0.  0.
+ gi ev, av og br/  1. -1.  1./
+ gi antall utskrifter/ 0/
+ dt_default=  0.470121861 =   0.470121861 sek.
+ gi tidsintervall (sek)/  7.47493744/
+ gi red.faktor/  1./
+ gi beg. og slutt paa utsk./ 1 90/
+ gi antall iterasjoner i kontlikning/ 5/
+ gi tserpos/ -1001./
+ gi tserpos/ -1001./
+ skrive forrykningsfiler?/no/
+ antall rader: 79 
+ gi gitternummere/8:*;8/
+ amp0=  0.100000001
+ iprint= 1
+ iprint= 2
+ iprint= 3
+ iprint= 4
+ iprint= 5
+ iprint= 6
+ iprint= 7
+ iprint= 8
+ iprint= 9
+ iprint= 10
+0.02user 0.00system 0:00.04elapsed 81%CPU (0avgtext+0avgdata 0maxresident)k
+0inputs+0outputs (0major+310minor)pagefaults 0swaps

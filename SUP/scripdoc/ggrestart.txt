@@ -1,0 +1,60 @@
+ggrestart.pe* Continues a gglo simulation
+
+The idea of the script is to prolonge simulations that are run with
+gglparse.pe/gglo. ggrestart.pe is run in a folder where outputfiles from
+gglparse.pe and gglo are available. The script then organizes initial
+conditions and a parameter file for a new simulation through gglparse.pe. 
+Typical applications are to increase the simulation time, look at refined
+calculations in a subdomain or switch type of equation.
+
+
+The new simulation is started from a specified printout, with number N, and
+the following files are then required:
+
+  yN, uN, vN, ggl.par, param.dat
+ 
+Use:
+
+/hom/geirkp/bouss/trappe/bin/ggrestart.pe \#DEF=<input-file> (options)
+
+Where specifications are given in the input-file or as command line options,
+as for gglparse.pe. ggrestart.pe inherits all the options from gglparse.pe,
+and they may all be modified, possibly at the risk of setting up meaningless
+simulations, in the application of ggrestart. In addition ggrestart.pe 
+supports the additional options:  
+
+-nstart N: The printout from which the new simulation starts
+           default: the last one 
+-subdir dir: Specifies a subdirectory in which the new run is made.
+           default: the new run is put in restartM, where M is the 
+                    lowest available integer such that restartM
+                    does not already exist. M must be less than 10.
+
+Most options are copied as defaults from the parameter files of the mother 
+simulations, but the following are calculated
+
+ t0: adjusted according to N and tint in ggl.par
+ tu: set to -0.5*dt, where dt is time step in mother simulation
+ run, compile : is turned off and must be set anew. 'run' now means that 
+                jrestart.sh is run in the specified subdirectory.
+
+The presendence of the options is in descending order
+
+        1. Options that are given as command line options to ggrestart.pe 
+
+        2. Options given in the input-file (optional) to ggrestart.pe
+
+        3. Options read or derived from the mother simulation
+
+        4. Defaults of gglparse.pe for options that have been added since
+           the mother run. This enables backward compatibality.
+
+Produced in subdirectory:
+
+        ginp.par : input file for gglparse.pe
+        jrestart.sh : file with sh code for copying of initial conditions
+                      and execution of gglparse.pe.
+        produced by jrestart.sh: eta.inp, u.inp, v.inp (initial conditions)
+ 
+
+Uses: pkat in /hom/geirkp/bin

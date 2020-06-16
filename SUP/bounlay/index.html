@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Boundary layer models.</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>Boundary layer program</h1>
+This page is a documentation of a f77 code for importing an external velocity 
+  field and performing linear and nonlinear boundary layer computations. 
+A description of the numerical method is found in <a href="bounum.pdf"> bounum.pdf </a>, with source code 
+in <a href="dokbo.tar"> dokbo.tar </a>, which must be unraveled with 'tar -xz < dokbo.tar'.
+
+    <h1>The method</h1>
+    Key points:
+<ul>
+   <li> The boundary layer equations are solved by FDM
+   <li> A Crank-Nicholson method is used for the diffusion+ time evolution 
+term
+   <li> Upstream spatial differences are combined with backward temporal differences.
+    <li> The  method is semi-explicit in the sense that only one sequence of 
+        sweeps in the grid columns normal to the boundary is performed. For each column a single three-diagonal equation set is solved.
+    <li> The grid resolution normal to the boundary is non-uniform.
+    <li> At present the resolution along the boundary and in time are uniform
+    <li> The forcing (pressure+gravity) is included as the acceleration of
+         the outer flow. This is dicretized as to make the outer flow an exact 
+         solution of the discrete boundary layer equations.
+</ul>
+<p>
+<h3>The input and execution</h3>
+    <ul>
+    <li> Parameters are read in a dialogue from standard input. 
+         Lines starting with !
+         are recognized as comments, there are some checks on the input
+         and default values are generally offered. 
+     <li> An file in gphov format (x and t) must be provided.
+          The number of rows (number of times ) may be smaller than specified in the heading.
+      <li> A two column trajectory file (t,x) may be provided for computing and
+           printing some secondary quantities. Some quantities are linked to 
+           the region to the left or right of the trajectory, as specified by a
+           separate input parameter.
+      <li> If dense time series a certain locations are wanted, then
+           an single column input file with grid numbers can be specified.
+           For these locations the parallel velocity is written with a
+           given temporal sampling.
+      <li> The following list of parameters are also given: A threshold velocity
+           for definition of boundary layer thickness, normal resolution, normal grid structure, upper limitation of computational domain (should be larger than layer thickness), kinematic viscosity coefficient or inverse Reynolds number, printing frequency and maximum time step. If the latter is smaller than the step in the input file for the outer flow, the grid is temporally refined and the input data interpolated linearly in time.    
+    </ul>
+ <a href="indat">Input file -- example </a>
+<p>
+  <h3> The scaling, gravity and pressure gradients</h3>
+  The program may run with a consistent set of dimensions or in 
+  dimensionless mode. Input and output will then be scaled in the same
+  manner.  It must be observed that also the kinematic viscosity coefficient
+  must bes caled. For water this is nu=10**(-6) m**2/s. If SI units are used 
+  in the input this value is to be used (for water). If, on the other hand, 
+  the input is dimensionless with d as length and U as velocity scale 
+  (U=sqrt{g*d} in standard scaling) the dimensionless viscosity factor
+  becomes 1/Re, where the Reynolds number is Re=U*d/nu.
+  The pressure gradient and the gravity component along the plane is
+  implicitly given through the outer flow and are not to be specified. 
+<p>
+  <h3> The output</h3>
+    The following output is produced
+    <ol>
+   <li> param.dat - parameter file
+   <li> Numbered velocity files in gphov format (z and , x)<br>
+        uinN - parallel to boundary <br> 
+        uxN - gradient parallel to boundary <br> 
+        vinN - normal to boundary <br>
+    <li> xtser (optional) - Selected profiles as a sequence of z, (normal-profile) fields 
+               in gphov format.
+               The fields are written at intervals ntxbet*dt (from param.dat) 
+               and data set N then corresponds to time N*ntxbet*dt. 
+               Initial conditions are not included.
+    <li> xserp - File with x-locations for series in xtser.
+    <li> wetlim - 3 column (N lower upper) file with
+           wetted interval (outside this a standard value is printed 
+         in data files)
+    <li> zcord - two column with vertical grid (node-number z) 
+    <li> xtintp - interpolated trajectory ( t x)
+    <li> gphov files (x, t) for normally integrated quantities<br>
+         btykke - boundary layer thickness<br>
+         deflux - volume transport deficiency <br>
+         dissep - dissipation per area <br>
+         dmomen - momentum transport deficiency <br>
+         dragbt - bottom drag, divided by density <br>
+     <li>trajval -computed values linked to the trajectory. Columns <br>
+            <ol>
+            <li>time
+            <li>momentum transport deficiency (per width)
+            <li>boundary layer thickness
+             <li>volume transport deficiency
+              <li>dissipation per area (normally) integrated
+              <li>dissipation per width. Integrated normally and horizontally
+                  at one side (left or right as specified)  of the trajectory
+              <li> The outer velocity interpolated to the trajectory position
+              <li> Bottom drag, divided by density, at trajectory position
+              <li>Bottom drag, divided by density, integrated as specified
+            </ol>
+
+</ol>
+<p>
+  <h3> The code</h3>
+  The star indicates nothing, LF8  or IN8.
+   <table  width="500" CELLPADDING="5" BORDER="2">
+<tr><td>
+   directory: <td>/hom/geirkp/boelge/bounlay</tr>
+   <tr><td>
+   main program<td> mulprof.f </tr>
+   <tr><td>
+   additional files:<td>blrut.f ulrut.f
+</tr>
+   <tr><td>
+   files from other projects:<td> 
+</tr>
+   <tr><td>
+   additional libraries:<td> /hom/geirkp/lib/i386/bibl.a /hom/geirkp/lib/i386/dia.a</tr>
+   <tr><td>
+   makefile:<td> i386/mmulprf </tr>
+   <tr><td>
+   executable: <td> i386/mulprf </tr>
+   <tr><td>
+   scripts: <td> /hom/geirkp/lagbouss/bin/Nbounl.sh /hom/geirkp/laplace/rusource/bin/Nbounl.sh </tr>
+</table>
+    <p>
+   <p>
+   <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>

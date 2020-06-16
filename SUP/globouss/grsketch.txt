@@ -1,0 +1,112 @@
+
+***********************************************************************
+*               
+*    Performs NT computational cycles for 3-D Boussinesq equations            
+*    in a rectangle with a noflux condition at all boundaries
+*    and no time dependent source
+*  
+*    parameters: 
+*      U,V - Velocities                        I/O
+*      UT,VT - Time derivative of velocities    I/O
+*      eta -  Surface elevation                        I/O
+*      H -  Depth                                    I/O
+*      YW - Work field                               D
+*      N,M -   grid size                             I
+*      cu,cv,rcy - arrays with geographical factors    I
+*      DX,DY,DT - grid increments                    I
+*      Tid - Time, incread by nt*dt at output        I/O
+*      x0,y0 - x position of u(0,j), y of v(k,0)     I
+*      IR,KIT - number of iterations in Bernoulli and  I
+*               and continuum equation
+*      NT - Number of time steps                     I
+*      eps - Amplitude factor. Value=0 corresponds        I
+*              to linear equations, wheras alpha=1 yield nonlinear
+*              equations with depth and surface elevation equally scaled 
+*      mu  -   Nonhydrostatic factor. mu=0 yields Airy's equations, while I
+*              mu=1.0 yields dispersion terms with equal scaling of
+*              vertical and horizontal lengths.
+*       fu,fv  - Coriolis factors
+*       ispg   - limits for sponge layers. Boundaries are enumbered    I
+*                 South, East, North, West
+*       xspon,yspon - sponge factors in x and y direction               I
+*                     those must span the whole region, regardless of
+*                     ispg values
+*                         
+*      skipfi - First computation of momentum equation is skipped   I
+*               when skipfi is true.
+*
+*        ---       remaining arguments are present for simplification of 
+*                  testing, dummy
+*
+***********************************************************************
+      SUBROUTINE grskritt(U,V,UT,VT,ETA,H,YW,cu,cv,rcy,
+     %N,M,DX,DY,DT,inu,inv,lu,
+     % Tid,x0,y0,IR,KIT,NT,eps,mu,kappa,ibon,iglk,fu,fv,
+     %  ispg,xspon,yspon,rim,skipfi,wrk)
+      ....
+      ....    
+
+      DO 500 ITID=1,NT
+             
+      ...                            
+Set ut, vt to zero before iteration
+      ...
+
+cc     Iterations are performed
+Set yw in case of improved dispersion
+      if(kappa.ne.0.0) then
+        call etalap(eta,yw,wrk,rcy,rcy,n,m,dx,dy,
+     %     iglk,0.0,1.0,ibon,inu,lu,'x')
+        ...
+      end if
+
+
+Iteraton for momentum equation, first an x-sweep for ut, then an 
+y sweep for vt. 
+       do 100 i=1,ir
+        call grfituv(u,v,ut,vt,eta,yw,h,wrk,cu,cv,rcy,n,m,dx,dy,dt,
+     %  inu,lu,eps,mu,kappa,gamma,fu,'x')
+        call grfituv(v,u,vt,ut,eta,yw,h,wrk,cv,cu,rcy,n,m,dx,dy,dt,
+     %  inv,lu,eps,mu,kappa,gamma,fv,'y')
+
+ 100   continue
+
+
+Compute new velocites
+       ....
+
+Sponge layer action
+       ....
+
+
+
+c     solution of equation of contiunuity
+
+Initialize
+      call gritinit(u,v,eta,h,yw,cv,rcy,n,m,dx,dy,dt,inu,lu,eps,0,wrk)
+
+
+Iterate in x and y sweep. 
+Comment: This may be overkill if nonlinaerity is weak
+         A pointwise iteration may be sufficient
+      do 200 i=1,kit
+        call gritcont(v,u,eta,yw,wrk,cv,cu,rcy,n,m,dx,dy,dt,
+     %                inv,lu,eps,'y')
+        call gritcont(u,v,eta,yw,wrk,cu,cv,rcy,n,m,dx,dy,dt,
+     %                inu,lu,eps,'x')
+ 200  continue
+
+
+Sponge treatment again
+       ....
+
+Writing of contribution to time series 
+       ....
+  
+        
+  500 CONTINUE
+
+
+
+      RETURN
+      END

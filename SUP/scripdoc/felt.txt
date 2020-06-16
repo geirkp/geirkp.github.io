@@ -1,0 +1,77 @@
+felt.sh
+
+    Produces velocity fields from the output of the boundary integral method
+    by means of Cauchys formula.
+    Files used for input are (N is dataset-number): 
+           param.dat, solv(t)N, set(t)N, (cornN), xyN.
+    The invoked script 'segfile.pe' produces segN and imsegN and an 
+    inputfile infelt is made. 
+    Velocities are computed by /hom/geirkp/laplace/rusource/i386/inter<infelt
+    
+    Results in files 
+           rnduvN - u and v at the boundary nodes, including bottom 
+                    and side-walls. columns x y u v
+
+           beru*N,berv*N (gphov) 
+           or beruv*N,berxyN (colums u,v) - files contain u and v, and
+                    derivatives at a defined grid of points. N is dataset 
+                    number and * is a letter that signals
+                      *=none  velocities
+                       =x     x derivatives
+                       =t     local temporal derivatives
+                       =d     material accelerations
+
+           vindN - contains number of windings for each point. A value
+                   close to 1 imply that the point is inside the contour,
+                   close to 0 outside and an intermediate value that the point
+                   is close to the contour and that the integration becomes
+                   inaccurate. The file is in gphov or two column (first column
+                   point number) format.
+
+    Use
+
+    (path)/felt.sh (options) n1 (n2)
+
+        n1 - first dataset to be treated
+        n2 - optional last dataset. If omitted: n2=n1
+
+     options:
+     -pform arg: Sets format for generated grid. Options are xy, gphov
+                 and cross-sections. cross-sections gives the same
+                 output grid as gphov, but another and more robust 
+                 algoritm. Default: gphov
+     -restype arg : option for resolution with alternative  cross-sections
+                    for -pform. Default: adjust
+     -or x0 y0 : Set origin of defined grid for velocity computation
+     -inc dx dy : Set increments of grid
+     -size nx mx : Sets size of grid
+     -rot|-rotate|-angle rot : Rotates grid an angle rot degrees.
+                               Mark: velocities are not rotated
+                               default: rot=0
+     -var arg : Chooses compiled version of inter. Options '', 'IN8' and 'LF8'
+                have existed.
+                Default: LF8 if the string is found in the path of
+                         the data-directory zero otherwise.
+     -mask arg: Boundary treatment. options: none, dry-remove, full-remove.
+                Matters only for gphov output. Default: none
+     -flim arg :
+     -umval|-umv arg :
+     -adint :
+     -gpmal file : Alternative setting of output grid. The parameters
+                   x0 y0 dx dy nx mx is read from the header of gphovfile
+                   file by gethead.pe 
+     -uv : Velocities on defined grid outputted as two columns uv 
+           (file beruvN), with coordinates in file berxyN
+           default: gphov format in beruN, bervN
+     -gaus* nh mh : Sets order (nh<=6) and number of element subdivisons
+                    (mh<=40/nh) for numerical integration.
+                    default: 5 2
+     -bzero : redefines coordinate system with zero at beach (right equilibrium
+              boundary) and reversed x -axis. Spesification of the grid is made
+              in the redefined coordinate system.
+              Default: coordinate system of BEM program
+     -vel :   only velocities and windings are computed.
+
+Future extensions:
+
+         .Improved treatment of grid-points close to boundaries.

@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Program for smoothing of polygon data</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>Program for smoothing of polygon data</h1>
+    The program reads the points of a polygon in x and y together with
+    a transition interval in x. Data are then generated where the polygon
+    is smoothed by a polynomial, giving continuous second derivatives,
+    in the transition intervals. The program will not work properly if the
+    transition intervals do overlap.
+  <h3> Use</h3>
+    An input file to the program may read (see example)
+    <pre>
+!give file
+korn.dat
+!give interval
+1 11
+!give n
+100
+!give undef value/-666/
+
+!give tolerance at boundaries/1.0e-7/
+
+ </pre>
+Here the file korn.dat contains three columns, x , y and transition interval.
+An interval, not necessarily coinciding with the interval in the x-data -- even though this is the default , is given. The number of grid points in the smooth data is set to 100, while x values outside the polygon data are assigned y-values
+as given by undef (default -666). All outside points within tolerance is redefined as interior points.
+   <p>
+  <h3> The code</h3>
+  Some documentation of key routines is found in the source codes. 
+   <table  width="500" CELLPADDING="5" BORDER="2">
+<tr><td>
+   directory: <td>/hom/geirkp/lib</tr>
+   <tr><td>
+   main program<td> glattpol.f </tr>
+   <tr><td>
+   additional files:<td> </tr>
+   <tr><td>
+   additional libraries:<td> bibl.a, dia.a in /hom/geirkp/lib/i386 </tr>
+   <tr><td>
+   makefile:<td> i386/mpoly </tr>
+   <tr><td>
+   executable: <td> i386/poly </tr>
+   <tr><td>
+   scripts: <td> </tr>
+</table>
+    <p>
+  <h3> An example</h3>
+    An example is given in this directory in <a href="exsnippet.sh"> exsnippet.sh </a> that must be run on an linux computer.
+    The program interprets as a comment every line on
+    stdin starting with a '!'. The result files from the script is found in the sub-folder <a href="mpol"> mpol </a>. The polygon and the smooth data are depicted below.
+    <img src="mpol/pol_test.png">  
+   </a>
+   <p>
+   <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>

@@ -1,0 +1,21 @@
+derv*   derivasjon
+     Utførerer derivasjon paa et datasett.
+     bruk : derv [-mid] [-ibr arg] [-eps arg ] [-lin] [-kvad] [-kub] [-spl] [-D2] fil1 fil2 ..
+     Det produseres da deriverete p} filer fil1_der etc. for derivasjon,
+     filer fil1_mid etc. for integrasjon.
+     Parametere:
+         -mid   midtpunktdifferens. Med denne opsjon kan datafiler ha formen
+                x,y1,y2,..... med andre valg bare x,y.
+         -ibr   interpolasjonsbredde i min. sq. settes lik arg, default
+                er at det interpoleres over 6 pkt. til hver side (-ibr 6).
+                Opsjon har bare mening sammen med -lin, -kvad el. -kub
+         -lin -kvad -kub   angir orden p} minste kvadr. interpolasjon.
+                           for disse valg m} xverdiene v{re ekvidistante.
+         -spl  deriverer ved spline interpolasjon. Aksepterer ogs} ikke
+               ekvidistante x.
+         -D2  Angir beregning av  annen-derivert. (default first derivative) 
+         -int  Denotes interpolation (zeroth derivative). 
+         -eps Sets arg as relative tolerance for deviation from equidistant
+              grids. If the coordinates (first column) fail to meet this 
+              criterion, only the -mid will work.  
+     standard derivasjonsvalg er -lin  

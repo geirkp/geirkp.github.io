@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Runup data</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>Data for runup</h1>
+<h3>This page</h3>
+     First version September 2016. Data are supposed to support study on 
+     runup of non-breaking solitary waves on a slope. 
+<h3>The basics</h3>
+    The numerical models in use are a  
+<ul>
+<li><a href="../../rusource/index.html">BIM (Boundary integral Model) for full potential theory </a> 
+<li>a   <a href="../../lagbouss/index.html">Lagrangian Boussinesq type model </a>
+</ul>
+    These models are run through a set of shell code snippets given in
+<ul>
+<li><a href="../../WaveTankSim/index.html"> /hom/geirkp/lab/Erika/genrun</a>
+</ul> These snippets are executed by
+the <a href="../../scripdoc/newrun.html">newrun</a> facility.<p>
+ 
+
+<h3>The data</h3>
+Data are given tar files, for example 
+<pre>
+Res0.30slope10.tar
+</pre>
+where amplitude/depth = 0.30, slope angle = 10.<br>
+Tar files are inflated by
+<pre>
+tar -xz < Res0.30slope10.tar
+</pre>
+Synchronization is accrording to t0 in
+<pre>
+ ttim0.30slope10.dat
+</pre>
+where simulation starts at t0 with zero defines as in article.
+<p>
+All data are dimensionless with d, the depth, as length scale, and time and velocity scaled by means of d
+and g. 
+<p>
+<h3> Examples on data </h3>
+<h4> BIM data </h4>
+<pre>
+solrupcasea0.3Bclaw10/a0.30/quad6one6/nf7red0.2_10_3f0.5dxb0.5
+</pre>
+where
+<ul>
+<li>solrupcasea0.3 :  the last is a case identifier; the amplitude
+<li>Bclaw10 : a set identifier followed by the angle  
+<li>/a0.30 : here the amplitude comes again
+<li>/quad6one6/ : something concerning the shoreline description
+<li>nf7 : the 7 indicates a spatial resolution; higher numbers are finer resolutions
+<li>red0.2_10_3f0.5dxb0.5 : more numerical parameters
+</ul>
+Datafiles are described with the <a href="../../rusource/index.html">BIM model </a>
+<h4> Serre data </h4>
+<pre>
+boussrupa0.3BclawBlokkho-sing/n2400rf1
+</pre>
+where
+<ul>
+<li>boussrupa0.3Bclaw : case and set identifier
+<li>Blokkho-sing : the part following Blokk is equation identifier
+ <ul>   
+<li>void : A moderately nonlinear version 
+   <li> reg : Fully nonlinear, no singularity when contact angle is 90 deg.
+   <li> sing : Fully nonlinear, singular when contact angle is 90 deg.: 
+   <li> <..>ho-lin : with ... as lin, reg or sing. First three options
+
+ </ul>
+<li>/n2400rf1 : 2400 is number of spatial point, 1 is the maximum Courant number
+</ul>
+Datafiles are described with the <a href="../../lagbouss/index.html">Serre type model </a>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>

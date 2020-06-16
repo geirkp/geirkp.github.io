@@ -1,0 +1,63 @@
+
+bounl.sh
+
+This script computes boundary layer profiles and thicnesses at time
+series locations used in simulations with the Lagrangian Boussinesq model.
+It runs the program /hom/geirkp/boelge/bounlay/i386/gprof subsequently for all
+the specified time series. Before the script is invoked the gsersplit.pe
+must be applied to the time series in raw form. For (weakly) nonlinear
+applications also the lagUxser.pe must be used prior to the present
+script. Comparison of boundary flux defeciencies to total flux is enabled after
+fluxser.pe. 
+
+All input to bounl.sh must be in consistent dimensions or diemnsionless.
+This also goes for nu (see below).
+
+The maximum time step for the boundary layer model is specified.
+The real time step is an integer fraction of the the time intervals in
+the input files for the outer flow. The output files are 
+(Ng=number of times series location, Nt - number of time for output) 
+
+  Uz_Ng_Nt  - files with z, u  profiles
+  dQ_Ng  - Mass flux defiency
+  delt_Ng - Boundary layer thickness based on a set deviation from outer flow
+            velocity
+  accdQ_ng - Accumulated mass flux defiency
+  zcord - z coordinates
+  param.dat  - parameter file from gprof
+
+
+Use: 
+
+/hom/geirkp/lagbouss/bin/bounl.sh (options)
+
+     -bdir arg : Sets folder for files from Boussinesq simulation
+               default arg=..
+     -pre arg :Name prefix for files from  gsersplit.pe
+               default arg= Dim
+     -ulin :Flg for weakly nonlinear boundary layer theory
+               default is linear theory
+     -strekk arg : Sets stretch factor for non-uniform grids in z
+               default arg=4
+     -grid arg : Sets type of z-grid (linear, exponential ...)
+               default arg=exp
+     -b arg : Sets z range  of computation domain. Must be scaled according to
+               input time series. 
+               default arg=0.02
+     -nper arg : Sets number of lines in input files for outer flow that
+                 are read between output of profiles.
+               default arg corresponds to interval in printing in Boussinesq
+               simulation (parameter nper)  
+     -nu arg : Sets viscosity coefficient. Must be scaled according to
+               input time series.
+               default arg=0.000001 (Water, SI units)
+     -nz arg : Set snumbr of points in profile
+               default arg=50
+     -dtmax arg : Sets dtmax.
+               default dtmax equals the increment in input time series.
+     -iclist arg : Sets a list of time series, either as a sequence of numbers
+               (divided by a comma, or quoted and divided by blanks) or
+               the special value 'all'
+               default arg=1
+
+

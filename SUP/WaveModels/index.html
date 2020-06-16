@@ -1,0 +1,331 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Comparison of runup experiments with theory</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>Procedure for doing solitary-wave runup simulations with Boussinesq equations
+and full potential theory. Facilation for comparison with experiments and other models</h1>
+<h3>This page</h3>
+     A first version was written in October 2010. Smaller amendments were made before
+     the parts about boundary layers were added in Mars 2011. More alterations and 
+     additions in March 2014. Several branches combined in autumn 2014.
+
+<h3>The basics</h3>
+    The numerical models in use are a
+ <a href="../lagbouss/index.html">Lagrangian Boussinesq model</a> 
+and a <a href="../rusource/index.html">BIM (Boundary integral Model)</a> for full potential theory.<br>
+<bf> Message (10/3-14) The Boussines model may not yet be fully facilitated in
+the present context.  </bf> 
+The output from the wave models may then be used as input 
+to a <a href="../bounlay/index.html">boundary layer model </a>
+<p>
+
+    These models are run through a set of shell code snippets given in
+    ~geirkp/lab/Erika/genrun. These snippets are executed by
+the <a href="../scripdoc/newrun.html">newrun</a> facility.<br>
+It must be carefully observed that static default values are available for
+a number of the parameters for the snippets. To obtain full controle a full
+specification must be used everywhere. <br>  
+The recipe is described with bash syntax which is recommended.
+
+
+<h3>The steps preparing for simulations</h3>
+In the following $Geirkp referes to the home directory of
+    the user geirkp. As of 7th March 2014 this is /mn/anatu/ansatte-u1/geirkp.<br>
+The rprep.sh snippet defines $Geirkp as an environment variable.
+<h4> Initiation</h4>
+  <li> Create a new folder. Then copy and execute a file with settings of paths and an environment variable according to:
+  <pre>
+   cp $Geirkp/lab/rprep.sh .
+   . rprep.sh
+  </pre>
+ The invocation of the snippet (last line) must precede every new session
+using the tools described below.<br> 
+Make a softlink
+  <pre>
+   ln -s $Geirkp/lab/Erika/genrun .
+  </pre>
+<h4> Defining cases </h4>
+Cases, meaning amplitudes, slopes, timing of output etc, are specified by a date
+and a case identifier. This notion is due to the initial use of the scripts for
+simulating laboratory experiments, but the specifieres may be defined by other 
+means as well.
+There are two slightly different procedures for defining cases; one for experiments 
+and one for use in other contexts. The steps accociated with experiments are
+marked by "LAB" in subtitles, while the alternative is marked "SIM".  
+<h4> LAB: Copying the lab data. </h4>
+     A folder of lab data is copied to the folder
+     'labdata/date', where date is given as YYYYMMDD. In this folder
+     the single row file 'xy_positions' gives the the position, in cm, of the 
+     gauges relative to the beach. It is required that the gauge locations 
+are sorted with increasingly onshore positions down the file. The subfolder 'caseNN' contains the
+     'gaugerunMM.lvm' for each run numbered MM. Presently the number of gauges
+     are 4, such that this is a 5 column file.
+<h4> LAB: Nondimensionalising and splitting of labdata.</h4>
+     To this end the snippet 'norgauge' is used, with specification of date,
+     case and gauges. Example:
+<pre>
+     newrun -pre 'case=10;date=20101018;gauge=1,2,3,4' norgauge
+</pre>
+<h4> LAB: Reformatting of lab data; synchronization of the simulations </h4>
+      Next step is synchronize the simulations, or rather determine
+     essential parameters for the simulation which assure synchronization.
+     The script <a href="../scripdoc/gbimpar.txt"> gbimpar.pe </a>
+     is then used. Examples
+<pre>
+     newrun -pre 'case=10;date=20101018;justzero=ja' timing
+     newrun -pre 'ts=10s;tinc=0.1s;case=10;date=20101018' timing
+</pre>
+    In the latter case the simulations is set to end at 10 seconds lab-time
+    and output fields at 0.1 seconds interval. The results of the snippet is put in the folder 'timing/date', with files 'hxy' (depth at gauges), 'Nxy' (dimensionless gauge positions),  'lapgbimp30.par' (parameter file for full potential  model) and  Serregbimp30.par (parameter file for Boussinesq (Serre) model).
+    The justzero option in the first line corrects for a nonzero start in the 
+lab time series. No such correction is made default.
+
+<h4>SIM: Defining a case and specificatons </h4>
+Next step for simulations, unattached to experiments in the Hydrodynamic laboratory, is to specify parameters for and to synchronize the simulations,
+     or rather determine
+     essential parameters for the simulation which allow synchronization.
+     The script <a href="../scripdoc/gbimpar.txt"> gbimpar.pe </a>
+     is then used. Example
+<pre>
+     newrun -pre 'a=0.09;tm=3s;d=1m;xm=3m;slope=10;ts=10s;tinc=0.1s;case=10;date=20101018' Tim
+</pre>
+    The date and case parameters may seem superfluous, but are useful
+    for organising sets of simulations.
+    For  experiments 'date' is the date of experiment, while case is the
+    name given to the parameter selection employed (however, snippet timing should be used instead of Tim then). For other purposes
+    they may carry information on beach angle and amplitude, as well as other
+    particulars.
+    If 'case' and 'date' are omitted the default values are a$a ($a is the value of 'a') ans slope$slope, respectively. Hence, the two following commands have the same effect
+    <pre>
+     newrun -pre 'a=0.09;tm=3s;d=1m;xm=3m;slope=10;ts=10s;tinc=0.1s;' Tim
+     newrun -pre 'a=0.09;tm=3s;d=1m;xm=3m;slope=10;ts=10s;tinc=0.1s;case=a0.09;date=slope10;' Tim
+    </pre>
+    In the examples a is amplitude to depth, tm is time for maximum at reference
+    position xm (from shore) , d is equilibrium depth and slope is beach angle
+    in degrees. 
+    The simulations is set to end at 10 seconds reference-time
+    and output fields at 0.1 seconds interval. The results of the snippet is put in the folder 'timing/slope10', with files 'hxy' (depth at gauges), 'Nxy' (dimensionless gauge positions),  'lapgbimpa0.09.par' (parameter file for full potential  model) and  Serregbimpa0.09.par (parameter file for Boussinesq (Serre) model).
+<p>
+ <h3> Making numerical simulations and postprocessing </h3>
+   When a given case is handled by the pre-processing according to the
+   above steps simulations may be performed.
+   The pre-processing need not to be repeated for each session of simulations,
+   but the rprep.sh snippet must be invoked.
+
+<h4> Run of simulation models.</h4>
+     The Boussinesq model is run by, for instance,
+<pre>
+     newrun -pre 'n=600,1200;case=10;date=20101018' boussrup
+</pre>
+     where n describes the list of resolutions, specified by number of 
+     grid points, that will be used. A lot of other parameters may be set 
+     as well. The above line will generate two folders for the results, namely,
+<pre>
+      boussrup1020101018Blokkreg/n600
+      boussrup1020101018Blokkreg/n1200
+</pre>
+     The structure then is boussrup'case''date'Blokkreg/n'n'. The files
+   Seta'M' and  Su'M' then contains the time series of surface elevation and
+   velocity for gauge totalnumber -M+1. For onshore gauges the  Seta'M' must be corrected for 
+   the depth at the gauge positions (see the timing part above).<br>
+   Correpondingly the BIM simulations are made by
+<pre>
+     newrun -pre 'nf=3,5,7;case=10;date=20101018' solrup
+</pre>
+   where nf now specifies the resolution in relative terms. The cpu time
+   does not scale very nicely. Hence a nf value larger than 7 may lead to
+   huge computational times. The folders now become
+<pre>
+     solrupcase102010101810.0/a0.0974597/quad6one6GF8/nf3red1_6_3f0.4
+     solrupcase102010101810.0/a0.0974597/quad6one6GF8/nf5red1_6_3f0.4
+     solrupcase102010101810.0/a0.0974597/quad6one6GF8/nf7red1_6_3f0.4
+</pre>
+    The pattern is solrupcase'case''date''slope'/a'amplitude'/quad6one6GF8/nf'nf'red1_6_3f0.4. The amplitude is as given in the lapgbimp10.par file in
+ the timiing/date directory. A lot of other parameters are set as default, 
+ based on the case and beach slope. The time series files for gauge M are now
+ lapgaugeM for surface and lapgaugeuM/lapgaugevM for velocity components
+ at the surface.<p>
+A few additional settings may be added to a command like, for instance,  
+<pre>
+     newrun -pre 'nf=3,5,7;case=a0.09;date=slope10;var=value' solrup
+</pre>
+as var=value. <br>
+Some options are
+<ul>
+<li> eps=val  Truncation limit/amplitude for solitons (def 0.001 )
+<li> f=val  Relative reduction of grid near beach (def 1)
+<li> dxb=val Grid-increment at flat bottom  (def 0.5)
+<li> sl=val smoothed region near kink in bottom profile (def 0.2)
+<li> ng=val sets number of Gaussian points for each of the three (fixed) 
+     subintervals in each panel. (def 6) 
+<li> red=val reduction of time interval. Value 1 corresponds to a Courant numberequal to 1 for a typical spatial increment in deep water. (def 1) 
+</ul>
+These setting may modify the path for the datafiles. For more complete list
+  of actual parameters used see file geninp.par in the datafolder.
+  This file is written by <a href="../scripdoc/geninp.txt"> geninp.pe </a>
+  which is the perl script invoking the soliton program and the BIM solver.
+ For higher amplitudes, or gentler slopes, a thinner swash tongue is generated.
+  Then extra accuracy in the integration and a smaller time step may be required. On the other hand, a small f parameter may be harmful. For an amplitude of
+  0.3 on a 10 deg slope a recommended command may be something like  
+<pre>
+     newrun -pre 'nf=3,5,7;case=a0.30;date=slope10;ng=10;f=1;red=0.2' solrup
+</pre>
+The important thing is that three subsequent resolutions yield consistent
+results.<br>
+For the standard laboratory cases default set of functioning parameters are predefined.
+
+<h4> Inherent postprocessing.</h4>
+   Some postprocessing is included in the simulation snippets. This includes
+   <ul>
+    <li> Extraction and formatting of time series at gauge positions.
+    <li> From November 10th 2010: formatting of the shoreline motion.
+         Otherwise this formatting may be performed by, for instance
+  <pre>
+     $Geirkp/lab/Erika/lapbeach.sh  -case 10 -date 20101018 -ddir solrupcase102010101810.0/a0.0974597/quad6one6GF8/nf7red1_6_3f0.4
+     $Geirkp/lab/Erika/boussbeach.sh  -case 10 -date 20101018 -ddir boussrup1020101018Blokkreg/n1200
+  </pre>
+     when in the project folder. The result will be a file Shoreser.dat.
+   </ul>
+
+   <p>
+<h3>The data-files</h3>
+ Unless otherwise is specified all data are dimensionless with the depth, d, as 
+ length scale and sqrt(d/g) as time scale. The times are synchronized with 
+the laboratory time line. 
+<ol>
+<li> Maximum runup<br>
+     The file param.dat contains input, as well as a few output, parameters.
+     For Boussinesq simulations the parameter  R1 in param.dat is the value of R/A for the first runup. For the BIM simulations the corresponding parameter, R1, is found in the file runres.dat.
+<li> Time series for the surface at gauge positions.<br>
+     These are given as two column files: time vertical-coordinate. When 
+     compared to flow depth measurements the vertical position of the beach 
+     must be subtracted from the numerical series. Still a small eror may 
+     remain due to the angle of the accoustic probe. Files
+     <ul>
+     <li> Boussinesq: Seta'M'contains the time series of surface elevation 
+          for gauge with number -M+1.
+     <li> BIM: lapgaugeM contains the time series of surface elevation 
+          for gauge with number M.
+     </ul>    
+  <li> Shoreline motion.<br>
+      For both Boussinesq and BIM the file Shoreser.dat is a 4 column file
+      with t x s y, where t is (lab) time, and x, s and are positions horizontally, 
+      along beach and vertically, respectively. All of x, s and y are zero 
+      at the equilibrium shoreline and are positive during runup.    
+</ol>
+
+<h3>Boundary layer computations</h3>
+<ol>
+<li> It may be a good idea synchronize the writing of fields more properly.
+     This is done by adding some settings to the timing snippet:
+<pre>
+newrun -pre 'ts=8.1s;tinc=0.1s;case=10;date=20101018' timing
+</pre>
+The simulations which then will be performed with reference to the given case and date
+will run until 8.1 seconds (lab time) and fields will be outputted at 0.1 seconds 
+intervals before this time.
+<li> The computation of boundary layers requires special computations with time series in 
+     a specific "block" form. Commands may run like
+<pre>
+newrun -pre 'case=10;date=20101018;nf=7;skipgauge=yes;npunkt=400;red=0.2' solrup
+newrun -pre 'n=1200;case=10;npunkt=400;skipgauge=yes' boussrup
+</pre>
+As compared to the invocations of the solrup and boussrup snippets above, two new 
+features have been added. First 'skipgauge=yes' which suppresses the automatic writing
+of time series at the gauge locations. Secondly, the 'npunkt=400' setting turn the
+output mode for time series to a block form (the BIM model always uses block form) giving a 400 x (number of timesteps+1) <a href="../gpxyconv/index.html" > gphov </a>files with 400 points along the beach. The span covered is specified in  
+$Geirkp/lab/knekkstrand/Misc.par (variables Eserlim and Eserbeach). This may be generalized. Last, the red=0.2 causes a smaller time step in the BIM model, giving 
+a denser temporal output. This may be an advantage for boundary layer simulations.  <br>
+The above 'solrup' and 'boussrup' applications yield the folders
+<pre>
+solrupcase1020101018Blokk40010.0
+boussrup1020101018Blokk400reg
+<pre>
+with subfolder structures as given above.
+<li> For BIM the tangential velocity at the bottom, in file ESusb, are used for boundary 
+layer computations. For the Boussinesq model the horizontal, average velocities in ESu
+are used. The difference between averaged and bottom velocities, as well as that between
+horizontal and along-bottom components, is of minor importance.
+<li> The Boundary layers are computed by a separate fortran <a href="../bounlay/index.html">program</a>.   This program is invoked by commands like
+<pre>
+newrun -pre 'case=10;nz=100;nx=400;mode=nonlin;nf=5;xlist=-3,-2,-1,0,1;densamp=7;trac=stop' Lblayer
+newrun -pre 'red=0.2;case=10;nz=200;nx=400;mode=lin;n=7;trac=stop' Lblayer
+newrun -pre 'case=10;nz=200;nx=400;mode=nonlin;n=1200;trac=stop' Mblayer
+</pre>
+Lblayer is for the BIM model, Mblayer for the Boussinesq model. The parameters are
+<ul>
+<li> n - resolution, corresponds to nf in the solrup and n in the boussrup snippets.
+<li> red, case, date - as in  the solrup or the boussrup snippets.
+<LI> nx - corresponds to npunkt in the solrup or the boussrup snippets.
+<li> mode - selects either linear or nonlinear boundary value theory
+<li> nz - number of points normal to beach 
+<li> nper (optional) - number of time steps between outputs (time step is as in 
+     BIM or Boussinesq model). Default give output of velocity fields which is
+     synchronous with BIM/Boussinesq simulation.
+<li> xlist - specifies a list of x-positions, relative to the shoreline 
+      (positive values are onshore), where denser time series for the parallel
+     velocity is written. The grid location closest to each specified value
+     is chosen.
+<li> densamp - density (in time steps) of time series specified by xlist. 
+<li> trac -- the special value stop prevents integration of quantities along a 
+     a particle trace. Tracing cannot be performed until some special preparations are made. Else trac=stop must be invoked. 
+</ul>
+Lists separated by commas are accepted for mode, nx, nz and n.
+The Mblayer and Lblayer snippets will generate subfolders under the simulation folder
+named blayd0.2nonlin200, blays0.2lin200 where the last number corresponds to nz
+and the sequence d0.2 indicates that the equilibrium depth is 0.2m.
+</ol>
+<p>
+<h4> Splitting of dense time series</h4>
+  The snippet command 
+  <pre>
+newrun -pre 'case=10;nz=100;mode=nonlin;npun=400;nf=7' extsr
+  </pre>
+produces a 
+subdirectory, tserd,  with the contents of xtser as individual two column files (z u). For instance, a file xtserx476_16 then gives the profile at position 16 of at t=16*ntxbet*dt. The corresonding grid location (x) and x position (BIM coordinates) are given at line 16 of densxfil and xserp, respectively. 
+
+<h3>Obtaining velocity fields from the BIM model</h3>
+The BIM model itself only produces values for field varaibles at the perimeter of the 
+fluid. To obtain velocities, pressure, acceleration in the bulk of the fluid a
+particular post-processor must be invoked.
+First more output must be produced than by the preceding invocations of solrup.
+<pre>
+newrun -pre 'case=a0.09;date=slope10;nf=2;skipgauge=yes;mapr=yes' solrup
+</pre>
+The setting of the last flag leads to more output; accelerations and 
+also the set* and solv* files needed for the computations in <a href="../scripdoc/felt.txt"> felt.sh </a>. <p>
+For computation of the fields the velfields snippet is used
+<pre>
+newrun -pre 'case=a0.09;date=slope10;nf=2;cord=org;n=1;origo=10,-1;grid=30,15;res=0.5,0.1' velfields
+newrun -pre 'case=a0.09;date=slope10;nf=2;cord=shore;n=80;origo=0,0;grid=60,60;res=0.025,0.005;' velfields
+</pre>
+For this case the upper command actually computes the initial condition (nearly), while the lower shows the swash zone. The data are put in the subdirectory specified by gdir (default: vels). Parameters are set according to
+<ul>
+<li>case, date and nf as explained above. There are no defaults for case and date, whereas nf is 
+    default set to 7.
+<li>cord=arg: sets coordinate system. There are three different values of arg
+  <ol>
+  <li> org  -- the coordinate system of the BIM simulation is used. The origin is then at the end with no beach.
+<li> shore -- the origin is put in the equilibrium shoreline, but the axes are still horizontal and vertical.
+ <li> beach --  the origin is put in the equilibrium shoreline and the axes are along the beach and normal to the beach, respectively.
+  </ol>
+<li> n=arg: the list of times to be computed (separated with ,). Default: arg=10,20,30
+<li> origo=arg;grid=arg;res=arg : contain duplets (comma separated), correponding to lower left corner, number of points and increments, respectively, for the grid at which velocities etc. are computed.
+<li>nh=arg;mh=arg: Set number of Gaussian points and subintervals in each panel. For a thin swash tongue
+     nh may be chosen large (12, for instance). Default values: 6 and 2.  
+<li>spes=arg: sets the last part of the data-path. Default:red1_6_3f0.4
+<li>gdir=arg: sets the subdirectory in which the essential files from the BIM simulation are copied 
+(and transformed if necessary). Default: vels
+<li>felter=arg: This is for testing. Keep clear!
+</ul>
+
+
+   <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>

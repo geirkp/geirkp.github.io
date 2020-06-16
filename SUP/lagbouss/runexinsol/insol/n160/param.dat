@@ -1,0 +1,25 @@
+iser =      4
+dispv =     1.000000   ahyd =    -2.000000     abr =     1.000000
+disp =   1.0
+ carrier =  F
+a =         0.100000    l =        37.374687   lambda =        60.571171
+flatl =    30.285585      heln =     0.176327    glatt =     0.250000
+n =   160   da =       0.23432405E+00    dt =       0.22167721E+00
+ntot =    170    nper =     17    iit =      5
+ipstart =      1    ipstop =    170
+ fforyk =  T
+ear =  0.0  skf =  0.0
+ilikn =     1  ilump =    0  iclamp =     0
+ldamp =     0.0000E+00   rdamp =     0.0000E+00
+brygren =    -0.9500E+00
+bbd1 =     0.0000E+00   bbd2 =     0.0000E+00    bbd3 =     0.0000E+00
+qval =     0.0000E+00   igdiff =     0
+urfile = 
+ngauge =     1
+R1 =   0.36700907E+01
+YR1 =  -0.36700892E+00
+SPR1 =  -0.20809240E+01 -0.20814121E+01 -0.20762491E+01
+KR1 =   0.36709428E+01
+TR1 =   0.27174603E+02
+ibryt =      153   grad =    -0.1060E+01
+nprint =      9

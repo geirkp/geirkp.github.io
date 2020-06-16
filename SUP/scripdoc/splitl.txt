@@ -1,0 +1,31 @@
+splitl.pe* gphov plotxy snitt
+       Perl script som parser argumenter og kjoerer gspli for aa generere
+       snitt i plotxy format fra gphov datafiler.
+       bruk:
+         splitl.pe (-l arg) (-n arg) (-ret arg) (-bin) (-asc) (-stem arg) \
+               fil1 fil2 fil3 ...
+       parametere:
+            -l arg : setter linjevalg til arg, -arg '1:8;3 11' gir
+                     feks linje nr 1,4,7,11     def: som i splitdat
+            -n arg : setter valg av datasett til arg, i samme syntaks 
+                     som linjevalg.             def: 1:* (dvs alle).
+            -ret arg : arg=x eller y gir retn paa snitt.   def: x
+            -coord arg : Type of coordinates. Options for arg
+                          1. head(ing):  coordinates is derived from 
+                                      heading in gphov file
+                          2. list(_on_file): coordinate values are read from
+                                  a separate file. Enough values must be 
+                                  provided
+                         default: arg=head
+            -cordfile arg: Name of coordinate file is specified in arg. If
+                           arg has the form filename:N, N being an integer,
+                           then N defines which column is to be used as 
+                           coordinate
+                       default: arg=kord              
+            -bin, -asc : overstyrer navnekonvensjon for filtype.
+            -r8 : runs gspliGF8 rather than gspli (for 64 bit binary)
+            -numf : Output for each line is sequentally enumerated instead
+                    of marked by line numbers.
+            -stem arg : gir navnestammer for linjedata-filer, arg maa ha
+                       form arg='stem1,stem2.., evt med blanke istedet for 
+                       komma.    def: som i splitdat.

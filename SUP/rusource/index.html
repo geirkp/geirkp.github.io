@@ -1,0 +1,240 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Potential flow model.</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>A BIM model for full potential flow</h1>
+
+    This page is a documentation of a, mostly, f77 code for solving the Laplace 
+    equation with a free surface.  
+
+<h3>The formulation</h3>
+   The formulation is akin to that of Dold and Peregrine (the Bristol model),
+   using the Cauchy integral theorem for the complex velocity,
+   but is modified in certain respects
+   <ul>
+    <li> Cubic splines are used for interpolating the field variables, rather 
+         that high order polynomials.
+    <li> The time integration is of moderately high order, but similar to that 
+         of Dold and Peregrine
+    <li> Instead of the secant method, higher order Gaussian quadrature are 
+         used for numerical integration. The secant method may be good under 
+         certain simple conditions, but is inaccurate if a rapidly varying 
+         resolution is applied.
+    <li> Prescribed grid refinement in space and time
+    <li> The splines allows for run-up computations. Analyticity is then used 
+         to connect the splines along the surface with those along the bottom. 
+   </ul>
+<p>
+A slightly more detailed and mathematical description is found in 
+<a href="BIMdes.pdf"> BIMdes.pdf </a> (source in  BIMdes.tex and BM.ps, this directory).
+<h3>Main features</h3>
+Features included
+
+<ul>
+<li> Full nonlinearity 
+<li> Boundaries as sloping beaches or vertical walls.
+<li> Fully Lagrangian coordinates for free surface, but not for bottom
+<li> The shoreline is automatically tracked on a sloping beach.
+<li> Initial conditions are read from files.
+<li> Output of fields and time series.
+<li> Post-processing tools for generation of bulk velocities and pressures.
+</ul>
+   <p>
+
+        <h3> Geometry, coordinate system and grid</h3>
+ In its present form the model requires a smooth bottom profile.
+ The geometry is one of the following (igeo parameter in parenthesis)
+   <ul>
+   <li> (1) simple-shelf
+   <li> (2) constant-depth
+   <li> (3) file 
+   <li> (4) beach <br>
+            In this case there is a vertical wall at x=0, a free surface 
+            extending from x=0 to the beach (totl at equilibrium).
+            There is a constant depth region that is smoothly connected to 
+            an inclined plane. <a href="shelfgrid.html"> A grid </a>that is refined
+            at the beach is an option.  
+   <li> (5) shelf
+   </ul>
+
+
+<p>
+<p>
+<h3>The input and execution</h3>
+    <ul>
+    <li> Parameters are read in a dialogue from standard input. 
+         Lines starting with !
+         are recognized as comments, there are some checks on the input
+         and default values are generally offered. The program is occasionally 
+         modified with implications for the dialogue.
+         The interface script 
+        <a href="../scripdoc/geninp.txt">geninp.pe </a> 
+         prepares simulations
+ </ul>
+    <h3> Output </h3>
+      <ol>
+       <li> param.dat -- file with parameters in particular format.
+            In addition to the input parameters also some output parameters 
+            are included.  List of selected <a href="parameters.html"> parameters </a>.
+       <li> dt0 -- contains a list of all scheduled time steps. If the
+            simulation is stopped not all the listed steps are used  
+       <li> Runup files (data from beach region). Lower case characters 
+            indicate nodal values, while upper case values obtained by 
+            polynomial regression. The derivatives are with respect to 
+            the enumeration coordinate (integer values at nodes).
+            f is potential and s is tangential velocity along bottom.
+            Accelerations have a d appended. 
+            d(eta)/dx can be obtained by Y'/X' 
+         <ul> 
+              <li>Re: t, x, X, X', X'', y, Y, Y', Y'', f, F, F', F''
+              <li>Ru: t, u, U, U', U'', v, V, V', V'', s, S, S', S''
+              <li>Ra: t, ud, UD, UD', UD'', vd, VD, VD', VD'', sd, SD, SD', SD''
+          </ul>
+       <li> At selected intervals the the field variables are printed. 
+            N is the number of time for output that corresponds to N*tper, 
+            where  tper is given in param.dat. The data files are not 
+            equidistant in the first column that is the horizontal
+             position of the nodes.<br>
+             etaN :  surface positions (xy)<br>
+             xyN : total fluid circumference<br>
+             uN, vN : velocities in x and y direction<br>
+            utN, vtN, udN, vdN, udmN, vdmN : accelerations at current and previous time <br>
+            setN, solvN : spline representation of velocity and acceleration components <br>
+            fN, ftN , fdN: surface potential and derivatives<br>             
+<li> max.dat: Times series with maximum surface elevation <br>
+t  etmax   xmax   etgmax  etgmin  iflag<br>
+where etgmax and etgmin refers to max and min at nodes.
+        <li> Time series at specified grid nodes.<br>
+             Not complete description.......
+             files:<br> 
+              tideK : Time series for the surface elevations are written
+                      with 5 columns in each file numbere by K. <br>
+              tideraw : Times series for a selection of fields are written.
+                        For each time the lines are written as<br>
+                       <br>
+                          time<br>
+                          x,y,u,v,ut,vt,ud,vd,f,ft      for first node<br>   
+                          x,y,u,v,ut,vt,ud,vd,f,ft      for second node<br>
+                            ......<br>
+
+                 The script splitser.pe splits the tideraw into numbered
+                 files tserNode, one  for each node, with columns
+                 time x, y, ....          
+        <li> Time series are extracted at specified, fixed, x positions.
+             Apart from SEuelex and SExy2 the files are in "gphov" format 
+             nx times nt
+             where nx and nt are points and time steps respectively. If
+             The simulation is stopped due to a breakdown test or abortion
+             nt may be larger than the actual number of "rows" present.
+             files: <br>
+               SEuelex single column file with x-positions
+               SExy two column file with x,y positions at segment 2 (beach-bed)
+               ES* where * is eta, u, v  contains fields on the surface <br>
+               ESusb contains tangential bottom velocity<br>
+            The files may be split into separate two column "time field" files
+            with Eulsplit.sh.
+      </ol>
+   </ul>
+<p>
+  <h3> The code</h3>
+  The star indicates nothing, LF8  or IN8.
+   <table  width="500" CELLPADDING="5" BORDER="2">
+<tr><td>
+   directory: <td>/hom/geirkp/laplace/rusource</tr>
+   <tr><td>
+   main program<td> rumain.f </tr>
+   <tr><td>
+   additional files:<td>
+</tr>bmeto.f rrut.f grut.f bottfun.f  beachgeom.f vargit.f  grigen.f gendef.inc  gendat.inc
+   <tr><td>
+   files from other projects:<td> 
+</tr>
+   <tr><td>
+   additional libraries:<td> /hom/geirkp/bouss/i386/bserv.a /hom/geirkp/laplace/nexgen/smbem*.a /hom/geirkp/nalib/lib/small*.a /hom/geirkp/lib/i386/bibl*.a /hom/geirkp/lib/i386/dia*.a /hom/geirkp/gitec/source/i386/gsource*.a</tr>
+   <tr><td>
+   makefile:<td> i386/mlru* </tr>
+   <tr><td>
+   executable: <td> i386/lru* </tr>
+   <tr><td>
+   scripts: <td> <a href="../scripdoc/geninp.txt"> bin/geninp.pe</a></tr>
+</table>
+    <p>
+   <p>
+  <h3>Scripts supporting simulations, pre- or post processing  </h3>
+   <table  width="700" CELLPADDING="5" BORDER="2">
+<tr>
+   <td> script <td> directory <td> purpose 
+</tr>
+<tr>
+   <td> geninp.pe  <td> /hom/geirkp/laplace/rusource/bin  
+   <td> Makes compatible inputfiles to BIM and Boussinesq(present) models for solitary wave runup.
+</tr>
+<tr>
+   <td> solrup.sh  <td> /hom/geirkp/laplace/rusource/bin  
+   <td> Sets up series of solitary wave runup simulations with geninp.pe.
+</tr>
+<tr>
+   <td> splitser.pe  <td> /hom/geirkp/laplace/rusource/bin  
+   <td> Splits raw time series into one file for each series.
+</tr>
+<tr>
+   <td> Eulsplit.sh  <td> /hom/geirkp/laplace/rusource/bin  
+   <td> Splits Euelrian time series files. Syntax
+        "Eulsplit.sh -t0 t0 -l point_selection"
+</tr>
+<tr>
+<td><a href="../scripdoc/felt.txt">felt.sh </a><td>/hom/geirkp/laplace/rusource/bin
+<td> Post-processes output to produce variable fields in the interior
+</tr>
+<tr>
+<td>aplot.pe<td>/hom/geirkp/laplace/rusource/bin
+<td> Depicts surfaces
+</tr>
+<tr>
+<td>piaplot.pe<td>/hom/geirkp/laplace/rusource/bin
+<td> Depicts surfaces with velocity arrows
+</tr>
+</tr>
+<tr>
+<td>gsympl.sh<td>/hom/geirkp/laplace/rusource/bin
+<td> Depicts surfaces near-shore with symbols. Used for grid-refinement studies
+</tr>
+<tr>
+   <td> <a href="../scripdoc/gbimpar.txt"> gbimpar.pe</a> <td> /hom/geirkp/laplace/rusource  
+   <td> Synchronization of simulations. Provides parameters that can be 
+        extracted and used with, for instance, geninp.pe.
+</tr>
+
+<tr><td> <a href="../scripdoc/rotxy.txt">rotxy.pe </a>  <td>/hom/geirkp/lagbouss/bin
+<td>Rotates and transforms xy files 
+    to  coordinates parallel and normal to the beach plane.
+    Origin for the rotated system in the equilibrium shoreline position.  
+</tr>
+
+</table>
+<p>
+  <h3> Examples</h3>
+  
+  <h4> Solitary wave shoaling and breaking at shelf </h4>
+  An example with a simulation that is smooth and easy at first, but ends
+  with an plunger. The shell code is automatically extracted from a slightly
+  more general system and may hence look a bit strange, at first. The essentials
+  are
+  <ul>
+    <li> First the environt variable Geirkp should be set to /mn/sarpanitu/ansatte-u1/geirkp
+    <li> The script uses two other scripts, $Geirkp/bin/fullsol and $Geirkp/laplace/soliton/expand2.pe. The first is essential, the latter is just producing a very simple geometry and format the solitary wave data for input.
+    <li> The command "bash demo.sh" runs the application. Download <a href="demo.sh"> demo.sh </a>.
+      <li> This should produce the folders and files in <a href="demores.tar"> demores.tar </a> which is unpacked by "tar -xz < demores.tar".
+    </ul>
+  <h4> Solitary wave plunging at a 5.1 deg. beach </h4>
+   An example is given in <a href="runup.tar"> runup.tar </a> which is unpacked by "tar -xz < runup.tar". The stanadrd input to the program is indat, while redfak.dat and inp.* are the files read by the program. Actually the simulation was made by scripts as given above.
+
+   <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>

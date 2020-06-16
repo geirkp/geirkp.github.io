@@ -1,0 +1,16 @@
+diffil.pe* differanser plotxy
+      Skriptet utf|rer enkel algebraisk manipulasjon paa filer
+      i plotxy-format med bare to kolonner gjennom kall p} programmet
+      gdiffer ved inputfil diff.inp. Bruk:
+             diffil.pe (option option ..)  fil1 fil2
+      parametere:
+            -o arg : outputfil settes til arg, default diff.dat
+            -w arg1 arg2 : det som skrives paa outpufil er arg1*a+arg2*b
+                           der a og b er verdiene fra hhv. fil1 og fil2.
+                           default: arg1=1, arg2=-1
+            -snitt :  setter definisjonsomraade for resultat til snittet
+                      av definisjonsomraade for fil1 og fil2
+                      default: defin. som for fil1
+            -off arg1 arg2: forskyver koordinater med hhv. arg1 og arg2
+                      i fil1 og fil2
+                      default: ingen forskyvning   

@@ -1,0 +1,327 @@
+gglparse.pe* Produces gglo input
+
+
+This script is a backward compatible interface to the gglo program. New
+functionality is included in the script in a manner that does not affect
+previous applications. All scripts should access gglo only through
+gglparse.pe
+Invoked perl libraries and additional source code files:
+   /hom/geirkp/bin/rotdat.pe
+   /hom/geirkp/gitec/bin/lpf_inc.pe
+   /hom/geirkp/bouss/trappe/bin/ggopset.pe
+   /hom/geirkp/gitec/bin/lesopt_inc.pe
+
+Use:
+
+/hom/geirkp/bouss/trappe/bin/gglparse.pe \#DEF=<input-file> (options)
+
+Where specifications are given in the input-file or as command line options.
+A command line option of the form '-opt arg' correponds to a line in the file
+containing "opt = arg". The blanks around = is mandatory and several
+settings may be combined in a single line provided arg contains no white-spaces.
+If a parameter is set both in the input-file and the command line the latter
+has precedence. A parameter may also be set more than once in the file; 
+the last setting being the one in effect.
+
+As of 2017 the script support two different version of gglo. ggloN is a new
+version that has some extra functionality. All features specific to this new
+versions is marked (only with version N).
+
+Example on input-file (touch is used to mark options without arguments)
+------
+depth = /work/geirkp/Tsunamis/LaPalma/bathymetry/Abred.dat
+refine = 1
+eq = disp 
+tint = 300
+nut = 7
+t0 = 600
+optboun = symm 1
+lunit = m  tunit = s
+in_eta = /work/geirkp/Tsunamis/LaPalma/newinbet/eta600.dat
+in_vel = /work/geirkp/Tsunamis/LaPalma/newinbet/u600.dat /work/geirkp/Tsunamis/LaPalma/newinbet/v600.dat
+tu = -1.61291 nut = 7
+grid = geog
+treshold = 0.0
+sponge = 0  
+redfak = def
+domain = 1871g  951g 2350g 1380g
+Coriolis = def
+progver = 
+run = touch
+compile = touch
+-----
+
+
+parameters for script:
+-depth arg : Depth matrix is read from arg, unless arg=none. 
+             For a binary file arg must
+             be 'bin filename', otherwise just 'filename'. In near future
+             the script will make use of an automatic detection of file
+             type that is already present.
+             If arg=none no depth file will read and a flat region must be 
+             specified with -bassin
+             default: arg must be specified
+-basin n m dx dy x0 y0 hval : sets computational domain and depth
+             default: 100 100 1.0 1.0 0.0 0.0 1.0
+-domain xa ya xb yb : Sets domain limits. The text 'def' as value copies
+             the limit from the depth matrix. A number with a g attached 
+             is interpreted as a grid position (in depth matrix) and simple
+             number is a coordinate value. When the g is apended the enumaration of nodes 
+             starts at 0, not 1, just as in the fortran code. The computational domain
+             is then set to the domain corresponding to the specified limits.
+              If all arguments are blank and
+             -refine (below) is set to 1 the depth matrix defines the grid
+             without modifications.
+-refine arg : Defines a refinement of the grid relative to the depth matrix.
+              default: arg=1  --> no refinement, but only necessary adjustment
+              of grid increments to match boundaries set by domain. 
+-eq  arg : Type of equations. Values for arg: LSW, NLSW, disp, Bouss.
+           If the separate word 'hodisp' is appended to the values disp, 
+           Bouss improved dispersion is invoked.
+           default: arg = disp
+-tint arg : Depends on program version
+            Version N: arg is a single number that
+              (i) is the time interval if second argument of -redfak is not dt  
+              (ii) number of time steps in time interval if second argument is dt
+            otherwise
+              Sets the time interval between printouts in one of two ways:
+             (i) arg is a single number: 
+                 The length of the time interval is chosen as arg while the 
+                 time increment is arg/N where N is smallest integer that makes
+                 the increment <= (the reduction factor {-redfak...})*(maximum
+                              step according to CFL criterion)
+             (ii) arg is real followed by an integer:
+                   Then the real number is the time increment and the integer
+                   the number of steps between each printout.
+                   The numbers may be separated by a comma, a blank or a star.
+                   In the latter two cases the argument must be quoted if used
+                   at the command line. 
+            default: arg=100
+
+-redfak arg: Governs time step.
+             Version N: arg may contain one or two arguments (arg1 arg2). arg2 may be
+	                redfak (or blank) : dt=arg1*dx
+			cfl : dt=arg1*dtmax, where dtmax is maximum stable time step
+	                dt : dt=arg1
+                        Default: arg1=def (program default)
+			The final time step is adjusted to match -tint settings for
+			arg2 in redfak or cfl.
+	     Old versions: arg is a single string. dt=arg*dx unless arg is def
+ 	                   for which program default is used.
+                           The final time step is adjusted to match -tint settings.
+-nut arg : Sets number of printouts
+           default:  arg=10
+-lunit arg : sets length unit: m is meter, 
+             km is kilometer. This and the -tunit have only affect if the
+             grid is either geographical or cartesian (not normalized)
+           default: arg=m 
+-tunit arg : sets time unit values second, minut, hour, time (abbrevations
+           are acepted).
+           default: arg=s
+-in_eta arg: Sets initial eta. Must be specified
+           default: arg=eta.in
+-in_vel arg1 arg2 : Sets initial velocities 
+           default: arg1=none arg2='' -- no velocities are read.
+-tu arg: Defines time offset of initial velocities relative to surface 
+         elevations
+           default: arg=0.0
+-BSname argu argv argeta : family of options defining input from a forced domain.
+               'name' is one of  file, format, dt, t0, scalt, scalx  and scalf.
+                The latter 3 are scaling for time, grid and field in SI units.
+                The three arguments are options  for u, v and eta respectively.
+                Formats may have the values 
+                     gphov-ascii
+                     gphov-bin
+                     netCDF (not yet active)
+                (only with version N)
+
+-BSdom arg1....argn : Sets rectangles for forcing as specified through the Bsname options.
+               each argi is quadruple of numbers joined by commas.
+	       Default: no forcing rectangles.
+-BSdomform arg1....argn : Sets format for forcing rectangles
+	       Default: grid-scale.
+
+-Hurricane arg1 (arg2) : Activates parameterized hurricane source. Args are either
+               none or press/drag. The latter two may be given in any sequence if
+	       both are given.
+	        Default: arg1=none
+-Hpress   arg: Sets maximum pressure in Pascal. Default: arg=5000
+-Hrmw arg : sets radius of maximum wind (units as set in gglob). Def: arg=100
+-Hb arg : power in spatial attenuation of pressure. Def arg=2
+-Htrunk :  relative truncation limit for pressure. Def arg=0.01
+-Htoff arg : Temporal shift. Time in projectory = time in program + arg.
+             Default: arg= 0.0
+-Hhmin arg : minimum depth in scaling set. Default arg=0.1
+-Hpsi arg : Counterclockwise rotation of darg in degrees. Def arg=45
+-Htraj arg: name of trajectory file (t x y ). Default arg=traj.txy
+
+-Coriolis arg: Value of the Coriolis parameter. For geo. coord. only the values
+               0 and def are meaningful. 
+               default arg=def (true values for geo. coord., 0.0 otherwise)
+-grid arg:   Grid type. Values:
+                geographical     grid in degrees
+                cartesian       input in units
+                normalized      non-dimensional cartesian
+             Abbreviations are accepted
+             default: arg=geo  
+-treshold arg : Treshold for land
+                default: arg=0.0
+-optboun arg1 arg2: Parameters in settings for improved dispersion.
+                    arg1 equal to symm and extra yields symmetric and
+                    extrapolation, respectively, for the correction term
+                    at the boundary. arg2 is the number of 5 points
+                    smoothing sweeps applied to the term 
+                    Only arg1=symm is recommended. 
+                    default: arg1=symm    arg2=1
+-iterations ia ib : Iterations in momentum and continuity equations.
+                    default: arg1=arg2=def (two iterations if option of
+                    -eq corresponds to implicit equations).
+                    For dispersive simulations a value of ia less than 1
+                    gives no meaning. 
+-itstart iist :    Selects initialization before iteration in momentum
+                   equations. Values
+                        cold : ut and vt set to zero before iterations
+                        previous: values from preceding step used
+                   For very fine grid the cold start is recommended.
+                   default: previous
+-sponge arg : arg is a composite argument of form "width N S E W" (must
+              be quoted in a shell) where the latter four is optional.
+              width is the width of the sponge layer and the inclusion of N,
+              for instance, states that a sponge is in action at the northern
+              boundary (max y).
+              default: arg=0.0
+-t0 arg : Time at the start of the simulation
+         default: arg=0.0
+-progver arg: Compiled version to be run. The name of the executable then
+         is gglo'arg'. The arg options do vary over time. In 2018 the viable
+	 options are '', GF8 (64 bit), N (newest version, 64bit).
+	 Some of the options are only activated for the version arg=N.
+         default: arg=''
+-run :  Flags that gglo is to be run, otherwise only the files are created
+         default: gglo is not run
+-compile : Flags that gglo is to be compiled. The use of this option 
+           requires the appropriate privileges
+           default: gglo is not compiled
+-nice arg: Sets nice priority
+           default: arg=-19
+-etaser arg: Inputfile for position of surface time series
+            default: arg=stop (no file and no time series)
+-user arg: Inputfile for position of  time series for u
+            default: arg=stop
+-vser arg : Inputfile for position of  time series for v
+            default: arg=stop
+-noosc : Turn off the addition of a 10^-8 infra-noise in the initial 
+         conditions. This noise is useful for preventing performance 
+         degradation due to floating point underflows.
+-iglatt arg : Number of 5 points smoothing applied to the surface and
+              velocity fields at each time step. The smoothing is applied
+              prior to the sponge.
+             default: 0
+-ik : Activate the numerical correction scheme for the LSW terms of 
+      the equation
+       default: no correction
+-ikglatt arg : Number of 5 points smoothing applied to the numerical 
+           flux correction
+       default: 0
+-ofieldformat arg: Sets the format for output of fields. The argument
+                 has two parts. The first is either of
+                  '' (empty) : ascii, surface elevation in meters,
+                            otherwise dimensionless
+                  'N' : all fields are dimensionless
+                  'SI' : meters and seconds are used
+                  'I' : all fields are given with the input units that
+                         may be set by -tunit -lunit (see above)
+                 The second part is one of (abbrevations are allowed)
+                    ascii - ascii gphov format
+                    binary - binary. If gglob is compiled with double
+                             precision as standard 64 bits binary will
+                             follow, otherwise 32 bits are used. 
+       IMPORTANT: the scaling of the grids in the output is made separately
+                  with -gridformat
+       default: arg= Nascii
+-gridformat arg: Sets the format for the grid in output of fields.
+                 The options are:
+                  'Nondimensional' : all fields are dimensionless
+                  'SI' : meters and seconds are used
+                  'Input' : all fields are given with the input units that
+                         may be set by -tunit -lunit (see above)
+                  default: arg=Input
+-prfield arg: Selects fields to be printed. arg contains one or more of the
+              indicators
+                 y u v ut vt ymax ymin all
+              in random sequence. In addition the first 7 may be preceded by
+              'f_'. Only the last field computed of the kind will then be 
+              printed. When both 'y' and 'f_y', say, is specified the latter
+              is redundant but no error message is given. 
+              If this option is given on the the command line and 
+              comprises more than one indicator arg must quoted.
+              'y' indicates surface elevation, 'u' x-component of the velocity
+              etc. 'ymax' is maximum surface elavation at each point until
+              time of printing. This is only computed if this indicator is 
+              given. 'ymin' refers correspondingly to minima.
+              The special value 'all' is equivalent to the rest 
+              combined. There is no check for redundancy among the indicators.
+         default: arg='y u v ut vt'  
+-propwin  arg : Sets window for writing of propagation files
+                arg=none (or empty): no files. This is the default.
+                arg= (format) xa ya xb yb selects the grid square
+                     that circumscribes the coordinate box (xa,ya,xb,yb).
+                     format is optional and equals either 'ascii-gphov'
+                     or 'binary-gphov'. Omission of explicit format yields
+                     'binary-gphov'. 
+-propdens iix iiy iit : Densities in x, y and t for propagation files 
+        default: 1 1 1
+
+-sourcestem stem : Sets stem to be common prefix for sink/source files.
+                   The time file is stem.tim. If a single source file is 
+                   provided it must be nsmae stemF, otherwise enumbered files 
+                   stem1... must exist.
+                   default: qqq 
+-sourceformat format bott : format is one of
+                             none   # no source file
+                             sep-gphov  # separate gphov files stem1
+                             joined-gphov# one gphovfile with head1 data1 
+                                            head2 data2 etc.
+                             coordinate-single-gphov# gphovfile with 
+                                                      head1 data1 data2
+                             data-single-gphov#  one gphovfile with head1 
+                                                  data1 head2 head3 etc.
+                             If the second argument bott, equals 'depth'
+                             also the depth matrix is changed due to the
+                             source distribution (only with version N).
+                             If bott = 'trans' a translational slide body is
+                             read from file (only with version N).
+			     Then the shape is given in
+                             stem.body, while the translation is specified in 
+                             the three column file stem.txybody.
+                             The depth is then h - body
+                       The datatype is probed by invoking the <a href="../scripdoc/gpslag.txt">gpslag.pe</a>   script.
+                       default: none
+
+-SourceGreen : Flag that invokes the Green function to bottom sources.
+                Warning: may be relatively time consuming if a large number of
+		simulations with a moderate computational size is performed.
+		(only with version N)
+		Default: no application of a Green function.
+		
+-press :  A pressure is applied to the surface. The data is provided in exactly
+          the same manner as the translational slide body correponding to
+	   'trans' above. This option is overruled if sourceformat is not
+	   'none', without warning or error message.
+	   (only with version N)
+	   
+-eta_limits min max : sets min and max allowed values for eta. The program
+                      stops in case of violation. If min >max
+                      no check is performed.
+                      Feature may be incompletely invoked.
+
+Produced files:
+
+        indat : input file for gglo
+        jrun.sh : file with sh code for compilation and run.
+        ggl.par : parameter file for gglparse. This contains much of the
+                  same information as param.dat from gglo, but with some
+                  additions. A file with this content may be used as input-file
+                  for another invocation of gglparse.pe.
+        pp.log, pp.err : standard output and error from gglob* 
+

@@ -1,0 +1,17 @@
+tserslice.pe
+
+Extracts and scales time series data at a given time. Also computes 
+        coefficients in velocity profile.
+      Use:
+        tserslice.pe -d d t1 t2 ..... 
+           -d $d : If this is specified d is interpreted as depth in m
+                   and all quantities are scaled accordingly.
+                   Default: no scaling 
+            t1 ...  The times given consitently with -d option
+
+
+  Produced file:
+
+  gag$t: x U DH DHx eta H Hx
+  kof$t: x U Ux Vs eta H hx A B
+  acc$t: x Ut

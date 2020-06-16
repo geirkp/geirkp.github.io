@@ -1,0 +1,11 @@
+Example: diffraction by vertical cylinder (amplitude=0.15, diameter 10 depths)
+as described in the report.
+
+Files used in simulations: xypos gg.inp eta.dat dyp.dat u.dat v.dat in sub-folder source.
+
+Command for execution: 
+/home/geirkp/bouss/trappe/bin/gglparse.pe \#DEF=gg.inp
+
+Result in sub-folder run.
+File y4.ps in the sub-folder is a contour plot of the surface after 4 time periods.
+

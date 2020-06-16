@@ -1,0 +1,91 @@
+
+        gsplit
+       
+   Formaal: Dele opp datafiler, i genkurv format, som inneholder et vilk}rlig
+            antall kolonner i tokolonne-filer uten heading. M.a.o. det 
+            genereres datafiler tilsvarende de for genkurv, men ikke grafikk
+            etc. eller styrefil for plotxy/gnuplot. Se genkurv
+
+   Syntaks:
+
+   gsplit [-opt arg ] [-opt arg ] ... [ datasett ] [ datasett ]...
+
+   Liste av opsjoner for split:
+         -F  arg1
+             Setter feltseparator til arg1. Default er , (komma).
+             Blanke vil alltid oppfattes som feltseparatorer.
+         -ko arg1
+             Setter arg1 til aa v{re standard koordinat-betegnelse.
+             Default er 1, som vil si foerste kolonne.
+          -s arg1
+             Stamme settes lik arg1 , benyttes i datasett-postene
+             Argumentet har form arg1=prefiks##postfiks, der fravaer av
+             ## bare gir prefiks. prefiks maa ikke inneholde #
+             Se forklaring om datasett.
+             default: ingen stamme
+          -ibeg arg1 
+             Heltallet arg1 angir foerste datalinje som skal leses, dvs
+             agr1-1 data-linjer skippes i starten av fila. NB: innledende
+             kommentarlinjer teller ike med. Default svarer til arg1=1.
+          -ix arg1 
+             Angir siling av datane, slik at bare hver arg1 linje ekstraheres.
+             Nyttig for reduksjon av tette datasett. Default: arg1=1 (ingen
+             siling)
+
+         [ datasett ] 
+             En slik  post definerer en datafil og et sett  data for denne.
+             Hver post ser ut som:
+
+             fil,kurver 
+
+             Full angivelse av filnavn er da det 
+             sammensatte filnavn='prefiks''fil'postfiks' der pre/post-fiks
+             er satt med -s opsjon. Hele angivelsen ser da ut som:
+             
+               fil,kolbet,kolbet...
+             
+             Dersom en annen feltseparator er satt ved -F maa , byttes
+             med denne. En kan alltid bruke blank og sette hele angivelsen
+             innenfor '' eller "". En foelge er at filnavn ikke kan inneholde
+             blanke eller feltseparatoren. En av kolonnebetegnelsene kan se ut
+             som x=arg, noe som foerer til at arg benyttes som koordinat-
+             angivelse i stedet for standarverdien som er 1 eller satt 
+             med -ko.
+             De oevrige har formen y=arg eller, enklere, bare arg. For hvert
+             slikt felt ekstraheres ett datasett tilsvarende 
+             ordinatbetegnelsen arg.
+             Dersom ingen oordinatbetegnelse er gitt brukes 2. 
+	     Skriptet genererer uansett (i motsetning til genkurv som 
+             genererer nye filer bare dersom den opprinnelige inneholder mer 
+             enn to kolonner eller heading ) en fil pr.  med navn:
+
+               filnavn_xkol_ykol
+   
+             Der xkol og ykol betegner hhv. ordinat og koordinat kolonne.
+             
+             Eksempler:
+
+                  gsplit  a.dat,2,3  
+   
+             gir filene a.dat_1_2 og  a.dat_1_3
+
+                  gsplit a.dat,x=2,3
+
+             gir det samme som:
+
+                  gsplit -ko 2 a.dat,3
+            
+             nemlig a.dat_2_3
+
+             Inneholder a.dat en kommentar linje 
+             ##kolonner: t,s,p
+             kan vi ekstrahere  data ved
+
+                  gsplit a.dat,x=s,p
+                  gsplit a.dat,x=s,3
+                  gsplit -ko s 'a.dat p'
+
+             Den andre vil generere fila: a.dat_s_3, den forste og 
+             siste a.dat_s_p.
+             Innholdet i disse filene vil naturligvis v{re identisk.
+                 

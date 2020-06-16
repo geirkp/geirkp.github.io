@@ -1,0 +1,237 @@
+peplot.pe* plotting postscript ps gkurv
+ Lager transparent grafisk postscriptkode som gir grafer fra filer i gkurv 
+ format, piler og sirkelsegmenter. Skriptet leses instruksjoner linje for 
+ linje, den foerste evt. fra kommandolinja de resterende fra STDIN.
+ Dersom input skal leses bare fra kommandolinja og ikke STDIN gis -- som
+ foerste argument.  Postscriptkode skrives til STDOUT.
+ Hver linje har utseende av en parameter-liste for skript, bortsett fra
+ foerste ord dvs:
+   (Grafisk type) (opsjon arg ..) (opsjon arg ..) ...
+ der grafisk type er en av
+    graf   eller  graph: graf fra  fil i gkurv format lages
+    pil    eller  arrow: en pil tegnes
+    sirkel eller  circle: et sirkelsegment tegnes
+    akse   eller  axis:  en akse tegnes
+ Argument for grafisk type etterfoelges av et sett opsjoner. Disse
+ er av to typer: ett sett fellesopsjoner som er like for alle grafiske typer
+ og som definerer koordinatsystemer, valg av farger etc. og ett som er
+ spesifikt for hver type. Felles opsjoner som er satt i en linje brukes
+ i senere linjer dersom de ikke er eksplisitt satt paa nytt. Dersom ingen
+ grafisk type spesifiseres kan vi benytte linjen til aa sette fellesopsjoner,
+ mens ingen grafisk output blir laget.
+  Fellesopsjoner:
+   (-kbox arg1..4) (-psbox arg1..4) (-exp) (-linewidth arg)  (-col arg) \
+    (-sat arg) (-bright arg) (-dash arg) (-style arg)
+  der:
+         -kbox - arg1 til arg4 settes som boundingbox for koordinatsystem
+                 brukt i inputfila. Dersom foerste grafiske type er en graf
+                 kan  maks og min funnet paa fila brukes som default. Ellers
+                 vil fravaer av -kbox foere til avbrudd i skript.
+                 Advarsel:
+                 Selv om -kbox settes  er det ingen sjekk paa at punkter 
+                 ligger innenfor koordinat-domene. Paa forhaand kan da feks.
+                 kappny_pe brukes.
+         -psbox - arg1 til arg4 gir maks grafisk omraade i tommer maalt fra 
+                 nedre venstre hjorne. def: 0.5 0.5 6.5 6.5
+         -exp - kbox omraade settes til a fylle psbox i begge retninger, dvs
+                  at x og y akse faar ulik skalering.
+                  def: ingen relativ strekking av akser (formtrohet),
+                  hele -psbox omraadet vil da vanligvis ikke bli fylt.
+         -linewidth arg:   setter linjetykkelse til arg, maalt i punkter
+                  (1 tomme = 72 punkter) def: linjetykk. settes ikke (gir
+                  oftest 1 punkt). 
+         -col arg, -sat arg, -bright arg : setter farge, metning og klarhet
+                  ihht. hsb systemet, dvs. at argumentene er definert mellom
+                  0 og 1. -col aksepterer i tillegg de spesielt definerte
+                  opsjoner black, grey, red, yellow, green, blue, lila.
+                  def: farge lik black.
+         -dash - gir stipling. arg maa inneholde minst 2 tall adskilt av 
+                 blank eller komma. Dersom antall tall er storre enn 2
+                 tolkes det siste som offset for start av 
+                 foerste dash. Alle tall maales i tommer. 
+                 def: ingen stipling av linjer.
+         -style arg - angir type for tegning av grafiske objekter (kurver mm.)
+                arg kan ha verdiene:
+                   line: object(kurve) tegnes som en linje i spesifisert farge.
+                   close: object(kurve) lukkes og tegnes som en linje.
+                   fill: object(kurve) lukkes og fylles med farge.
+                   frame: object(kurve) lukkes, fylles med farge og rammes inn
+                          med en svart strek. (svarer til en linje med -style
+                          fill, etterfulgt av en identisk linje bortsett fra
+                          -col black -style close.)  
+                Virkning er litt avhengig av grafisk type og andre parametere.
+                For noen opsjoner neglisjeres -style helt eller delevis.
+  Opsjoner for grafisk type graf:
+     (-off ax ay) (-stretch bx by ) (-ix arg) (-iy arg) (-stag) \
+     (-f arg) (-mark arg) (-msize arg) (-b arg)
+     der
+           -iy arg - setter kolonne for koordinat. Dersom arg er et naturlig
+                 tall tolkes det som kolonne-nummer, ellers sokes etter
+                 en kodelinje paa form ##kolonner: ... som i gkurv.
+           -ix arg - setter kolonne for oordinat.
+           -stag - trekker bare annenhvert linjesegment -- maa ikke brukes
+                   sammen med close eller fill.  def: ikke aktivisert. 
+           -off ax ay  -stretch bx by - gir offsett og strekking av data.
+                   dvs at dersom x,y leses fra fil erstattes dette paret 
+                   med X,Y der X=ax+bx*x, Y=ay+by*y.
+                   def: ax=ay=0, bx=by=1
+           -f arg - innhenter data. Dersom arg starter med ## vil det 
+                    etterfoelgende bli tolket som tallserie atskilt av komma,
+                    dvs. arg= x1,y1,x2,y2... Ellers tolkes arg som navn paa 
+                    inputfil. I begge tilfeller erstattes en serie like punkter
+                    av bare ett. def: arg=inp.dat
+           -mark arg - gir kurvetype. Verdier for arg:
+                     0 : vanlig linje som kan lukkes fylles etc. i hht. -style
+                         opsjonen.
+                     + eller pluss : Hvert punkt markeres med en pluss, -style
+                         opsjon ignoreres.
+                     - eller minus : Hvert punkt markeres med en horisontal 
+                         strek, -style opsjon ignoreres.
+                     | eller vert : Hvert punkt markeres med en vertikal
+                         strek, -style opsjon ignoreres.
+                     o eller sirk : Hvert punkt markeres med en sirkel
+                         tegnet i hht. -style opsjon ignoreres.
+                     shade: det legges en skygge (bredde satt med -b)
+                            paa hoyre side av kurve i forhold til 
+                            gjennomlopsretning. Brukt til aa markere
+                            en bunn el.  -style opsjon ignoreres.
+                  default arg=0
+           -msize arg - gir storrelse av symboler satt med -mark i tommer.
+                  default arg=0.1
+           -b arg - gir skyggebredde maalt i tommer.
+                  default arg=0.16
+  Opsjoner for grafisk type pil:
+      (-or x y) (-l L) (-b B) (-ret v) (-topp arg) (-fig arg) (-dob)
+    der:
+           -or x y - pilen starter i koordinat (x,y) (def: (0,0) )
+           -l L - Dersom L er ett tall tolkes det som lengde i inch.
+               Dersom L er et tallpar, adskilt av komma uten blanke,
+               tolkes tallparet som koordinater pila skal ende i.
+               def: L=0.5
+           -b: B gir bredden i inch av pilhode, def: 0.1.
+           -ret: gir vinkel i grader i postscript-koordinatsystem. Dersom
+                 L (ovenfor) er et tallpar ignoreres denne. def: v=0.
+           -fig: arg angir type pil.
+                   arg=pil : fet pil, lengde justert i forhold til
+                             linewidth, slik at den ender i rett punkt.
+                             Tegning i hht. -style opsjon.
+                   arg=strekpil : enkel linjet pil, ingen justering. Stygt
+                             resultat for stor linewidth. -style opsjon
+                             negisjeres.
+                 def: pil.
+           -topp arg - Vinkel i pilens hode settes til arg (grader).
+                 Den virkelige verdien modifiseres noe ved stor linjetykkelse.
+                 def: arg=30
+           -dob - gir pilhode i begge ender.
+                  default: pilhode bare mot sluttpunkt.
+
+  Opsjoner for grafisk type sirkel:
+          (-or x y) (-vink v1 v2) (-r radius)
+  der
+         -or x y : origo i sirkel settes til x, y
+                   default x=y=0
+         -vink v1 v2 : Definerer vinkelbue. Dersom v1 og v2 er enkle tall
+               vil sirkelsegment strekke seg fra v1 til v2 (grader)
+               maalt fra x-aksen. radius er da gitt ved -r ( i punkter).
+               Dersrom v1 og v2 begge er dubletter, atskilt av komma uten 
+               blanke, tolkes de som koordinater til punkter. Sirkelbuen
+               starter da i v1, noe som ogsaa definerer radius, og ender 
+               der den skjaerer den rette line mellom origo og v2, eller 
+               dennes forlengelse.Dette siste er nyttig for aa merke vinkler 
+               paa tegninger som ikke er formtro.
+         -r radius : gir radius i punkter,
+               default: radius=100.
+   Setting av -style opsjonen har innflytelse paa resulat. Dersom opsjonen
+   er line tegnes bare segmentet. Ellers tegnes ogsaa kordene og 'kakestykket'
+   fylles etc i hht. opsjonen.
+
+  Opsjoner for akse:
+  (-span x0 y0 x1 y1) ( -stretch a b) (-refor s0) (-inc ds)  (-add *) \
+  (-subint n) (-ticl tL) (-stir ff) (-addtic aL) (-form format)\ 
+   (-font font) (-toff xoff yoff) (-orient ri) (-align alig) (-tprod mult)
+  der
+  -span x0 y0 x1 y1 : set endpoint for axis 
+                  default: see below  
+  -stretch a b :  Defines stretch factors for the axis variable. The axis
+                  variable is then defined as 
+                   s=s0+sqrt( (a*(x-x0))**2+(b*(y-y0))**2 )
+                  where (x,y) is a point on the axis.
+                  All tics and numbers are set with respect to s.
+                  Example: a=b=1, s0=x0, y0=y1 yield a translated x-axis
+                  default: a=b=1 
+  -refor s0 :  Start value (at x0,y0 ) of axis variable.
+              default: either x0 or y0.
+  -inc ds :   tic increment. Values n*ds, that are within the s interval,
+              are used.
+              default: one fifth of the s interval
+  -add * :    sets additional ticmarks, not yet available
+  -subint n : number of subtic intervals. n=2 yield one subtic between each 
+              main tic etc.
+              deafult: n=0 
+  -ticl tL :  Length of main tic (inch).
+              deafult: tL=0.1
+  -stir ff :  Ratio between length of subtic and length of main tic.
+              deafult: ff=0.4
+  -addtic aL : Ratio between length of additional tics and length of main tic.
+              deafult: aL=1.2
+  -form format : Format for writing of tic annotation on the file pepl.txt.
+                 The numbers are put into math environment and the e of
+                 the exponential format is interchanged by 10^m (m being the
+                 exponent value).
+                 The content of this file may be uset with the -lett option
+                 in pakk.pe to generate an axis with numbers from the tex code
+                 thus produced. 
+                 default: format=%.1f  
+  -font font :   Font specification for tickmark numbers.
+                deafult no font set.
+  -toff xoff yoff : offset of tickmark number in mm.
+                 default depends on alig:
+
+                       alig       xoff     yoff
+
+                      SV           1         1   
+                      S            0         1.5 
+                      SO          -1         1  
+                      V            1         0   
+                      O           -1         0  
+                      NV           1         -1  
+                      N            0         -1.5
+                      NO          -1         -1 
+
+  -orient ri :  ri=1 and 2 yield clockwise and counterclockwise orientation
+                of ticks respectively.
+                default ri=1 
+  -align alig : Defines alignment of tick numbers by specifying the location of
+                the end of the ticmark relative to the number. The notation is
+
+                               NV      N      NO
+
+
+                                V     xxxx    O
+
+
+                               SV      S      SO
+
+                 where xxxx is the number. The distance of the box-border to
+                 the ticmark is xoff yoff.
+                 default: is goverened by ticmark-orientation as the most
+                 appropriate choice of S N O V                   
+  -tprod mult :  Multiplication character in expontial form of tickmarknumbers.
+                 default: mult=\times
+   -twrap pre#post : the latex-code pre and post are written before and after the
+                     tic number.
+   Some defaults are governed by ri:
+
+                    ri=1              ri=2 
+          
+          x0        xmin              xmin
+          y0        ymin              ymin
+          x1        xmax              xmin
+          y1        ymin              ymax
+          s0        xmin              ymin
+                 
+
+
+
+
+

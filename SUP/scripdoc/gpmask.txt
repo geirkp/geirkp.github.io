@@ -1,0 +1,18 @@
+gpmask.pe* masking gphov
+      Conveys a mask from one  gphov file to another.
+      The files must have identical number of points.
+      If an item in file2 is less than a specified limit this is printed, 
+      otherwise the item in file1 is printed. 
+
+      Use:
+             gpdiff.pe (option option ..)  file1 file2
+      parameters:
+            -o arg : output file is named arg. If the name in arg  
+                     end with .bin a binary file is made.
+                     default: gpmask.dat
+            -fkod arg: In case of binary output file
+                        arg=d yields 64 bit floats, otherwise 32 bits are
+                        used. 
+                        default arg=f
+            -lim arg :  Limit for mask
+                           default: arg=-500

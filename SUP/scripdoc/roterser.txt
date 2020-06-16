@@ -1,0 +1,42 @@
+
+
+    roterser.pe
+
+  Rotation of data from a column file. 
+  The column must be either scalars, which are not transformed, or doublets
+  that are either coordinates or velocities.
+
+  Use 
+   roterser.pe (-v vink) (-or x0 y0) (-nor nx0 ny0) (-sc sx sy) (-st st) (-sn sn) (-ctyp ct) (-form form) < input > output
+   where
+   -v vink: rotation angle for coordinate system (counter-clockwise).
+            vink has the format Nunit, where N is a float and unit is either of
+             degrees
+             radians
+             stign; meaning tangens of the angle 
+            The unit may be abbreviated.
+      default: vink=90deg 
+   -or x0 y0: Old position of center of rotation. Affects only positions.
+      default: 0.0 0.0 
+   -nor nx0 ny0: New position of center of rotation.  Affects only positions.
+      default: 0.0 0.0
+   -sc sx sy: stretch factors for positions. For coordinates 
+              it is the distances from
+              x0, y0 which are stretched, while nx0 and ny0 are not 
+              changed due to sx sy. Affects positions and velocities.
+              All stretching is performed before rotation. 
+               default: sx=sy=1  
+   -st st: stretch factor for time. Affects velocities.
+               default: st=1
+   -sn sn: stretch factor for scalars.
+               default: sn=1  
+   -ctyp ct: ct is a sequnce of the letters 
+              n  - indicating a single scalar column
+              u  - indicating two columns defining a velocity 
+              r  - indicating two columns defining a position
+             For instance, ct=cun corresponds to a five column file
+                   x y u v g
+             where g is some scalar( such as density of mass).  
+      default: ct=ru 
+   -form form: Format for output columns
+      default: %18.8e

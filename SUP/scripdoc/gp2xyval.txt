@@ -1,0 +1,21 @@
+gp2xyval.pe
+
+Converts a gphov formatted file to a column format
+x y 'fieldvalue'. The columns are merged by single blanks and written 
+by specified formats.
+
+ Use:
+
+     gp2xyval.pe (-form1 arg1) (-form2 arg2) (-o outfile) fil1 (fil2)
+
+     where
+      -form1 arg1 : sets the format for x and y in C-style
+                    default: arg1=%.6e
+      -form1 arg2 : sets the format for the field in C-style
+                    default: arg1=%.6e
+      -o filename : sets name of outputfile
+                    default: xy.dat
+      fil1 : name of first file in gphov format. Must be specified
+      fil2 : name of second file in gphov format. Optional.
+             With two files we obtain a four column file. Compatibility
+             of files is checked only for array dimensions.

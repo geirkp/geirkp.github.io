@@ -1,0 +1,106 @@
+getnew.pe* parameters 
+  The script reads a parameter file in a specified format and returns 
+an ordered parameterlist to standard output. It offers a considerable
+degree of flexibility concerning the format of the list. Parameter lists
+produced by the script are particularely useful for transferring the 
+governing parameters from FORTRAN or C programs to graphic scripts or automatic
+report generators.
+  getnew.pe is an improvent over the older script getpar.pe and inherits
+one special feature: The string #EQ# is replaced by =. The puropse is to get
+around the special meaning of ' = ' as separator in the parameterfiles.
+Please note that '=' is not interpreted in this way when not surrended
+by spaces, uless the '-sloppy' flag is set. 
+use:
+getnew.pe (-par arg) (-sep arg) (-and) (-form arg) (-alias arg) \
+          (-post arg) (-sloppy) (-nfield arg) par1 par2 .......
+options:
+  -par arg : sets the name of the file containing parameters and values to
+             arg. The default value is param.dat. If arg is a directory a
+             parameterfile arg/param.dat is assumed.
+             Each line of the parameter file must have the format
+               name = value
+             or
+               name1 = value1   name2 = value2 .....
+             where 'name' denotes the parameter names ( as written by the
+             program that generates the file) and 'value' the values.
+             In the first case the value may consist of a numer of strings
+             separated by blanks, while we in the latter case must require
+             that each value is a single alphanumeric string with no blanks.
+             The names must in any case be single alphanumeric strings.
+             A parameter file containing the time of the generating program
+             started to run and the two real parameters a and b may then
+             look like:
+                    time = Tue Jan 16 05:17:06 MET 1996
+                    a = 2.57  b  = 3
+             The names time, a and b are choosen by the programmer and at least
+             one blank at each side of  the = is mandatory.
+
+  -sep arg  : sets the string arg as seperator between the entries of the
+              output parameter list. THe default value is a single blank
+              unless  the -alias option is invoked. In that case the 
+              default value is a comma followed by a blank, as in ordinary 
+              lists in a text.
+  -and  : urges the script to use ' and ' instead of the separator string 
+          between the last two entries in the output list.
+  -form arg : Sets the standard format of the valus to arg. The format is
+              given in C (perl) style without the leading '%'. 
+              default value arg=s
+              This setting is overruled by the optional format specifications
+              in the input parameter list below).
+  -sloppy :   Makes the script interpret also '=' as seperator, 
+              regardless of surrounding blanks.
+              default: blanks are required
+  -nfield arg: Selects fields of the parameter value to be returned.
+               arg is a set of numbers, separated by blanks or commas, and
+               blank is assumed field separator for the parameter value.
+               default: all fields are returned.  
+  -alias arg : Specifies arg as a file containing alternate parameter names.
+               This file must conform to the same format as the parameterfile.
+               Example: Assume that the parameters a and b (se example under 
+               -par option) are grid increments in x and y direction. (a and
+               b is not a wise choice for naming such parameters in the first
+               place, but..) If we the wish to create a list in TEX code
+               we may employ an alias file with content:
+                    a = $\Delta x$  b = $\Delta y$
+               default: no alias file is invoked.
+  -post arg  : Governs the standard organization of each entry in the output 
+               list. The setting is overruled by the optional specifications
+               in the input parameter, as for the -form option.
+               Generally the string arg contains a capital N and a capital V,
+               that is replaced by the name and value of the parameters.
+               One of the capital N and V may be omitted. 
+               Default: arg=V unless the -alias option is invoked.
+                        if the -alias option is invoked we employ arg='V'
+                        when the value starts with a letter and arg='N=V'
+                        otherwise.
+               Examples: Again we assume a param.dat containing:
+                    time = Tue Jan 16 05:17:06 MET 1996
+                    a = 2.57  b  = 3
+               With different options we then observe:
+                     COMMAND                       OUTPUT
+              getnew.pe a                          2.57
+              getnew.pe -post N=V a                a=2.57
+              getnew.pe -post 'N equals V' a       a equals 2.57
+
+  -nospes : turns off special meaning of '-' and '#' in par1..parN 
+
+   -preP : OBSOLETE!!!!Removes a capital P from the front of each parameter.
+   
+   -front arg: adds arg, from left, to all parameternames. Particularely useful
+               with arg='-'
+               default: arg=''
+  par1 par2 ....... : list of parameter names, as given in the parameter file,
+               to be processed. Each item argi consists of 3 parts in the
+               given sequence:
+                          name%form-post
+               where the last two, %form and -post, may be omitted. The
+               strings form and post is format and organization, respectively,
+               that will be used for the single entry specified by name instead
+               of those specified by the -form and -post option.
+               
+               
+
+
+
+
+

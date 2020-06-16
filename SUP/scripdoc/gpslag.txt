@@ -1,0 +1,9 @@
+gpslag.pe <filename>
+
+Returns Ver to standard output and the gphov header to standard error.
+Ver may have the values
+  IN  -- 32 bits binary
+  IN8  -- 64 bits binary
+  ascii -- ascii
+  gnu -- a strange, hopefully obsolete, format with redundancies in record 
+         marks

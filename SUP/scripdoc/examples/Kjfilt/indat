@@ -1,0 +1,18 @@
+!give type of coordinates/cartesian/
+
+ !give input file/source.dat/
+hz
+! input = yes
+ !give depth/   1.0000000000000000      /
+5
+ !give truncation limit over depth/   5.0000000000000000      /
+
+ !give n.o. terms in series/  7.40462471103107251E+097 /
+
+ !give n.o. table points/  3.18299369138856493E-312 /
+
+ !give type of interpolation/linear/
+spl
+!lin
+ !give output file/smo.dat/
+sm.dat

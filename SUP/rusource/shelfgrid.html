@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Beach model grid.</title>
+  </head>
+
+  <body bgcolor="white">
+    <h2>The grid for the beach option the potential flow model.</h2>
+       There are three grid options for the beach linked to the value of the igrid parameter in the following way
+<ol>
+<li> Normal (uniform) grid.
+<li> Simple stretched grid.
+<li> Grid with flexible refinement at the beach and bottom.
+</ol>
+    <h3>The flexible grid (3)</h3>
+     The geometry consists of four segments
+<ol>
+<li> The free surface. Here a Lagrangian grid is used.
+<li> Most of the slope (beach). The grid is re-stretched at each 
+     time step to link the shoreline with the start of the bottom segment(no. 3)
+<li> The bottom from a little landward of the toe of the slope and to the
+     vertical wall. A constant partition with length dxb, projected on the 
+     x-axis, is employed. The shoreward limit of the segment is defined as to 
+     have a whole number of intervals dxb.  
+<li> The vertical wall. The grid is re-stretched at each 
+     time step to connect the surface to the bottom. The resolution is uniform 
+     at each time and the number of points specified (mvert).
+</ol>
+    For the grids used in segment 1 and 2 a simple,piecewise linear transformation is used. The partition is made, uniformely, on an interval (0,1). The stretching is then made by mapping this interval (in z, say) ono (0,c) in x, say, by
+x(0)=0, x(ak)=a, x(bk)=b, x(1)=c. for z in (0,ak) and z in (bk,c) the derivative  dx/dz is constant. Moreover dx(c)/dz is f times dx(0)/dz. For z in (ak,bk)
+dx/dz varies linearely. Hence, f is the refinement ratio of the grid.
+A reference grid is refined by spline interpolation and smoothened.
+In the surface grid a and b are between 0 and totl (equilibrium shoreline 
+position). For the beach grid o corresponds to the joint with segment 3 (the bottom) and a,b are between 0 and cslope0, that is the x-span of the segment.
+At z=0 the beach grid has a resolution close to dxb.  
+   <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>

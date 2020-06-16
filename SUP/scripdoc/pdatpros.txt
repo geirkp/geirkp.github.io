@@ -1,0 +1,21 @@
+pdatpros.pe* gphov xyuv conversion
+
+
+Converts a xyuv file to gphov format. Use:
+
+/hom/geirkp/SUP/experiments/pdatpros.pe (-rotate arg) fil
+
+parameters:
+    -rotate arg : rotates data an angle arg (deg)
+
+The other options are obselescent. The xy data are assumed to organized either
+column by column or row by row and the x-axis in the gphov format is the axis
+aligned closest to the physical x-axis. The increments are computed.
+
+Produced files
+
+ U.dat V.dat -- gphov files for the velocity components
+ X.dat Y.dat -- gphov files for x and y; used for controle
+ C.dat D.dat -- gphov files for rotation and divergence that are
+                 computed by differences.
+ param.dat -- contains parameters 

@@ -1,0 +1,29 @@
+linset.pe
+
+Reads an xy-file from standard input and produces either a regular xy file or a gphov file. 
+
+Use
+
+ linset.pe ( options....) < xyinputfile
+ options:
+
+ -dx  arg:  arg is increment in x direction
+     default: computed from data and -x0, -npoints options.
+ -x0  arg: arg is start of x in ouput
+     default: as in input
+ -npoints arg: number of points in output
+      default: same number as in input
+-utform  arg: either  xy  or gphov
+      deafult: arg=xy
+ -m  arg : points in transverse direction (only significant for gphov)
+      default: arg=5
+ -dy  arg : increment in transverse direction (only significant for gphov)
+      default: as dx
+ -y0  arg: start of data in transverse diection
+      default: arg=0.0
+ -o   arg: name of output file
+      default: arg=lins.dat
+ -udval arg: undefined value
+        default: arg=-1
+ -stretch arg arg: rescales data in relation to input
+        default: args= 1 1 

@@ -1,0 +1,290 @@
+
+        genkurv
+       
+   Formaal: Gi en rask bruk av plotxy/gnuplot for datafiler som inneholder et
+            vilk}rlig antall kolonner. Datafilene kan  inneholde
+            et vilk}rlig antall kommentarlinjer fulgt av tallkolonner.
+            En kommentarlinje er definert som en linje der de foerste 
+            ikke-blanke tegn ikke kan svare til et tall, feks at foerste tegn
+            er en bokstav. Tallkolonnene refereres til med nummer, startende
+            paa 1. Dersom en av kommentarlinjene har formen:
+
+              ##kolonner: kol1 kol2 kol3 ...
+
+            vil kol1 kunne benyttes som betegnelse p} foerste kolonne etc.
+            Kolonnebetegnelser satt p} denne m}ten kan ikke v{re positive
+            heltall, da dette kommer i konflikt med nummerering beskrevet 
+            ovenfor.
+            NB: antall kolonner sjekkes bare i foerste linje med tall.
+
+
+   NB: genkurv er bygd etter samme lest som gkurv, men har en litt annen
+       funksjonalitet. For kompatibilitet er enkelte opsjoner beholdt selv
+       om de ikke influerer plottet. Noen opsjoner vil ogsaa ha virkning
+       avhengig av det uderliggende plottesystem.
+       Viktig forskjell: gkurv laget fila myplot med unix plottekode 
+       og sendte tek40xx-kode til
+       standard output. For genkurv settes output med -dev opsjonen. 
+
+   Syntaks:
+
+   genkurv [-opt arg ] [-opt arg ] ... [ datasett ] [ datasett ]...
+
+   Liste av opsjoner for genkurv:
+         -xs arg1 arg2
+             Bare arg1 < koordinat < arg2 skal plottes
+         -ys arg1 arg2
+             Bare arg1 < ordinat < arg2 skal plottes             
+         -xl arg1
+             Tekst p} koord-akse settes til arg1 ( husk quoting dersom teksten
+                inneholder blanke eller andre spesialtegn )
+             default: x
+         -yl arg1
+             Tekst p} ord-akse settes til arg1 ( husk quoting )
+             default: y
+         -csize arg1
+             Setter karakterstorrelse til arg1. Er bare aktivert for
+             postscript-output. Bare maaltall svarerer til tommer, 
+             arg1=Npt svarer til punkter ( 1 tomme = 72 punkter)
+             default: 0.2 
+         -dob 
+             (bare plotxy)   Deler kurvetype og forklaringer paa to kolonner.
+             default er en kolonne.
+         -xinch arg1
+             Setter storrelsen paa plott i x-retning. En avsluttende n 
+             (se -yinch) tolereres, men er uten virkning.
+             default: 8
+         -yinch arg1
+             Setter storrelsen paa plott i y-retning. Dersom arg1 ender
+             paa n, vil arg1 bli storrelsen paa grafen, ellers storrelsen
+             paa graf  og kurve-forklaring. Dersom -anot er satt vil
+             arg1 i alle fall gi storrelse paa graf.
+             default: 6
+         -col arg1
+             (bare plotxy) Setter standard farge til aa vaere arg1, dvs.
+             at koordsystem etc tegnes med denne fargen.
+             default: black
+         -noframe 
+             (bare plotxy)  Koordinatsystem utelates.
+         -nobox
+             (bare plotxy) Akser med tall tegnes, men ingen ramme.
+         -F  arg1
+             Setter feltseparator til arg1. Default er , (komma).
+             Blanke vil alltid oppfattes som feltseparatorer.
+         -ko arg1
+             Setter arg1 til aa v{re standard koordinat-betegnelse.
+             Default er 1, som vil si foerste kolonne.
+         -t arg1
+             Tittel settes til arg1
+             default: ingen
+         -o arg1
+             Styrefil til gnuplot/plotxy lagres pa fila arg1 og alle datafiler
+             generert av scriptet bevares.
+             default: ingen lagring
+         -k arg1
+             Tre muligheter
+          (i) Opsjonen settes ikke. Kurvetyper settes i skriptet i en 
+             fast rekkefoelge. Med -dev psC skilles de med farger
+             i plotxy mode.
+          (ii) arg1=alt. Ulik (i) bare for plotxy. 
+               Kurvene skilles både med farger og stipling.
+          (iii) Kurvetyper settes i hht. til fila arg1, de skrives
+             linjevis i rett format. For gnuplot brukes 
+             lines, points, linepoints etterfulgt av nummer.
+             fila kan feks. se ut som
+                 lines 2
+                 points 5
+                 linespoints 1
+                    ...
+             er det flere kurver enn linjer brukes gnuplots standardvalg
+             For plotxy kan fila se ut som:
+                    dash 0.1 0.1 # color red # weight 10 
+                    symb 4 0.2
+             der # konvereteres til linjeskift i skriptet. Valg av farge
+             overstyrer ps setting og verdi paa weight gir linjetykkelse
+             i tusendels tommer. I prinsippet kan de fleste plotxy kommandoer
+             puttes inn paa fila -- kan vaere aktuelt med notes etc.
+             Ofte oenskes et annet valg av strektykkelse, farge etc. i
+             kurveforklarings-teksten. Dette oppnaes ved aa sette inn
+             spesifikasjoner for teksten etter koden :NOTE:. feks vil
+                  dash 0.2 0 # color red#fill :NOTE: weight 3#color blue
+             gi at kurven fylles med roedt, mens skriften blir tynn og blaa.  
+             default: kurvetype settes i skriptet i en fast rekkefoelge.
+         -a
+             boer ikke brukes, kurvetyper sokes p} $HOME/plotxy.alt
+         -s arg1
+             Stamme settes lik arg1 , benyttes i datasett-postene
+             Argumentet har form arg1=prefiks##postfiks, der fravaer av
+             ## bare gir prefiks. prefiks maa ikke inneholde #
+             For et enkelt argument settes "templatet" ut av spill
+             ved aa foye en innledende \ eller # til filargumentet.
+             (NB: husk ekstra \ eller "")
+             Se forklaring om datasett.
+             default: ingen stamme
+         -sys arg1
+             Setter plottesystem til aa vaere arg1. Mulige valg er
+             gnuplot eller plotxy.
+             default: gnuplot
+         -pause arg1
+             Ny opsjon for gnuplot, bare aktiv sammen med x11 device.
+             arg1 gir omtrentlig det antall sekunder plottet staar
+             paa skjermen.default arg1=10
+         -dev arg1
+             Setter outputformat til arg1.
+             valg:(default: x11 for gnuplot, ps for plotxy)
+               x11  (bare gnuplot) plott vises i eget vindu som spretter opp og
+                    staar i et antall sekunder som kan settes med
+                    -pause opsjonen. lines skilles ved farger.
+               ps   Svart-hvitt postscriptformat, legges paa fila
+                    myplot.ps. Ulike lines har ulikt utseende (solid, dashed
+                    etc.)
+               psC  Som ps, men med farger. Fargevalg er forelopig fast.
+               tek  (bare gnuplot) tektronix, output legges i fila 
+                    $HOME/tek.tmp.
+                    Svakhet: bare points og linespoints gir skillbare
+                    kurver.
+          -symb     Alters standard curve choice from lines to symbols.
+                    deafult: off
+          -symbsize arg (plotxy only) Sets the symbolsize (in inch) for
+                    symbols selected by default. A specified symbol will
+                    have the plotxy default as default size
+                    default: arg=0.1
+          -linewidth arg1
+                    Setter linjetykkelse paa kurver til arg1, regnet i 
+                    punkter (1tomme=72 pkt). Bare aktiv med -dev ps og psC
+          -tex
+               (bare plotxy) angir at kurve-betegnelser og koordinat-angivelser
+               skrives i tex-kode sammen med ps-koordinater paa en fil. Denne
+               kan leses av pakk.pe. Fila har navn "ostem".ps.txt der ostem
+               settes med -ostem (def myplot)
+          -texfont arg1
+               (bare plotxy) setter fontvalg til arg1 i tex-kode.
+          -labelfont arg1
+               (bare plotxy) setter fontvalg til arg1 i tex-kode for akselabler.
+          -ostem arg1
+               soerger for at ps-fil heter  "ostem".ps etc.
+               default: myplot
+          -anot arg1 arg2 arg3 arg4
+               Definerer stoerrelse og plassering av boks med kurvebeskrivelser
+               arg1 og arg2 er forskyvning (i inch) av nedre venstre hjorne
+               av boksen relativt til nedre venstre hjorne av graf-boksen.
+               arg3 og arg4 gir stoerrelsen i inch.
+               default: arg1= 0.0 med -dob opsjon, 0.5 uten, 
+                        arg3=1.35*csize*(antall linjer), 
+                        arg4= verdi satt ved -xinch, fratrukket 0.5 u. -dob op.
+                        arg2= -arg3-5*csize
+               der csize er stoerrelsen satt ved -csize opsjon og det bemerkes
+               y-forskyvning av boks (nederste linje over) er 5*csize mer
+               en boksstoerrelse.  
+         -ansp arg1 
+               (Only plotxy) Sets the amount of horizontal space (inch) 
+               between the curve and the text in the annotation box. 
+               default: arg1=0.1
+         -ctfrac arg
+               (only plotxy) Sets the fraction of the annotation box that is 
+                used for curve samples.
+                default: arg=0.3 if -dob is set, arg=.1875 otherwise.         
+         -off ax ay 
+              (bare plotxy) Translaterer data ( se -stretch), def: ax=ay=0
+         -stretch bx by 
+              (bare plotxy) Strekker data. Sammen med -off opsjon gir denne en 
+             transformasjon:
+                   X=ax+bx*x ; Y=ay+by*y
+             der x og y er verdier paa datafila, mens X og Y er verdiene som
+             plottes.
+             def: bx=by=1 
+         -xlo arg
+             Forskyver aksetekst for x-aksen arg mm i y-retning. Bare aktiv
+             med -tex opsjon. def: arg=0
+         -ylo arg
+             Forskyver aksetekst for y-aksen arg mm i x-retning. Bare aktiv
+             med -tex opsjon. def: arg=0
+         -peplot arg
+             arg tolkes som en fil med instruksjoner for peplot.pe ( som
+             i tillegg til grafer tegner piler sirkler etc.) Den resulterende
+             postscript-kode legges til den fra plotxy vha. adps.pe. 
+             NB: virker bare med -sys plotxy og dersom -ys og -xs er satt.
+             Informasjon om koordianter og postscrip-omraade legges automatisk 
+             til i kallet av peplot.pe, -kbox, -psbox og -exp opsjoner vil 
+             derfor som oftest ikke spesifiseres i fila arg. 
+         -skyv arg1 arg2
+             (Bare plotxy) Forskyver plottet arg1 tommer i x-retning og arg2 
+             tommer i y-retning. Kan vaere nyttig for printing.
+         -psor x0 y0
+              (Only plotxy) Places the lower left corner in the coordinate 
+               system explicitly on the postscript page (inches). With
+               default value the script tries to compute a suitable location.
+         -short 
+              In the absense of expicitly set curve legend, the short form
+              in the file list is used insteda of the expanded form that
+              takes the argument to the -s option into consideration.
+              Default: expanded legend.
+         [ datasett ] 
+             En slik  post definerer en datafil og et sett  kurver for denne.
+             Hver post ser ut som:
+
+             fil,kurver -fork
+
+             Der andre argument er valgfritt
+             Full angivelse av filnavn er da det 
+             sammensatte filnavn='prefiks''fil'postfiks' der pre/post-fiks
+             er satt med -s opsjon. Hele angivelsen ser da ut som:
+             
+               fil,kolbet,kolbet...
+             
+             Dersom en annen feltseparator er satt ved -F maa , byttes
+             med denne. En kan alltid bruke blank og sette hele angivelsen
+             innenfor '' eller "". En foelge er at filnavn ikke kan inneholde
+             blanke eller feltseparatoren. En av kolonnebetegnelsene kan se ut
+             som x=arg, noe som foerer til at arg benyttes som koordinat-
+             angivelse i stedet for standarverdien som er 1 eller satt 
+             med -ko.
+             De oevrige har formen y=arg eller, enklere, bare arg. For hvert
+             slikt felt tegnes en kurve tilsvarende ordinatbetegnelsen arg.
+             Dersom ingen oordinatbetegnelse er gitt brukes 2. Dersom 
+             noedvendig vil skriptet generere en fil pr. kurve med navn:
+
+               filnavn_xkol_ykol
+   
+             Der xkol og ykol betegner hhv. ordinat og koordinat kolonne.
+             Uten bruk av -o opsjon vil disse slettes av scriptet. Dersom
+             koordinat og oordinat svarer til hhv. foerste og andre kolonne
+             i en fil med bare to kolonner og ingen kommentarlinjer 
+             genereres ingen ny fil. Dersom bruker har skriverettighet paa
+             direktoriet der filnavn er, legges en eventuell ny fil der.
+             Hvis ikke maa brukeren inrette seg slik at han har skriverett
+             paa current direktori, og filen legges der. Husk: en lang felles
+             path til flere datafiler kan effektivt innarbeides ved -s opsjon.
+             En innledende \ (satt med feks \\ i shell) eller # setter
+             bruk av s opsjon ut av spill for denne ene fila.
+
+             Kurveforklaring  angis med tekst fork dersom -fork
+             argument er gitt, med tekst=filnavn ellers.
+
+             Eksempler:
+
+                  genkurv  a.dat,2,3  
+   
+             gir 2 kurver; hhv. kol 2 mot kol 1 og 3 mot 1.
+
+                  genkurv a.dat,x=2,3
+
+             1 kurve : 3 mot 2 , det samme som:
+
+                  genkurv -ko 2 a.dat,3
+
+             Inneholder a.dat en kommentar linje 
+             ##kolonner: t,s,p
+             vil samme plott oppn}es ved feks. en av kommandoene:
+
+                  genkurv a.dat,x=s,p
+                  genkurv a.dat,x=s,3
+                  genkurv -ko s 'a.dat p'
+
+             Den andre vil generere fila: a.dat_s_3, den siste a.dat_s_p.
+             Innholdet i disse filene vil naturligvis v{re identisk.
+                 
+
+             
+            
+

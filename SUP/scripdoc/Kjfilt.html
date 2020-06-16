@@ -1,0 +1,261 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Filtering of bottom sources.</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>Program for sea surface response to bottom source.</h1>
+This page is a documentation of fortran codes for reading a source field and
+compute a response at the surface. It utilises the 2D or 3D Green function of 
+    Kajiura. Even though the Green functions are strictly valid for uniform depth only, a variable depth may be imported as a depth matrix and invoked in a local manner. Some features of the programs may not be properly tested.
+    The sources are generally
+chopped at boundaries of the field, implying a localised volume loss there. 
+Otherwise, the methods are generally  strictly volume conserving.
+
+<p>
+    <h1>The method</h1>
+The particulars of the method is given in a separate <a href="Kajrep.pdf">
+report and references therein. </a> (Not yet fully developed). 
+<p>
+<h3>The input and execution</h3>
+    <ul>
+    <li> Parameters are read in a dialogue from standard input. 
+         Lines starting with !
+         are recognized as comments, there are some checks on the input
+         and default values are generally offered. 
+     <li> A file in gphov format, or as a two column file, for the bottom surce (x and y) 
+       must be provided. In the new version and the 2D  also a depth matrix,
+       a positon file,          and a velocity file may be provided.
+          For the 3D program this may correspond to either a cartesian field or a geographical one.
+      <li> Corresponding output-files are produced.
+    </ul>
+    <h2> 3D Filters </h2>
+    <h3> Input </h3>
+    <h4> New version</h4>
+ An inputfile may look like (comments after # must not be included in input to
+    program, see authentic file in link below.)
+    <pre>
+!give type of coordinates/cartesian/
+cartesian #options cartesian , geographical I: extra comment below
+ !give input file/source.dat/
+sor.dat  # input source file in gphov
+!give depth alternative
+matrix # options constant, matrix
+ !give depth matrix
+hmat
+!give source alternative
+moving # alternatives: fixsor, moving
+!give position file
+xpos # only if moving
+!give velocity file
+uslide # may seem redundant, but really defines a strengtyh factor for source.
+ !give truncation limit over depth/   5.0000000000000000      /
+ $blf # distance/depth beyond which the source influence is set to zero. Must be positive
+ !give n.o. terms in series
+ $nterm # number of terms in series expansion for green function
+ !give n.o. table points
+  $ntab # number of points in table for Green function
+ !give type of interpolation/linear/
+spl # spline or linear
+!give rimx and rimy
+$rimx $rimy # extra rimwidth around source in output II:
+ !give output file/smo.dat/
+smC.dat 
+!Give tent. inc. trans field
+$resx $resy # Tentative resolution output. may be a lot courser than in
+!              input source file 
+!give width
+$mss # give points in width
+!give dipole volum/  -1.0000000000000000      /
+$volnum # if input > 0 a dipole source is computed. Volume must be provided
+    </pre>
+    All $something represent a single value.   <br>
+    Everything after # are extra comments and cannot be included in an input file.<br>
+    I: For cartesian all lengths must be equally scaled: a length scale must be chosen. Naturally, that may well be the length of that prototype in Paris, but the depth and grids then must be in meter. The source strength may be scaled arbitrarely; what scaling for this
+    you put in you get out. <br>
+    II: for fixsor there are problems with non-zero rimwidths
+    <h4> Old version</h4>
+An inputfile may look like (comments after # must not be included in input to
+program, see authentic file in link below.)
+<pre>
+!give type of coordinates/cartesian/
+         # alternative is geographical
+ !give input file/source.dat/
+hz
+! input = yes
+ !give depth/   1.0000000000000000      /
+5   # must be given in same unit as carteisn grid, in km for geograph. coord.
+ !give truncation limit over depth/   5.0000000000000000      /
+    # defines region of influnce of point source, default value should suffice
+ !give n.o. terms in series
+    # A large default value secures good accuracy in tabulated Green function
+ !give n.o. table points
+   # density in tabulated Green function
+ !give type of interpolation/linear/
+spl # alternaties are spline or interpolation
+!lin
+ !give output file/smo.dat/
+sm.dat
+</pre>
+
+  <a href="examples/Kjfilt/indat">Input file -- example </a>.
+<a href="examples/Kjfilt/hz">Source  file for example </a>.
+<p>
+  <h3> The output</h3>
+    The following output is produced
+    <ol>
+   <li> param.dat - parameter file
+   <li> hh1 or hh2; two columns (xy). 1 is for linaer interpolation 
+        2 for spline.
+        The file contains the interpolation table. In the linear case this is 
+         simply the values of the Green function. For spline interpolation
+         it is the basic spline coefficient. In the latter case an extra value 
+         is found at the end and beginning of the table and the values of the 
+         Green function at point j is obtained by (v_j-1 +4*v_j+v_j+1)/6.
+    <li> wf (gphov). The response to a point source.
+    <li> zcord - two column with vertical grid (node-number z) 
+    <li> The file (name specified in input) with the surface response.
+
+    </ol>
+    New version may in addition output:
+    <ol>
+      <li> dipsor - dipole source file
+      <li> osor -- source without transfer function, in same format as
+	transfered source.
+	<li> assemb -- may correspond to the total bottom change
+<p>
+  <h3> The code</h3>
+  <h4> New version </h4>
+   <table  width="500" CELLPADDING="5" BORDER="2">
+<tr><td>
+   directory: <td>/hom/geirkp/lib</tr>
+   <tr><td>
+   main program<td> Gkaj.f </tr>
+   <tr><td>
+   additional files:<td>
+</tr>
+   <tr><td>
+   files from other projects:<td> 
+</tr>
+   <tr><td>
+   additional libraries:<td> /hom/geirkp/lib/i386/biblGF8.a /hom/geirkp/lib/i386/diaGF8.a</tr>
+   <tr><td>
+   makefile:<td> i386/mGK </tr>
+   <tr><td>
+   executable: <td> i386/GK </tr>
+   <tr><td>
+   scripts: <td> </tr>
+</table>
+    <p>
+  <h4> Old version </h4>
+
+   <table  width="500" CELLPADDING="5" BORDER="2">
+<tr><td>
+   directory: <td>/hom/geirkp/lib</tr>
+   <tr><td>
+   main program<td> Kajifilt.f </tr>
+   <tr><td>
+   additional files:<td>
+</tr>
+   <tr><td>
+   files from other projects:<td> 
+</tr>
+   <tr><td>
+   additional libraries:<td> /hom/geirkp/lib/i386/biblGF8.a /hom/geirkp/lib/i386/diaGF8.a</tr>
+   <tr><td>
+   makefile:<td> i386/mKjfilt </tr>
+   <tr><td>
+   executable: <td> i386/Kjfilt </tr>
+   <tr><td>
+   scripts: <td> </tr>
+</table>
+    <p>
+    <p>
+      <h2> 2D filter </h2>
+      <h3> Input</h3>
+      <pre>
+ !give scale-factor of initial elevation/   1.0000000000000000      /
+
+ !give a and b in: new x =a+b*(old x)/   0.0000000000000000        1.0000000000000000      /
+
+ !give integration rule/linear interpolation/
+ !comm: way of integrating the source with the Green function. 
+ !linear interpolation
+ !point sources
+ !lumped point sources
+lump
+ !give no. Gaussian points/          10 /
+! Only for linear interpolation
+ !give format of deformation/xy-file/
+!xy-file  # a single line source as xy
+!gphov # a set of line sources as gphov
+!slide-series # a fixed slide body shape is read. Then position and velocity files must be given
+slide
+ !give xy-file/eta.inp/
+qd
+!give position file
+xpos
+!give velocity file
+uslide
+!give extra widths # only for input option slide series
+2 4
+!qd
+ !give truncation tolerence/  9.99999999999999955E-007 /
+
+ !give minimum depth/  1.00000000000000002E-002 /
+
+ !give format depth/flat/
+ !flat # Flat bottom
+ !double-slope# Used in random earthquake study
+ !file# read from two column file
+file
+!give depth file # a two column file
+hxy
+ !give output format
+ !strip # output matches input, either a two column file or a gphov file
+ !field # output is inlated to a single, or a series of, xy fields, uniform in y, for use in GloBouss
+field
+!give ibh# only for output field
+2
+      </pre>
+      Comments
+      <ul>
+	<li>	Dialogue may be modifed for other uses of the program.
+	  <li> When plane simulations for a deformable slide are to be conveyed to GloBouss, the slide deformation rate fields must be convered into a gphov file; one line for each time. Then the output must be chosen as "field". Together with a file for times this may be imported into GloBouss.
+	</ul>
+      <h3> output</h3>
+      <ul>
+	<li> Parameter file, param.dat, with a few parameters only.
+	<li> If 'strip' is specified for output a file 'eta', either two column og gphov, is
+	  produced for the surface respons.
+	  <li> If 'field' is specified for output a gphov file 'smC.dat' is produced for the surface respons, while a file in the same ormat are prodiuce for the bottom sources ('osor').
+	</ul>
+  <h3> code </h3>
+   <table  width="500" CELLPADDING="5" BORDER="2">
+<tr><td>
+   directory: <td>/hom/geirkp/tsunamisource/okada</tr>
+   <tr><td>
+   main program<td> enDsres.f </tr>
+   <tr><td>
+   additional files: <td>intglib.f 
+</tr>
+   <tr><td>
+   files from other projects: <td>/hom/geirkp/runup/obliq/georut.f 
+</tr>
+   <tr><td>
+   additional libraries:<td> /hom/geirkp/lib/i386/biblGF8.a /hom/geirkp/lib/i386/diaGF8.a</tr>
+   <tr><td>
+   makefile:<td> i386/menDsr </tr>
+   <tr><td>
+   executable: <td> i386/enDsr</tr>
+   <tr><td>
+   scripts: <td> </tr>
+</table>
+    <p>
+   <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>

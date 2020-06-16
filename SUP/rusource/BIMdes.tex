@@ -1,0 +1,165 @@
+\documentclass[11pt]{article}
+\usepackage{array,epsfig,epsf,rotating,graphics,colordvi,color,a4}
+\newcommand{\Mder}[1]{\frac{{\mathrm D}#1}{{\mathrm D}t} }
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\Ai}{\mathrm{Ai}}
+\newcommand{\third}{\frac{1}{3}}
+\newcommand{\sixth}{\frac{1}{6}}
+\newcommand{\beq}{\begin{equation}}
+\newcommand{\eeq}{\end{equation}}
+\newcommand{\beqn}{\begin{eqnarray}}
+\newcommand{\eeqn}{\end{eqnarray}}
+\newcommand{\der}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\oder}[2]{\frac{{\rm d}#1}{{\rm d}#2}}
+\newcommand{\numm}[1]{(\ref{#1})}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\imunit}{{\mathrm i}}
+\newcommand{\OBS}[1]{\marginpar{\scriptsize #1}}  % \OBS{margin comment}
+\newcommand{\us}{u^{(s)}}
+\newcommand{\vs}{v^{(s)}}
+\newcommand{\dt}{\Delta t}
+\newcommand{\Mdto}[1]{\frac{{\mathrm D}^2#1}{{\mathrm D}t^2} }
+
+\begin{document}
+\title{A note on a BIM model made for runup}
+\author{G.~Pedersen}
+\date{\today }
+\maketitle
+\subsubsection{Introduction}
+This note is a brief description of a full potential flow model with
+particular adaptations to moving shorelines.
+ The model is closely related to the
+higher order technique of  \cite{Cooker:1990,Dold:1992}, while the formulation differs from the standard references \cite{Grilli:1990,Grilli:1994,Grilli:1997}. However, while these references employ high order polynomials for interpolation along the contour
+we use 
+cubic splines. This makes inclusion of boundary conditions simpler and does 
+ allow for the inclusion of a moving shoreline in particular. 
+
+At the shoreline point we 
+assume analyticity which in principle excludes cases with contact angles 
+larger than $90^\circ$. Also some other features, such as the numerical 
+integration procedure along the contours, differ from the references. 
+Boundary integral methods are not efficient for the computation of very thin swash tongues that evolve during runup/withdrawal of higher waves. This is ironical
+since the flow may be so simple that even the shallow water equations are unnecessarily complicated (see \cite{Jensen:2003}). The proximity of the surface and 
+the bottom parts of the contour requires a smaller time step relative to 
+the grid spacing and a higher order numerical integration than in deeper water.
+A runup value should then only be accepted if a systematic refinement sequence 
+of at least three grids, with the the same integration rule, produce consistent results and point to at least three correct digits.      
+
+
+
+\section{A boundary integral method}
+In the fluid the motion is governed by the Laplace equation 
+\[\nabla^2\phi=0\quad \mathrm{for}\quad -h<z<\eta.\]
+At the free surface ($z=\eta$) the Bernoulli equation is
+expressed as
+\beq
+\label{Bernoulli}
+\Mder\phi -\half(\nabla\phi)^2+\eta=0
+\eeq
+The kinematic condition at the surface is written in the Lagrangian form
+\[\Mder\eta=\der\phi z\,\quad \Mder\xi=\der\phi x,\]
+where $(\eta,\xi)$ is the position of a surface particle.
+At rigid boundaries (bottom or sidewalls) we have
+\[\der\phi n=0,\] 
+where $n$ denotes the direction normal to the boundary.
+
+This model is related to the high order technique of  
+\cite{Dold:1992}. However, to allow more flexible boundary conditions, 
+as sloping beaches, the high order polynomials are replaced by cubic splines 
+for the spatial interpolation between nodes. Accordingly the order of the 
+temporal scheme is reduced to third order accuracy. 
+ The key features then become
+\begin{itemize}
+\item Lagrangian particles are used along the free surface. At other 
+boundaries both fixed and moving nodes may be employed
+\item Cauchy's formula for complex velocity ($q=u-\imunit v$) is used to produce an implicit relation between the velocity components along the surface
+\beq
+\label{Cauchyrel} \alpha \imunit q(z_p)=\mathrm{PV} \oint\limits_C \frac{q(z)}{z_p-z}dz
+\eeq
+where $\alpha$ is the interior angle. 
+Following \cite{Dold:1992} the integral equation \numm{Cauchyrel} is rephrased
+in terms of the velocity components tangential and normal to the contour,
+denoted by $\us$ and $\vs$, respectively. Invoking the relation 
+\[\us-\imunit \vs =\mathrm{e}^{\imunit\theta}(u-iv),\]
+where $\theta$ is the angle between the tangent and the $x$-axis,
+we then obtain 
+\beq
+\label{usrel} \alpha \imunit (\us_p -\vs_p)=\mathrm{e}^{\imunit\theta_p}\mathrm{PV} \oint\limits_C \frac{\us-i\vs}{z_p-z}ds.
+\eeq
+For rigid boundaries, where the normal velocity is known, the real component
+of this equation is imposed, while the imaginary component is used at free surfaces, where $u_s$ is known from the integration of the Bernoulli equation.
+The equation set is established by
+collocation in the sense that $z_p$ runs through all nodes to produce
+as many equations as unknowns (see figure \ref{Cauchydef}). 
+\item Cubic splines for field variables -- solution is twice continuously
+differentiable
+\item Combination of Taylor series expansion and multi-step
+technique used for time integration. This allows for variable time stepping.
+For instance, $\phi_p$ is advanced one time step $n$ to $n+1$ according to
+\[\phi_{(n+1)}=\phi_{(n)}+\dt_{(n)}\left(\Mder\phi\right)_{(n)} +\half\dt_{(n)}^2\left(\Mdto\phi\right)_{(n)}+\sixth\frac{\dt_{(n)}^3}{\dt_{(n-1)}}\left(\Mdto\phi_{(n)}-{\Mdto\phi}_{(n-1)}\right).\]
+The last, backward difference both increases the accuracy and stabilize the
+scheme. The first temporal derivative of $\phi$ is obtained from the Bernoulli
+equation. We then also obtain the local derivative, $\der\phi t$,
+that is used to define a boundary value problem for the temporal derivatives
+of the velocity. This is identical to the problem for the velocities 
+themselves, given by \numm{Cauchyrel} or \numm{usrel} with $u$ and $v$
+replaced by their local time derivatives. Formulas like the one above
+are applied to the other principal unknowns $\xi$ and $\eta$.  
+\item   Special treatment of corner points; invocation of analyticity.
+\item Like most models of this kind some filtering is required in the nonlinear
+      case to avoid growth of noise. A five point smoothing formula is applied
+to this end.
+\end{itemize}
+In sum we have a ``moderately high order'' method that is lower order 
+compared to the method \cite{Dold:1992}, but at the same time less 
+restricted at the boundaries.
+  
+The computational cycle consists of the following main steps 
+\begin{enumerate}
+\item We know velocities (and more) at $t$. Time stepping by discrete 
+      surface condition give $\phi$ (potential) and  particle positions 
+      at the surface for $t+\Delta t$
+\item $\phi$ at surface yields the tangential velocity at the surface
+\item Crucial step: 
+      Tangential velocity at surface and bottom condition (normal velocities)
+      yield
+      equations for the other velocity component through the integral 
+      equation \numm{usrel} that is equivalent to the Laplace equation
+\item $\partial\phi/\partial t$ is obtained from the Bernoulli equation \numm{Bernoulli}.
+      The tangential component of the temporal derivative of the velocity is
+      then obtained, in analogy to step 2, and
+      the linear equation set from step 3 is solved with a new
+      right hand side to obtain the remaining component of $\partial {\bf v} /\partial t$.
+\item The Bernoulli equation is differentiated, materially, with respect to 
+$t$ and   $\Mdto{\phi}$ is computed.
+\item Now the first and second order Lagrangian derivatives of $\phi$, $\xi$
+and $\eta$ are computed at $t+\dt$ and the cycle may repeat itself.
+\end{enumerate}
+The whole problem is then posed in terms of the position of the fluid boundary and the velocity potential there. Values of velocities within the fluid may
+be obtained by choosing $z_p$ as
+an interior point and put $\alpha=2\pi$ in the Cauchy relation 
+\numm{Cauchyrel}, which then provide explicit expressions for $u_p$ and $v_p$.
+In the linear case the procedure is substantially simplified since the 
+geometry is constant and matrices involved in the third step may be 
+computed and factorized only once.
+ 
+\begin{figure}
+\centerline{
+\makebox{
+\setlength{\unitlength}{1mm}
+\begin{picture}(105,48)(0,-10)
+\put(  5.25,  9.20){\epsfig{figure=BM.ps,width= 94.50\unitlength,height= 29.61\unitlength}}
+\put( 52.50, 40.80){\makebox(20,10)[lb]{$z_p=x_p+\imunit y_p$}}
+\put( 28.57, 21.04){$\nabla^2\phi=0$}
+\put( 21.00, 41.80){$C$}
+\end{picture}}
+}
+\caption[\ ]{ \label{Cauchydef}Definition sketch of computational domain in
+BIM method
+}
+\end{figure}
+
+\bibliographystyle{plain}  % typesettingsformatet
+
+\bibliography{/hom/geirkp/tex/newref,/hom/geirkp/tex/runup}
+\end{document}

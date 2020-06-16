@@ -1,0 +1,36 @@
+  /hom/geirkp/SUP/experiments/initialperf.sh
+
+  Prepare initialization for paddle iteration. 
+  The initial and final files are in
+  volt, cm and seconds.
+  Everything is performed within a rigid filestructure (see below) that
+  is consistent with the one of initperf.sh.
+  The shell is a wrapping of /hom/geirkp/SUP/experiments/lagtser.pe.
+
+  options
+         -case arg: Sets case identifier
+               default arg=IV
+         -depth|-dyp arg: set the depth
+               default arg=0.2
+         -glatt arg: Number of pointwise smoothenings used in  production
+                of voltage (conveyed to lagtser.pe)
+                default arg=0
+         -fasit arg: name of file with the desired ("prescribed") 
+                     paddle-displacement (in cm and s).  
+                     default arg='wave.dat'
+         -hz arg: sampling rate for output voltage
+               default arg=500
+ 
+
+    Filstructure:
+      Starting at the current directory, where the script is run, we
+      have the following folders and subfolders ($case is the case identifier)
+
+      ./case$case/initial
+        Paddle-input in file padin1$depth, parameters in param.dat
+        Other subdirectories are not touched
+
+      ./prescribed/case$case/$fasit
+         contains the desired paddledisplacement as tx in file $fasit
+
+

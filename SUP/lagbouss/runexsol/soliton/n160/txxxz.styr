@@ -1,0 +1,7 @@
+set terminal x11 
+set size  0.70000, 0.71429 
+set title " "  
+set xlabel  "x"
+set ylabel  "y"
+plot "max.dat_1_3" title "max.dat" with lines
+pause 100

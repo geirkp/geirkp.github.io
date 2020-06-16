@@ -1,0 +1,41 @@
+gparvar.pe* plotxy parameter
+ The script extracts values for a given set of parameters from a series
+ of systematically named parameter-files. The results is written in genkurv
+ format on standard output. A line starting with "##kolonner:", that identify
+ the parameters by their name, is given at the head of the output. The
+ parameter-files must be in the format required by the getnew.pe script.
+ use:
+  gpvar.pe  (-a arg) (-var arg) (-fil arg) (-undef arg) (-nohead)
+ where   
+  -fil arg : Defines the generic form of name for the parameterfile.
+             Normally arg contains one, and only one, substring "#a",
+             which is subsequently replaced by a list of values (given by -a)
+             to produce the corresponding list of file-names. If the file-names
+             are directories, the default filename '/param.dat' will eventually
+             be added. If arg do not contain "#a", arg is virtually replaced
+             by the derived string #a/arg. Default value arg = ''
+ -aname : sets names on produced columns 
+ -a arg : specifies the list of file-name parts to be inserted in the generic
+           form (given by -file). The items  in arg may be separated either by
+           commas or blanks. In the latter case the argument must be qouted.
+           There is a special value arg = 'alle'. In this case all possible
+           matches for file-name parts (corresponding to existing files) is
+           found and used. The list of the matches is subjected to a numeric 
+           sort. Default arg = 'alle'. 
+ -witha :  Causes the file-name parts specified by -a to be included at
+           the beginning of each line. Deafualt: no such inclusion  
+ -var arg: specifies the list of parameter-names as given in the 
+            parameter-files.The items  in arg may be separated either by
+            commas or blanks. In the latter case the argument must be qouted.
+            Each parameter-name may be appended a string :N, where N is an 
+            posetive integer. This enables the extraction of entry N in a
+            multi-number parameter value. Example: If Z is the name of a
+            complex parameter, the parameter-file may contain a line of form:
+             Z = val1 val2
+            where val1 and val2 are the real and imaginary part, respectively.
+            To obtain the real part we specify Z:1 in the parameter list.
+            Default arg = ''. (nothing of interest is produced). 
+  -undef arg : specifies the value to printed when a parametername is not
+            found in a given parameter-file.
+            Default arg = '-111'.
+  -nohead : noe header is printed 

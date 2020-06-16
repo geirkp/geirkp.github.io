@@ -1,0 +1,72 @@
+pilplott.pe
+
+Generates an inputfile to peplot.pe that will produce a vector field depicted
+with arrows, including a legend-box with a "sample" arrow of prescribed
+size.
+
+use:
+/hom/geirkp/bin/graf/pilplott.pe [ \#DEF:fil ] [ options..] infil1 [ infil2 ]
+
+    -isel arg arg --  selected densisty in x and y direction. Only first option
+           is used for xyuv input.   
+           default: 1 1  
+    -ioff  arg arg -- offset for point selection
+           default 0 0  
+    -off   x0 y0 -- offset for coordinates. Plotting is done in coordinates
+                    (x',y') where x'=x0+sx*x_input 
+           default 0.0 0.0  
+    -stretch  sx sy -- coordinate stretch factors
+           default 1 1 
+    -xs  min max -- x' range for plotting  
+           default: max/min found from data
+    -ys   min max -- y' range for plotting  
+           default: max/min found from data
+    -uoff u0 v0 -- velocity offset. Plottet velocities are u'=u0+ux*u_input etc.
+           deafult: 0 0  
+    -vstretch ux vx -- velocity stretch factors 
+           default: 1 1  
+    -scal  lr [hr] -- lr is length of reference arrow measured in 
+                      coordinate units. If a charcter f is added to the number
+                      the number is interpreted as fraction of (xmax-xmin).
+                      If a % is added instead of f the number is percent of
+                      (xmax-xmin).
+                      hr (optional) is the speed that the reference arrow
+                      corresponds to.
+           default: lr=0.3 , hr=maximum speed in data. 
+    -refpos "xr yr" -- sets position (lower left) of reference (legend) box.
+                     Numbers followed by f is interpreted as fractions, as
+                     for -scal. Argument =none turns box off.
+           default:  Selects a place in upper left of coordinate system. 
+    -xinch  arg -- set length of x region in inches
+           default: 5  
+    -o  arg -- Stem in names of output-files. Generated files
+               Stem.ext where
+                 ext=txt : latex text to be included by pakk
+                     head : coordinate box
+                     pil : inputfile to peplot.pe
+                     legpil : inputfile to peplot.pe, reference arrow
+           default: ppil  
+    -linplace  arg -- legend boxes are organized in an array, arg is the row
+               number for present dataset.
+           default: 1  
+    -verplace arg -- column number for legend box. 
+           default: 1 
+    -inform  arg -- format of input data, xy or gphov
+           default: gphov  
+    -umask arg arg -- allowable region for u-values
+           default:  -665 -0.0001  
+    -veps  arg -- minimum length of velocity vector
+           default: 0.1  
+    -vmax  arg -- maximum length of velocity vector
+           default: 300 
+    -pilop  arg - options conveyed to the pil feature of peplot.pe
+           default: "-fig strekpil  -style line -b 0.08 -sat 1 -bright 0  
+    -piladd  arg - additional options conveyed to the pil feature of peplot.pe
+                   (addition to default ones)
+           default: ''   
+    -legtex arg -- text in legend box
+           default:   
+    -boxrim arg arg arg -- rimwidths for legend box 
+           default: 0.2 0.15 0.66  
+    -boxop  arg -- options for box drawing in peplot.pe
+           default: -col black -linewidth 0.5 -style close 

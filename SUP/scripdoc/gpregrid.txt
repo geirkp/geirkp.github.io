@@ -1,0 +1,14 @@
+gpregrid.pe (arguments) <file>
+Regrids a field in gphov format by either linera interpolation or splines.
+
+Arguments
+<fil> : name of file with data to regrid (mandatory)
+
+-bin -asc : specifies <file> as binary or ascii , regardless of name convention
+-spline : spline interpolation if invoked, otherwise bi-linear
+-refine ax ay : sets new increments as dx/ax, dy/ay, where ax, ay do not need
+                to be integers.
+                Default: 5 1 
+-o arg : sets name of outputfiel. Default: ref.dat 
+-igl arg1 arg2 : sets number of three point smothing in the two directions, 
+                 respectively. Default: 0 0

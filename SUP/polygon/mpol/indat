@@ -1,0 +1,10 @@
+!gi fil
+korn.dat
+!give interval
+1 11
+!give n/100/
+100
+!give undef value
+-100
+!give tolerence at boundaries/1.0e-7/
+

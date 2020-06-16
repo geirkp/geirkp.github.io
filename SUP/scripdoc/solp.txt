@@ -1,0 +1,5 @@
+solp
+
+A fortran program in  /hom/geirkp/solitons which computes solitary wave 
+solutions according to Tanakas method. The program should not be used
+for amplitudes less than 0.1, say. Is invoked by fullsol

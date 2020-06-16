@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>A digiflow to ascii converter.</title>
+  </head>
+
+  <body bgcolor="white">
+    <h1>A digiflow to ascii converter.</h1>
+This page is a documentation on a .dfi to text filter for binary data-files
+from DigiFlow. Author of script: Jostein Kolaas.
+<p>
+    <h2>Use</h2>
+Example (32 bits code)
+<pre>
+~/lab/bin/dfi2txt32 piv003415.dfi
+Converting piv003415.dfi -> piv003415.txt
+</pre>
+The heading of the generated file looks like
+<pre>
+64 512 4
+ -0.0000000000000000e+00 -0.0000000000000000e+00  8.0000000000000000e+00  1.0000000000000000e+00
+ -0.0000000000000000e+00 -0.0000000000000000e+00  2.4000000000000000e+01  1.0000000000000000e+00
+ -0.0000000000000000e+00 -0.0000000000000000e+00  4.0000000000000000e+01  1.00000
+</pre>
+The first two numbers on the first line are array sizes (nx and ny). 
+The third is number of fields. In this case 4 means u v x and y. 
+  <h2> The code</h2>
+<pre>
+Skal være mulig å linke dfi2double.o og libz.a for å lese inn i eget program.
+Hvis du vil kompilere for 32bit så er det letteste å redigere makefilen.
+kommenter (#) linjene under "# matlab 64 bit linux" og
+fjern kommenteringen under "# matlab 32 bit linux". og så kjøre:
+$ Make clean
+$ Make
+<pre>
+   <table  width="500" CELLPADDING="5" BORDER="2">
+<tr><td>
+   directory: <td>UiO:/mn/anatu/hydrolab-data/josteiko/digiflow, Nordlysvn:/hom/geirkp/lab/bin</tr>
+   <tr><td>
+   main program<td>  </tr>
+   <tr><td>
+   additional files:<td>
+</tr>
+   <tr><td>
+   files from other projects:<td> 
+</tr>
+   <tr><td>
+   additional libraries:<td></tr>
+   <tr><td>
+   makefile:<td> Made in matlab </tr>
+   <tr><td>
+   executable: <td> dfi2txt (for 64 bits architecture) dfi2txt32</tr>
+   <tr><td>
+   scripts: <td> </tr>
+</table>
+    <p>
+   <p>
+   <hr>
+    <address><a href="mailto:geirkp@math.uio.no">Geir Pedersen</a></address>
+<!-- hhmts start -->
+<!-- hhmts end -->
+  </body>
+</html>

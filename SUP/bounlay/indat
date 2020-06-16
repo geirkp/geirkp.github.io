@@ -1,0 +1,36 @@
+!Lines strating with exclamation marks are comments and are skipped
+!by the program.
+!Give file for outer velocity/
+../ESusb      
+!give trace file (t,x)/Tratx/ (answer = stop surpresses this functionality) 
+wedge
+!integrate dissipation to the right?
+yes
+!give du for boundary layer thickness/  9.99999978E-03 /
+0.0033314
+!give simulation mode
+nonlin
+!give type of grid/linear/
+exp
+!give stretch factor/   2.0000000     /
+ 4
+!give number of points in z/         100 /
+200
+!give upper limitation of z grid/  9.99999978E-03 /
+0.1
+!give viscosity coefficient/  9.99999997E-07 /
+3.56961e-06
+!give maximum timestep/  5.83630092E-02 /
+0.004
+!give steps between printing/          58 /
+61
+!give pos. file for dense series
+stop
+!If denser time series are desired for a number of points a file name with
+grid poistions (integers) must be specified
+!gi sample-dens of series
+!7
+!number must be given if a file is specified as response to the preceding
+!guestion
+!give low velocity limit/  -500.00000     /
+

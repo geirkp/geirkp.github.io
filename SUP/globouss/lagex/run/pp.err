@@ -1,0 +1,39 @@
+ give type of input grid/geographical/
+ give bathymetry choice/depth-matrix/
+ give depth matrix/dyp.dat/
+ Modify grid ?/no/
+ give land treshold/   0.0000000000000000      /
+ gi initiell hevn/eta.dat/
+ Read initial velocity fields/no/
+ give time for in. velocities/   0.0000000000000000      /
+ gi initiell u/u.dat/
+ gi initiell v/v.dat/
+ Add oscill to the initial conditions?/yes/
+ give source-file format/none/
+ Dispersive equations?/yes/
+ Non-linear equations?/yes/
+ Corrected dispersion/yes/
+ Numerical corrections/yes/
+ give number of iterations/           2           2 /
+ give init. of mom. iter./previous-value/
+ give no. 5 point smothing/           0 /
+ give width of sponge layers/   0.0000000000000000      /
+ give output format for grid/Input/
+ give output format for fields/ascii/
+ Specify fields to be printed/y u v/
+ bermax= F
+ give Coriolis parameter/   0.0000000000000000      /
+ give file for eta time series/stop/
+ give file for u time series/stop/
+ give file for v time series/stop/
+ dt_default=  0.25094300000000008       =   0.25094300000000008       sek.
+ specify time interval (sec)/   5.0000000000000000      /
+ give time step reduction factor/   1.0000000000000000      /
+ give number of intervals/           5 /
+ give legal eta span/   1000000.0000000000       -1000000.0000000000      /
+ give pro-mat-output/none/
+Finished loop:     1
+Finished loop:     2
+Finished loop:     3
+Finished loop:     4
+Finished loop:     5
