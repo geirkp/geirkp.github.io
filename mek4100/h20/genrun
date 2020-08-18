@@ -1,0 +1,20 @@
+#!/bin/bash
+
+marker=tiljob
+her=`pwd`
+Me=/home/geirkp/kurs/mek4100
+
+cd /home/geirkp/kurs/mek4100/oppgavehefte
+fil=noppg
+prospak -pdf $fil
+cp $fil.pdf $her
+
+cp $Me/Twoscal/twobem.pdf $her 
+cp $Me/Twoscal/WKB.pdf $her 
+
+cd $her
+cd ..
+rsync -rLpDt -v h18 math.uio.no:/mn/sarpanitu/ansatte-u1/geirkp/www_docs/mek4100
+ssh math.uio.no "chmod -R go+Xr www_docs/mek4100"
+
+echo slutt $marker
