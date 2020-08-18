@@ -1,0 +1,364 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="nb"><head>
+
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+
+<title>Plan (MEK4100 - vår 2014)</title>
+
+</head><body><h1>Undervisningsplan
+    (MEK4100 - 
+    vår&nbsp;2014)
+  </h1>
+<h3>
+Linjer merket med * i første kolonne inneholder foreløpige planer som kan bli 
+endret. Etter at undervisning er gitt oppdateres beskrivelsen.<br>
+Dersom ikke annet er oppgitt undervises det i B91,
+tirsdag og onsdag 10.15-12.
+<p>
+</p></h3>
+
+&nbsp;
+  <table border="1" cellpadding="5" cellspacing="0"><tbody>
+
+<tr>
+<td width="5%"><b>Dato</b></td>
+<td width="60%"><b>Tema</b></td>
+<td width="30%"><b>Kommentarer/ressurser</b></td>
+</tr>
+
+<tr valign="top">
+<td>14/1 </td>
+<td> Innledning. Enheter, eksempel på bruk av dimensjoner og motivering for
+PI-teoremet.</td>
+<td> Forelesning</td>
+</tr>
+<tr valign="top">
+<td>15/1 </td>
+<td> PI-teorem med eksempler. Vi startet på eksemplet "Projectile problem".</td>
+<td> Forelesning.</td>
+</tr>
+
+
+<tr valign="top">
+<td>21/1 </td>
+<td> Ingen undervisning.</td>
+<td> </td>
+</tr>
+<tr valign="top">
+<td>22/1 </td>
+<td> Avslutter eksemplet "Projectile problem" og teori 
+om dimensjonering/skalering.  Oppgaver: 1, 2 og 3 fra hefte.
+</td>
+<td> Forelesning/øving.</td>
+</tr>
+
+<tr valign="top">
+<td>28/1 </td>
+<td> Enkle eksempler på pertubasjonsløsninger; algebraiske likninger
+og ODE'er. </td>
+<td> Forelesning</td>
+</tr>
+<tr valign="top">
+<td>29/1 </td>
+<td> Vi fortsetter med perturbasjoner. Deretter gjennomgår vi
+oppgavene 4, 5 og 6 fra heftet.
+</td>
+<td> Forelesning/Øving.</td>
+</tr>
+
+<tr valign="top">
+<td>4/2 </td>
+<td> Tvungne svingninger. Eksempel med resonans.
+Sammenbrudd av direkte perturbasjonsteknikk for fri svingninger. 
+Poincare-Lindstedts metode.
+</td>
+<td>Forelesning. </td>
+</tr>
+<tr valign="top">
+<td>5/2 </td>
+<td> Logan: Oppgave 9 side 166, 
+oppgave 12 side 167, men stopp til orden epsilon. Tilleggspørsmål: sammenlikn maksimum 
+høyde fra perturbasjonsløsningen med det eksakte  resultatet som kan
+finnes fra energibetrakninger. <br>  
+Fra hefte: 14, 8, 10.<br> 
+Anbefalte ekstra oppgaver fra Logan: 1 side 165, 6 side 166, 10 side 167.
+Kanskje også 20 og 21 på side 169. 
+</td>
+<td> Øving.</td>
+</tr>
+
+
+<tr valign="top">
+<td>11/2 </td>
+<td> Poincare Lindstedts  metode fortsetter. Vi tar først oppgave
+ 8a side 166 fra Logan. Denne kan studentene prøve å løse før timen.
+Deretter ser vi på en realistisk anvendelse: Stokes bølger (<a href="stokslide.pdf">slides</a>).<br> 
+Mulig start på singulær perturbasjon for algebraiske likninger.
+</td>
+<td>Forelesning. </td>
+</tr>
+
+<tr valign="top">
+<td>12/2 </td>
+<td>  Fra Logan: oppgave 2, side 165. Finn i alle fall perturbasjonsløsningen.
+     Du kan gjerne finne noen ledd i Taylorutviklingen og bruke numerisk 
+     løsning også.
+Fra hefte: 9, 11, 12. <br>
+Logan: oppgave 8c, side 166. 
+</td>
+<td> Øving. Studentene gjennomgikk oppgavene på egenhånd.</td>
+</tr>
+
+
+<tr valign="top">
+<td>18/2 </td>
+<td> Vi tar opp ting i forbindelse med oblig 1.
+</td>
+<td>Gruppetime. </td>
+</tr>
+
+<tr valign="top">
+<td>19/2 </td>
+<td>  Singulære perturbasjoner. Grensesjikt. 
+</td>
+<td> Forelesning.</td>
+</tr>
+
+<tr valign="top">
+<td>25/2 </td>
+<td> Grensesjikt fullføres
+</td>
+<td>Forelesning. </td>
+</tr>
+
+<tr valign="top">
+<td>26/2 </td>
+<td> Hefte: 12c, 17, 49 og 50, 27, 21.
+</td>
+<td> Øvelse.Vi rakk ikke 27c, 49 og 50.  
+</td>
+</tr>
+
+
+<tr valign="top">
+<td>4/3 </td>
+<td> Multiple skalaer <a href="twobem.pdf">(slides) </a>
+</td>
+<td>Forelesning. </td>
+</tr>
+
+<tr valign="top">
+<td>5/3 </td>
+<td> Hefte: 27c (finn ledende orden for alle røtter),
+ 49, 50, 21 (se kommentarer under), 19.<br>
+I oppgave 21 krever vi at z og u er reelle. Etter at de ledende
+ledd er funnet (gjort 26/2) settes likningene til neste orden i u opp
+og sekulære ledd diskuteres. Merk at vi her kan få krav på løsningen fra 
+ledende orden.   
+</td>
+<td> Øvelse.</td>
+</tr>
+
+
+<tr valign="top">
+<td>11/3 </td>
+<td> Vi tar sikte på et slags regneverksted der 
+vi tar opp spørsmål for å hjelpe studentene i gang med
+løsing av oppgaver etc. </a>
+</td>
+<td>Uformell gruppetime. </td>
+</tr>
+
+<tr valign="top">
+<td>12/3 </td>
+<td> Hefte: 16, 28, 29, 34, 30, 31.
+</td>
+<td> Øvelse.</td>
+</tr>
+
+<tr valign="top">
+<td>18/3 </td>
+<td> Oppgave 34 gjennomgås og diskuteres.
+Etterpå blir det "regneverksted".</a>
+</td>
+<td>Øvelse. </td>
+</tr>
+
+<tr valign="top">
+<td>19/3 </td>
+<td> Hefte: 33, 55, 43, 22, 23, 24.
+</td>
+<td> Øvelse.</td>
+</tr>
+
+<tr valign="top">
+<td>25/3 </td>
+<td> Gjennomgang av oppgave 24b.
+Variasjonsregning.</a>
+</td>
+<td>Forelesning. </td>
+</tr>
+
+<tr valign="top">
+<td>26/3 </td>
+<td> Hefte: 25, 54ab, 56. Alle oblig-grupper må presentere
+sin ODE løser. 
+</td>
+<td> Øvelse. Forberedelse for oblig 2.</td>
+</tr>
+
+<tr valign="top">
+<td>1/4 </td>
+<td> Variasjonsregning forsetter.</a>
+</td>
+<td>Forelesning. </td>
+</tr>
+
+<tr valign="top">
+<td>2/4 </td>
+<td> Noen oppgaver som gjenstår: 23 og 56de fra heftet.
+Forøvrig kan vi ta opp problemer med oblig. 2 eller andre ting.
+</td>
+<td> </td>
+</tr>
+
+<tr valign="top">
+<td>8/4 </td>
+<td> Presentasjoner av oblig 2. Vi tar sikte på at hver gruppe holder på
+20-30 min.</a>
+</td>
+<td>Studentpresentasjoner. </td>
+</tr>
+
+<tr valign="top">
+<td>9/4 </td>
+<td> Variasjonsregning. Utvidelser av standardproblem til
+flere ukjente, høyere ordner og flere fri variable (PDEer).
+Naturlige randbetingelser.
+</td>
+<td> Forelesning. </td>
+</tr>
+
+<tr valign="top">
+<td>15/4 </td>
+<td> Ingen undervisning</a>
+</td>
+<td>Påske. </td>
+</tr>
+
+<tr valign="top">
+<td>16/4 </td>
+<td> Ingen undervisning
+</td>
+<td> Påske. </td>
+</tr>
+
+<tr valign="top">
+<td>22/4 </td>
+<td> Ingen undervisning
+</td>
+<td>Reisedag etter påske. </td>
+</tr>
+
+<tr valign="top">
+<td>23/4 </td>
+<td> Vi starter med oppgave 60 fra hefte. Deretter tar vi opp andre ting knyttet
+til variasjonsregning eller begynner på Hamiltons prinsipp.
+</td>
+<td> Forelesning </td>
+</tr>
+
+<tr valign="top">
+<td>29/4 </td>
+<td> Logan, kap. 4.3, oppgave 1, 7, 12, 13<br>
+Logan, kap. 4.4, oppgave 1ab. <br>
+</td>
+<td>Oppgaveregning </td>
+</tr>
+<tr valign="top">
+<td>30/4 </td>
+<td> Hamiltons prinsipp, Hamiltons kanoniske likninger.
+</td>
+<td>Forelesning.</td>
+</tr>
+
+<tr valign="top">
+<td>6/5 </td>
+<td> Regneverksted.
+</td>
+<td> Gruppetime</td>
+</tr>
+
+<tr valign="top">
+<td>7/5 </td>
+<td>Oppgavehefte: 35, 42, 36, 37, 61<br>
+</td>
+<td>Oppgaveregning </td>
+</tr>
+
+<tr valign="top">
+<td>13/5 </td>
+<td> Vi går igjennom oppgave 61.<br>
+Dereter regneverksted.
+</td>
+<td> Gruppetime.</td>
+</tr>
+
+<tr valign="top">
+<td>14/5 </td>
+<td> Hefte: 39, 44, 51, 52, 46<br>
+Eksamen Me207, fredag 17. desember, 1993, oppgave 1.
+</td>
+<td> Oppgaveregning.</td>
+</tr>
+
+<tr valign="top">
+<td>20/5 </td>
+<td> Eksamen Me207, 1993, oppgave 1. Deretter regneverksted.
+</td>
+<td>Gruppetime</td>
+</tr>
+
+<tr valign="top">
+<td>21/5 </td>
+<td> Eksamen 2008, oppg. 1,2,3.<br>
+    Eksamen ME207 1994 oppg. 2.<br>
+    Hefte: 53
+</td>
+<td> Oppgaveregning.</td>
+</tr>
+
+<tr valign="top">
+<td>27/5 </td>
+<td> Hefte 53 gjennomgås. Deretter regneverksted.
+</td>
+<td>Gruppetime.</td>
+</tr>
+
+<tr valign="top">
+<td>28/5 </td>
+<td> Eksamen 2008, oppg. 3. Kommentar: denne er en anderledes
+Poincare-Lindstedt oppgave. Her skal randbetingelsen være oppfylt
+på alle nivåer i pertubasjonsutviklingen, mens det ikke antas
+noe om periodisitet.<br>     
+    Eksamen ME207 1995 oppg. 1.  <br>
+    Hefte 38. Begrensning og reformulering:
+    a) Anta at store-lambda er eksakt lik 1 i pkt a.
+    Diskuter delta i forhold til epsilon ved dominant balanse
+    når ikkelineær de-tuning må balansere pådrag.
+    Ekstra spørsmål: finns det et førsteintegral for Lagrangesliningene?
+    Diskuter hva dette i så fall svarer til fysisk ?<br>
+    I pkt c er det ikke så viktig å løse for amplituden. Vi har gjort slikt så mange ganger før.
+    <br>
+    d) sløyfes
+</td>
+<td> Oppgaveregning.</td>
+</tr>
+
+
+
+</tbody></table><br  clear="all"> <hr noshade="noshade" size="1"> <span class="signatur">
+
+</body></html>
+

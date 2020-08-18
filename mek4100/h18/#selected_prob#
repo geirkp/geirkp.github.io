@@ -1,0 +1,36 @@
+Some solutions to problems in the leaflet are found in the exam section.
+<ul>
+<li> <a href="AMsolutions.pdf"> Solutions to selected problems from Logan. </a>
+The solutions are numbered according to the third edition. A corresponding set
+ of solutions for the fourth edition is in progress <a href="http://www.math.unl.edu/~jlogan1/"> see authors home page</a>.
+<li> Problem 2, page 165 in Logan.
+<ul> 
+<li><a href="logan2.pdf"> On the perturbation solution and the Taylor series </a> 
+<li><a href="text2.pdf"> Graphs </a> and  <a href="2.py"> python script. </a> Made by Christian P. 2016.
+<li><a href="Problem2_page100_Logan_Dokken_Schreiner.pdf">More details.</a><br>
+   Made by Jakob and Jørgen 2015.
+</ul>
+<li><a href="solv2008.pdf"> Solutions for the exam 2008. </a> Problems 1 and 3 corresponds to 29 and 69 in leaflet, respectively.
+<li> <a href="presentation_pendulum.pdf">Problem 54 in leaflet.</a><br>
+   Made by students spring 2014.
+<li> <a href="problem57.pdf">Problem 57 in leaflet.</a><br>
+   Made by students spring 2014.
+<li> <a href="problem58.pdf">Problem 58 in leaflet.</a><br>
+   Made by students (Sindre) spring 2014.
+</ul>
+
+<h4>Old exams</h4>
+The sketches on the solutions may be brief and incomplete. It may also happen 
+that there are some errors. 
+<ul>
+<li><a href="Me207extot.pdf"> Problems for ME207 </a> ME207 was a predecessor
+for MEK4100. There may have been differences in the syllabus. The problem
+list is compiled and there may be deviations from the actual exams.
+<li><a href="MEK3100_2006.pdf"> 2006. </a> All problems given in leaflet.
+<li><a href="MEK3100_2007.pdf"> 2007. </a> All problems given in leaflet.
+<li><a href="MEK3100_2008.pdf"> 2008 </a>. <a href="solv2008.pdf"> Solutions for the exam 2008. </a> Problems 1 and 3 correspond to 29 and 69 in leaflet, respectively.
+<li><a href="mek4100v14.pdf"> 2014 </a>. <a href="fasitv14.pdf"> Sketch of solution </a> Problems 1, 2 and 3 correspond to 62 through 64 in leaflet. There is an error in the solution for problem 2.
+<li><a href="MEK4100_2015_1.pdf"> 2015 </a>. <a href="fasitv15.pdf"> Sketch of solution </a> Problems 2 through 4 correspond 71 through 73  in leaflet.
+<li><a href="MEK4100_2016_1.pdf"> 2016 </a>. <a href="fasitv16.pdf"> Sketch of solution </a> Problems 1 through 3  correspond to 73 through 75 in  leaflet.
+<li><a href="MEK4100_2016_2.pdf"> 2016 </a>. <a href="fasith16.pdf"> Sketch of solution </a> Problems 2 through 4  correspond to 79 through 81 in  leaflet.
+</ul>
