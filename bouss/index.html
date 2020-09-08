@@ -1,0 +1,284 @@
+<html>
+<head>
+<title>Boussinesq solver</title>
+ </head>
+ <body bgcolor="#FFFFFF">
+ <h1>A program for the standard Boussinesq equation</h1>
+ The program is written in Fortran (compatible with f77) and
+ computes the evolution of initial value problems according to the
+ standard Boussinesq equations. The initial conditions are either
+read from file(s) or specified as solitary waves. The bottom is either 
+flat or read from file. At the lateral boundaries no-flux conditions 
+are employed. The numerical algorithm is based on finite differences on
+a regular grid. All input and output is scaled by a single length (should
+preferably be a typical depth). Velocity and time scales based on this 
+length and the acceleration of gravity. Grid values are obtained from
+the input files (depth, initial conditions) by linear interpolation.
+Hence for coarse resolutions the input may deviate somewhat from the
+actual fields used in the program.
+<p>
+The code is slightly documented below and in the source files.
+The latter and a few types of executables may be downloaded. 
+<nl>
+<a href="eq.pdf"><li>A brief treatise on the theoretical background</a>
+<a href="index.html#running"><li>Running the program</a>
+<a href="index.html#examples"><li>Examples</a>
+<a href="index.html#compilation"><li>File structure and compilation</a>
+<a href="index.html#program"><li>Program and numerics</a>
+</nl>
+
+<a name="running"></a>
+<h3>Running the program</h3>
+On Linux and Windows the  program is started writing 'path/sbouss' or
+  'path/sbouss.exe', respectively, where 'path' is the path to the folder
+The input is specified in a dialog. A certain degree of type check is performed on the answers,
+default values are generally provided (given within /../)
+and every input line starting with a '!' is discarded as a comment. In case of 
+an illegal answer the question is rephrased and a new input line is read. 
+The input is requested and provided by the user as described below.<p>
+The best way to run a program like this on Linux is to produce an input file
+and redirect the standard input of the program 
+<pre>
+path/sbouss < indat 
+</pre>
+where indat is the name of the input file. Such an input file may be edited
+from one of the examples or by cut and paste from an interactive run of
+the program. Questions and comments may be included in the input file if 
+preceded by '!'.<br>
+The program may  be  downloaded as an executable for <a href="i386/sbouss"> Linux</a> or <a href="i386/sbouss.exe">windows </a>.  Then the path to where it
+ is copied must be used instead of "path" in the examples above. Alternatively, the program may be compiled from downloaded <a href="source.zip"> source code </a>. 
+<h4>Geometry</h4>
+ First question
+<pre>
+give bathymetry option/readfromfile/
+...
+</pre>
+where the dots represent the input from the user. 
+Legal answers are readfromfile (default) and flat, as well as abbreviations of
+these. In the first case the program prompts for a file name  
+<pre>
+give depthfile/depth.dat/
+...
+</pre>
+otherwise a uniform depth equal to 1, starting at x=0, is assumed and
+the length must be given
+<pre>
+give total length/100.0/
+...
+</pre>
+A depth-file must contain two columns, x and depth, where
+the x values may be non-equidistant, but must be given in increasing order. 
+Then, the x-range corresponds to the last and first coordinate in the file.<br>
+Next the number of grid points is specified by answering
+<pre>
+Give number of grid points/../
+...
+</pre>
+A too large number of point will give an error message and the program stops
+
+<h4>Equation/method settings</h4>
+The type of equations is specified by answering
+<pre>
+give equation type/LSW/
+...
+</pre>
+by one of 
+<ul> <li>LSW  -- Linear shallow water equations
+<li> NLSW  -- Nonlinear shallow water equation
+<li>  LBoussinesq -- Linearized Boussinesq equations (contain dispersion)
+<li> Boussinesq -- Weakly dispersive and nonlinear Boussinesq equations
+</ul>
+Again unique abbreviations are accepted and there is no case-sensitivity.
+A numeric correction term is activated by answering yes  to
+<pre>
+Employ discrete correction term/yes/
+...
+</pre>
+
+<h4>Selection of wave input</h4>
+First the type of initial/boundary condition is selected
+<pre>
+give initial condition/readfromfile/
+...
+</pre>
+where the answers may be 
+<ul>
+<li>soliton <br>
+  The program asks for parameters for a solitary wave and computes an
+  initial condition.
+<li>readfromfile<br>
+ The initial conditions are read from files
+<li>boundary-conditions<br>
+Input is specified at the left boundary. Files for the velocity and 
+derivative of surface elevation with respect to x must be provided. 
+<li>combined<br>
+Initial conditions and boundary conditions are both read from files.
+</ul>
+Boundary files are explained below, but not yet functional. 
+
+<h4> Setting of initial conditions</h4>
+In case of initial conditions from file the user is prompted for
+the names of two-column files for (x, surface elevation) and
+(x, velocity).
+ <pre>
+give eta-data/eta.in/
+..answer with name of surface file
+ give u1-data
+..answer with name of velocity file or type stop
+</pre>
+If the latter question is answered with stop, no file for velocities is read
+and the motion is assumed to start from rest. Again the input files must 
+contain coordinates in increasing order. However, they need not be equidistant
+and eta and u file may contain  different coordinate values. Outside
+the coordinate ranges covered by the input files zero is assumed.<br>
+If soliton is chosen amplitude/depth, initial position and direction is
+read
+<pre>
+give a/h/0.2/
+...
+give initial position/.../
+...
+Prop. toward decreasing x/yes/
+...
+</pre>
+
+<h4>Time stepping/output</h4>
+The time integration is divided into a number of periods (cycles) that
+each correspond to an integer number of time steps. 
+<pre>
+Number of cycles/0/
+...
+give time interval/1/
+... 
+</pre>
+After each period, or cycle, we may have the fields (velocity and surface
+elevation) printed to file, according to the instructions below concerning printing.
+<pre>
+give reduction factor for dt/dx
+...
+</pre>
+The reduction factor, f, sets the maximum allowable time step to
+f*dx/sqrt(max depth). The program then finds the largest time step, smaller
+than this, that correspond to an integer fraction of the period.
+When the NLSW equation is solved f should be less than 1/(1+1.5*amp/depth),
+where amp is the amplitude (height) of the wave.<p>
+If a negative time interval is given, the program instead requests a
+time increment and the number of increments in a period.<br>
+<pre>
+give timestep
+...
+give number of time steps in interval directly
+...
+</pre>
+<pre>
+times for printing/all/
+...
+</pre>
+The point of the questions on printing is to enable a dense temporal output
+in selected stages of the development. 
+Times for printing are given as separate numbers, as dense intervals (n:m)
+or intervals with an increment (n:m;i). If the total number of periods is
+15 the input
+<pre>
+1 4 8:14;2
+</pre>
+will give output after periods 1, 4, 8, 10, 12, 14. The input all will
+give output after every interval. The initial values are always printed.
+ 
+<h4> Reading of boundary conditions </h4>
+If boundary input is chosen, either alone or together with initial conditions,
+two files must be available. The names are read according to
+<pre>
+give u boundary file
+..answer with name of file
+give ex boundary file
+..answer with name of file for the x derivative of the surface elevation
+<pre>
+Both files are ascii files with time and value as columns. The temporal
+distribution does not need to be neither the same nor uniform for the files.
+Outside the range of the files, both the velocity and the surface derivative
+are assumed zero.
+
+<a name="examples"></a>
+<h3>Examples</h3>
+In some of the examples the grid is somewhat coarse. The examples
+may be copied from the tar archive <a href="cases.tar"> cases.tar </a>, which is inflated by (linux) "tar -x < cases.tar" and where the individual examples are in sub-folders. The folder examples_dry contains sub-folders 
+with input files to the program, only. Alternatively, examples may be found in the  zip files linked below. Available
+examples are 
+
+<h4>  <a href="flat.zip">flat </a></h4>
+      A solitary wave propagating to the right in constant depth.
+      The initial position is a little too close to the left hand
+      boundary, with a little local noise as a consequence.
+
+<h4>  <a href="shoaling.zip">shoaling</a></h4>  
+      An solitary wave incident on a slope and a shelf is eventually
+      split into a series of solitary waves in shallow water.   
+<h4>  <a href="initial.zip">initial  </a></h4>
+       Initial value problem where both surface elevations and velocities
+        are specified. Also the depth is read from file.
+
+
+<a name="compilation"></a>
+<h3>Source code and compilation</h3>
+The source is a number of .f and .inc files. The latter contains common blocks that are included in several subprograms. <br>
+All source code is included in a <a href="source.zip">zip archive </a>.<br>
+This may, for instance, be downloaded to an empty folder. In Linux, with the gfortan compiler, the program can be compiled with the snippet
+<pre>
+  unzip source.zip
+  gfortran  -O  -fdefault-real-8  -fimplicit-none -o sbouss bouss.f routines.f
+  </pre>
+
+<a name="program"></a>
+<h3>About the program and the numerics</h3>
+<h4>Output</h4>
+The program produces the following output files
+<ul>
+<li> etaN,  where N is an integer corresponding to the time period (cycle).
+     This is a column files
+<li> uN,  velocities. Observe that uN is output 0.5*dt later than etaN. 
+<li> In case of boundary input: urnd, exrnd contain the boundary values 
+     as invoked in the program (after interpolation from the input) 
+<li> h, the depth in eta nodes
+<li> The programs part of the dialog is written on the standard error stream.
+</ul>
+ <h4>Numerics, software</h4>
+A few of the key routines are briefly defined in the table below.
+ Those not associated with the solution of the PDEs should be regarded as black
+boxes. A short description of mathematics and numerics is found in a
+separate <a href="eq.pdf">pdf </a> file. <br>
+The table below is of little interest for most students.  
+
+   <table  width="100%" CELLPADDING="5" BORDER="2">
+<tr><td> <b>Routine(s) </b><td> <b> File </b> <td> <b> Purpose  </b></tr>
+
+<tr><td> initkom, setkom  <td> dia/*.f <td> Initiates interactive dialog</tr>
+<tr><td> lesfrareg<td> dia/*.f <td> Reads an option (text) from a specified 
+list. Abbreviations are accepted and upper/lower case ignored. The answer h
+gives the list of available options</tr>
+<tr><td> promptfil  <td> dia/*.f <td> Prompts the user for filename, open the
+file  and reads the first two ASCII columns into arrays</tr>
+<tr><td> gpri <td> dia/*.f <td> Prints an array to a file. The name is made up
+by a prefix and a number (i.e. u and 5 --> u5)</tr>
+<tr><td> rtall, itall <td> dia/*.f <td> Prompts for and read a single real or integer respectively. Type-check is done and a default value is provided</tr>
+<tr><td> ja <td> dia/*.f <td> Reads a yes or no</tr>
+<tr><td> nureglin, kstageg, gureglin  <td> bibl/*.f <td> Linear interpolation</tr>
+<tr><td> tri  <td> bibl/*.f <td> Solves a tridiagonal system</tr>
+<tr><td> lesinitial  <td> bouss.f <td> Reads initial conditions and store the data in common-block in file inp.inc </tr>
+<tr><td> exfield  <td> bouss.f <td> Extracts an interpolated field from the initial conditions in common-block (inp.inc) </tr>
+<tr><td> regpfil  <td> bibl/*.f <td> Prompts for file and return, among other things, an uniform, interpolated table for the contents. </tr>
+<tr><td> soliset  <td> bouss.f <td> Calls routines for exact solitary wave shapes specific to the standard Boussinesq equations and produce initial conditions <tr><td> halv2  <td> bouss.f <td> Find velocity at dt*0.5 </tr>
+<tr><td> advance  <td> bouss.f <td> Integrate the equations a given number of time steps. Calls wimeta and wcerut   </tr>
+<tr><td> wimeta, wcerut  <td> bouss.f <td> Step one dt forward by the continuity and the momentum equation, respectively. Call the tridiagonal solver tri.   </tr>
+
+
+</table>
+
+</body>
+</html>
+
+
+
+
+
+

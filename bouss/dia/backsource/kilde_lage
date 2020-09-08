@@ -1,0 +1,3883 @@
+------------------------------
+fil dia1.f
+Thu Oct  4 16:11:53 CEST 2012
+-rw-r--r-- 1 geirkp mn 39719 2010-10-14 14:48 dia1.f
+***************************************************************************
+*
+*              D I G I T
+*
+*     Unders|ker om karakteren 'c' er et tall
+****************************************************************************
+      function digit(c)
+      character c
+      logical digit
+*-------------------------------------------------------------------------
+      integer idiff                       
+
+      idiff=ichar(c)-ichar('0')
+      digit= idiff.ge.0  .and.  idiff.le.9
+      return
+      end
+         
+
+********************************************************************
+*
+*                 i t c o n v
+*
+*     Konverterer heltallet 'i' til teksten 't'. 'kf' angir lengden
+*     av den konverterte teksten. 
+***********************************************************************
+      subroutine itconv(i,kf,t)
+      integer i,kf
+      character*20 t
+*---------------------------------------------------------------------
+      integer irest,isiff,inull,ichar,isgn,j,jstop
+      character c,char
+
+      inull=ichar('0')
+
+      if(i.ge.0) then
+        isgn=1
+        irest=i
+      else
+        isgn=-1
+        irest=-i
+      end if
+
+      kf=0
+
+ 100  continue
+      kf=kf+1
+      isiff=mod(irest,10)
+      t(kf:kf)=char(isiff+inull)
+      if(kf.eq.20) go to 300
+      irest=irest/10
+      if(irest.eq.0) go to 200
+      go to 100
+
+ 200  continue
+      if(isgn.lt.0) then
+        kf=kf+1
+        t(kf:kf)='-'
+      end if
+
+ 300  continue
+ 
+      jstop=kf/2
+      do 400 j=1,jstop
+      c=t(j:j)
+      t(j:j)=t(kf+1-j:kf+1-j)
+      t(kf+1-j:kf+1-j)=c
+ 400  continue
+      
+      return
+      end
+     
+*****************************************************************************
+*
+*                   L O K O R D
+*
+*    Lokaliserer foerste sekvens i strengen c(n0:n1) og angir den eventuelle
+*    posisjonen c(i0:i1). Med sekvens menes en sammenhengende serie ikke-
+*    blanke tegn. 
+*        iflag=0   : strengen er tom.
+*              1   : sekvens som begynner med bokstav funnet. 
+*              2   : sekvens som begynner med tall funnet. 
+*              3   : sekvens som begynner med annet tegn funnet. 
+*
+*
+**************************************************************************
+      subroutine lokord(c,n0,n1,i0,i1,iflag)
+      integer n0,n1,i0,i1,iflag
+      character c*80
+*--------------------------------------------------------------------
+      integer i
+      character b
+
+      if(n0.gt.n1) then
+        iflag=0
+        return
+      end if
+
+      i=n0
+      b=c(i:i)                
+
+  100 continue
+      if(b.ne.' ') go to 200
+      if(i.eq.n1) then
+        iflag=0
+        return
+      end if
+      i=i+1
+      b=c(i:i)
+      go to 100
+  200 continue
+
+      if((b.ge.'a'.and.b.le.'z').or.(b.ge.'A'.and.b.le.'Z'))then
+        iflag=1
+      else
+        if(b.ge.'0'.and.b.le.'9')then
+          iflag=2
+        else
+          iflag=3
+        end if
+      end if
+      i0=i
+
+                                 
+  300 continue
+      if(b.eq.' ') go to 400
+      if(i.eq.n1) then
+        i1=n1
+        return
+      end if
+      i=i+1
+      b=c(i:i)
+      go to 300
+
+  400 continue
+      i1=i-1
+
+      return
+      end                                                
+
+****************************************************************
+*
+*                 B L A N K
+*
+*     C(1:K) fylles med blanke
+*
+*****************************************************************          
+      SUBROUTINE BLANK(C,K)
+      INTEGER K
+      CHARACTER*80 C
+*--------------------------------------------------------------
+      INTEGER I
+
+      DO 100 I=1,K
+  100 C(i:i)=' '
+
+      RETURN
+      END
+
+
+
+****************************************************************             
+*
+*              U P C H A R
+*    Gjoer om smaa bokstaver i c(k1:k2) til store.
+****************************************************************
+      subroutine upchar(c,k1,k2)
+      character*80 c
+      integer k1,k2
+*------------------------------------------------------------------
+      integer ila,ilz,isa,ks,iver,i
+                        
+      ila=ichar('a')
+      ilz=ichar('z')
+      isa=ichar('A')
+      ks=min(80,k2)
+      do 100 i=k1,k2
+      iver=ichar(c(i:i))                             
+      if(iver.ge.ila .and. iver.le.ilz)
+     %   c(i:i)=char(isa+iver-ila)
+  100 continue
+      return
+      end
+
+
+*********************************************************************
+*                 L O K I N T                                       *
+*   Lokaliserer foerste heltall i strengen c(n0:n1).Ved output      *
+*   angir i0 posisjon av foerste ikke-blanke tegn, et eventuelt     *
+*   heltall er lokalisert til c(i0:i1). Kontroll parameter:         *
+*     iflag=0    : tekst-streng er tom.                             *
+*          =1    : ledende heltall etterfulgt av blank er funnet.   *
+*          =2    : ledende heltall etterfulgt av  ikke-blank.       *
+*          =3    : ensomt fortegn funnet i posisjon n1.             *
+*          =4    : foerste ikkebl. tegn ingen mulig del av heltall. *
+*                                                                   *
+*********************************************************************
+      subroutine lokint(c,n0,n1,i0,i1,iflag)
+      integer n0,n1,i0,i1,iflag
+      character c*80
+*--------------------------------------------------------------------
+      integer i
+      character b
+
+      if(n0.gt.n1) then
+        iflag=0
+        return
+      end if
+
+      i=n0
+      b=c(i:i)                
+
+  100 continue
+      if(b.ne.' ') go to 200
+      if(i.eq.n1) then
+        iflag=0
+        return
+      end if
+      i=i+1
+      b=c(i:i)
+      go to 100
+  200 continue
+      i0=i
+
+      if(b.eq.'+' .or. b.eq.'-') then
+        if(i.eq.n1) then
+          iflag=3
+          return
+        end if
+        i=i+1
+        b=c(i:i)
+      end if
+
+      if(b.lt.'0' .or. b.gt.'9') then
+        iflag=4
+        return
+      end if
+                                 
+  300 continue
+      if(b.lt.'0' .or. b.gt.'9') go to 400
+      if(i.eq.n1) then
+        i1=n1
+        iflag=1
+        return
+      end if
+      i=i+1
+      b=c(i:i)
+      go to 300
+
+  400 continue
+      i1=i-1
+      if(b.eq.' ') then
+        iflag=1
+      else
+        iflag=2
+      end if
+
+      return
+      end
+
+
+
+
+**************************************************************************
+*                                                                        *
+*                   I C O N                                              *
+*                                                                        *
+*    Funksjon som regner om tekst t(k1:k2) til et heltall. Det m} p}     *
+*  forh}nd v{re testet at alle enkeltbokstaver i sekvensen er tall       *
+*  (bortsett fra fortegn) og at antallet ikke er ulovlig stort.          *
+**************************************************************************
+
+      function icon(t,k1,k2)
+      integer icon,k1,k2
+      character*80 t
+*--------------------------------------------------------------------------
+      integer i,l,n10,null,isum,kk1,isgn
+
+      null=ichar('0')
+      n10=1     
+      isum=0                       
+      
+      if(t(k1:k1).eq.'-') then
+        kk1=k1+1
+        isgn=-1                          
+      else                
+        isgn=1
+        if(t(k1:k1).eq.'+') then
+          kk1=k1+1               
+        else
+          kk1=k1 
+        end if
+      end if
+         
+      do 100 i=kk1,k2
+      l=k2 -i + kk1 
+      isum=isum+(ichar(t(l:l))-null)*n10
+      n10=n10*10
+  100 continue
+      icon=isgn*isum
+      return
+      end
+         
+
+
+
+*********************************************************************** 
+*                                                                     *
+*                 G E T I                                             *
+*   Samme anvendelse som 'lokint' men returnerer med verdi av evnt.   *
+*   heltall i parameter 'ires'                                        *
+*                                                                     *   
+*   kaller 'lokint','icon'                                                   *
+***********************************************************************
+      SUBROUTINE GETI(C,N0,N1,I0,I1,iRES,IFLAG)
+      character*80 c
+      integer n0,n1,i0,i1,ires,iflag
+*------------------------------------------------
+      integer icon
+
+      call lokint(c,n0,n1,i0,i1,iflag)
+      if(iflag.eq.1 .or. iflag.eq.2)then
+        if(i1-i0.gt.9) then
+          write(0,*)'for mange siffer'
+          iflag=6
+        else
+          ires=icon(c,i0,i1)
+        end if
+      end if
+      return
+      end
+
+
+**************************************************************************
+*                                                                        *
+*                   G E T R                                              *
+*   Real versjon av 'geti'. 'iflag'=1,2,3,4 som for 'geti', 'iflag'=6    *
+*   angir for stor eksponent.                                            *
+*                                                                        *
+*   kaller 'geti'                                                        *
+**************************************************************************
+      subroutine getr(c,n0,n1,i0,i1,res,iflag)
+      character*80 c
+      integer n0,n1,i0,i1,iflag
+      real res
+*-------------------------------------------------------------------------
+      character b
+      integer num,nn0,ia,i,kflag,ie,ib,isgn
+      real des
+                                           
+      isgn=1
+      call geti(c,n0,n1,i0,i1,num,iflag)
+      if(iflag.eq.3 .or. iflag.eq.0) return
+      b=c(i0:i0)
+      if(b.eq.'-') isgn=-1
+      if(iflag.eq.4) then                
+        nn0=i0+1
+        if(b.eq.'-'  .or.  b.eq.'+') then
+          b=c(nn0:nn0)
+          nn0=nn0+1   
+        end if
+        if(b.ne.'.') return
+        res=0.0
+        call geti(c,nn0,n1,ia,ib,num,kflag)
+        if(kflag.gt.2. .or. kflag.eq.0 .or. ia.gt.nn0) return
+        b=c(ia:ia)
+      else    
+        res=num*1.0
+        if(iflag.ne.2) then
+          return   
+        end if
+  
+        b=c(i1+1:i1+1)
+        if(b.eq.'e' .or. b.eq.'E') then
+          ie=i1+1
+          go to 300 
+        end if
+
+        if(b.ne.'.') return
+        i1=i1+1
+        nn0=i1+1
+        call geti(c,nn0,n1,ia,ib,num,kflag)
+
+        if(kflag.eq.0 .or. ia.gt.nn0) then
+          iflag=1
+          return
+        end if  
+
+        b=c(nn0:nn0)
+
+        if(kflag.gt.2)  then
+          if(b.eq.'e' .or. b.eq.'E') then
+            ie=nn0
+            go to 300
+          else
+            return
+          end if
+        end if
+ 
+      end if
+
+      if(b.eq.'-' .or. b.eq.'+') return
+
+      i1=ib
+      des=num*1.0*isgn
+      do 100 i=ia,i1     
+  100 des=des*0.1
+      
+      res=res+des
+
+      if(kflag.eq.1) then
+        iflag=1
+        return
+      end if
+      
+      ie=i1+1
+  300 b=c(ie:ie) 
+      if(b.ne.'e' .and. b.ne.'E') then
+        iflag=2
+        return
+      end if
+                               
+      nn0=ie+1
+      call geti(c,nn0,n1,ia,i1,num,kflag)
+      if(kflag.eq.0 .or. kflag.gt.2 .or. ia.gt.nn0) then
+        iflag=2
+        return
+      end if                      
+
+      if(abs(num).gt.99) then
+        write(0,*)'for stor eksponent'
+        iflag=6
+        return
+      end if
+   
+
+      iflag=kflag
+      res=res*10.0**(num*1.0)
+      return
+      end
+
+
+
+               
+
+************************************************************************
+*                                                                      *
+*                      S T R I P                                       *
+*                                                                      *
+*    Finner den del, tekst(1:k), som ikke er blank. kmax angir total   *
+*    lengde av tekst. Dersom tekst er tom returneres med k=0.
+************************************************************************
+
+      subroutine strip(tekst,kmax,k)
+      integer k,kmax
+      logical def
+      character*200 tekst
+*-----------------------------------------------------------------------
+      integer i                                                         
+
+      k=kmax
+
+  100 continue
+      if( tekst(k:k).ne.' ') go to 200
+      if(k.eq.1) then
+        k=0
+        return
+      end if
+      k=k-1
+      go to 100
+  200 continue
+      return
+      end
+
+
+
+************************************************************************
+*                                                                      *
+*                      F R O N T S T R I P                             *
+*                                                                      *
+*    Fjerner innledende blanke i tekst(1:kmax), kmax angir total          *
+*    lengde av tekst. k er antall blanke som er funnet.
+************************************************************************
+
+      subroutine frontstrip(tekst,kmax,k)
+      integer kmax
+      character*200 tekst
+*-----------------------------------------------------------------------
+      integer k,i             
+
+      k=1
+
+  100 continue
+      if( tekst(k:k).ne.' ') go to 200
+      if(k.eq.kmax) return
+      k=k+1
+      go to 100
+  200 continue
+
+      do 300 i=k,kmax
+      tekst(i+1-k:i+1-k)=tekst(i:i)
+ 300  continue
+
+      k=k-1
+      
+      return
+      end
+
+
+
+
+************************************************************************
+*                                                                      *
+*                      X S T R I P                                     *
+*                                                                      *
+*    Finner den del, tekst(1:k), som ligger foran tegnet '#' eller '!'.*
+*    def=true angir '#', def=false angir '!'. Dersom hverken '#' eller *
+*    '!' finnes settes k=80 og def=true.                               *
+************************************************************************
+
+      subroutine xstrip(tekst,k,def)
+      integer k
+      logical def
+      character*80 tekst
+*-----------------------------------------------------------------------
+      integer i                                                         
+      character b
+
+      k=1
+      b=tekst(1:1)
+  100 continue
+      if( b.eq.'!' .or. b.eq.'#') go to 200
+      if(k.eq.80) then
+        def=.true.
+        return
+      end if
+      k=k+1
+      b=tekst(k:k)
+      go to 100
+  200 k=k-1
+      def=.not.b.eq.'!'
+      return
+      end
+
+
+************************************************************************
+*                                                                      *
+*                      X S T R I P G                                    *
+*                                                                      *
+*    Finner den del, tekst(1:k), som ligger foran tegnet '#' eller '!'.*
+*    def=true angir '#', def=false angir '!'. Dersom hverken '#' eller *
+*    '!' finnes settes k=kmax og def=true.                               *
+************************************************************************
+
+      subroutine xstripg(tekst,k,kmax,def)
+      integer k,kmax
+      logical def
+      character*200 tekst
+*-----------------------------------------------------------------------
+      integer i                                                         
+      character b
+
+      k=1
+      b=tekst(1:1)
+  100 continue
+      if( b.eq.'!' .or. b.eq.'#') go to 200
+      if(k.eq.kmax) then
+        def=.true.
+        return
+      end if
+      k=k+1
+      b=tekst(k:k)
+      go to 100
+  200 k=k-1
+      def=.not.b.eq.'!'
+      return
+      end
+
+
+
+
+************************************************************************
+*
+*                    D E L T E K
+*
+*    sekvenser i t(na:nb) lokaliseres. iant angir antall sekvenser,sekvens
+*    k er lokalisert til t( l(1,k):l(2,k) ).
+*
+*    kaller 'lokord'
+*****************************************************************************
+      subroutine deltek(t,na,nb,l,iant)
+      integer na,nb,l(2,20),iant
+      character*80 t
+*-------------------------------------------------------------------------
+      integer k1,k2,iflag,n0
+
+      n0=na
+      iant=0  
+
+  100 continue
+      call lokord(t,n0,nb,k1,k2,iflag)
+      if(iflag.eq.0) return
+      n0=k2+1     
+      iant=iant +1
+      l(1,iant)=k1
+      l(2,iant)=k2
+      go to 100
+c     return
+      end        
+
+
+
+************************************************************************     
+*                      R E D
+*
+*    ordner teksten t(1:nb) slik at den faar form: 'sekvens1 sekvens2 ...
+*     sekvensN#' ,der n er antall sekvenser.  
+*
+*    kaller lokord.
+*************************************************************************
+      subroutine red(t,nb)
+      integer nb
+      character*80 t
+*-------------------------------------------------------------------------
+      integer k1,k2,iflag,n0,kfyll,ka,iant,i
+
+      n0=1
+      kfyll=0
+      ka=1                                
+      iant=0
+
+  100 continue
+      call lokord(t,n0,nb,k1,k2,iflag)
+      if(iflag.eq.0) then
+        kfyll=kfyll+1
+        if(kfyll.le.nb) t(kfyll:kfyll)='#'      
+        do 75 i=kfyll+1,nb
+   75   t(i:i)=' '
+        return
+      end if
+      n0=k2+1
+      iant=iant+1
+      if(iant.gt.1) then
+        t(kfyll+1:kfyll+1)=' '
+        ka=2
+      end if
+      t(kfyll+ka:kfyll+ka+k2-k1)=t(k1:k2)
+      kfyll=kfyll+k2-k1+ka
+      go to 100
+c      return
+      end
+
+
+
+
+********************************************************************     
+*
+*                 A L A C A R T
+*
+*   sjekker hvor mange tekster i menyen t(n) streng(na:nb) er en
+*   forkortelse av. Tekstene i t(n) maa avsluttes med '#' eller '!'.
+*   iant er antall treff, l(1)..l(iant) er nummerne i menyen t for
+*   tekstene som er truffet. 
+*
+*   kaller 'fork'
+***********************************************************************
+      subroutine alacart(t,n,streng,na,nb,l,iant)
+      integer n,na,nb,iant,l(n)
+      character*80 streng,t(n)
+*-------------------------------------------------------------------
+      integer i   
+      logical fork
+      
+      iant=0  
+      do 100 i=1,n   
+      if(fork(t(i),streng,na,nb)) then
+        iant=iant+1
+        l(iant)=i
+      end if
+  100 continue
+      return
+      end
+
+********************************************************************     
+*
+*                 V E L G C A R T
+*
+*   Funksjon som alacart, men returnerer med bare ett treff dersom
+*   streng(na,nb) er identisk lik en av tekstene i t.
+*
+*   kaller 'fork'
+***********************************************************************
+      subroutine velgcart(t,n,streng,na,nb,l,iant)
+      integer n,na,nb,iant,l(n)
+      character*80 streng,t(n)
+*-------------------------------------------------------------------
+      integer i,kf
+      logical fork,paelm
+      
+      iant=0  
+      do 100 i=1,n   
+      if(fork(t(i),streng,na,nb)) then
+        call xstrip(t(i),kf,paelm)
+        if(kf.eq.(nb-na+1)) then
+          iant=1
+          l(1)=i
+          return
+        end if
+        iant=iant+1
+        l(iant)=i
+      end if
+  100 continue
+      return
+      end
+
+
+
+********************************************************************     
+*
+*                 B A L A C
+*
+*   sjekker hvor mange tekster i menyen t(n) streng(na:nb) er en
+*   forkortelse av. Tekstene i t(n) maa avsluttes med '#' eller '!'.
+*   iant er antall treff, l(1)..l(iant) er nummerne i menyen t for
+*   tekstene som er truffet. Det skilles ikke mellom sm} og store 
+*   bokstaver.
+*
+*   kaller 'fork'.
+***********************************************************************
+      subroutine balac(t,n,streng,na,nb,l,iant)
+      integer n,na,nb,iant,l(n)
+      character*80 streng,t(n)
+*-------------------------------------------------------------------
+      integer i  
+      logical fork
+      
+      iant=0  
+      do 100 i=1,n   
+        if(fork(t(i),streng,na,nb)) then
+          iant=iant+1
+          l(iant)=i
+        end if
+  100 continue
+      return
+      end
+
+
+
+
+*******************************************************************          
+*
+*                  F O R K
+*
+*   tester om s(n1:n2) er en forkortelse av t(1:...). Teksten i t maa
+*   avsluttes av '#' eller '!'. Testen virker uavhengig av smaa/store
+*   bokstaver.
+*
+*   kaller 'xstrip','upchar'.
+**********************************************************************
+      function fork(t,s,n1,n2)
+      integer n1,n2
+      character*80 t,s
+      logical fork
+*--------------------------------------------------------------------
+      integer kt,ks
+      character*80 tt,ss
+      logical def
+
+      call xstrip(t,kt,def)    
+      ks=n2-n1+1
+      if(ks.gt.kt) then
+        fork=.false.
+        return
+      end if
+
+      tt(1:ks)=t(1:ks) 
+      ss(1:ks)=s(n1:n2)
+      call upchar(tt,1,ks)
+      call upchar(ss,1,ks)
+      fork= tt(1:ks).eq.ss(1:ks)
+
+      return
+      end            
+
+
+
+****************************************************************
+*                  
+*                  FSOK
+*
+*     Leter fra gitt poisjon i en tekst til n{rmeste forekomst av
+*     en gitt karakter.
+*
+*     parametere:
+*           t(1:nmax) - tekst det s|kes i                              I
+*           np - ved input: posisjon i t sIket starter fra,            I/O
+*                         NB. dvs en finnner n{rmeste forekomst til
+*                         utenom posisjonen selv,forekomster i endene
+*                         av tekstem m} da spesialbehandles.
+*                ved output: posisjon der karakter er funnet.
+*                      Dersom ingen forekomst finnes returneres med
+*                      np=1 eller np=nmax, avh. av ivis, og iflag=1
+*                forekomst i np teller ikke
+*           c - karakter som s|kes                                     I
+*           ivis - =1 : forover s|k  , ellers bakover s|k              I
+*           iflag - feilparameter                                      O
+*                   =0 alt ok
+*                    1  se ovenfor
+*                    2  np er ulovlig ved input
+*********************************************************************
+      subroutine fsok(t,nmax,np,c,ivis,iflag)
+      integer np,nmax,ivis,iflag
+      character c
+      character*120 t
+*------------------------------------------
+      integer iadd
+
+
+      iflag=0
+
+      if(np.lt.1 .or. np.gt.nmax ) then
+        iflag=2
+        return
+      end if
+
+      if(ivis.eq.1) then
+        iadd=1
+        if (np.eq.nmax) return
+      else
+        iadd=-1
+        if (np.eq.1) return
+      end if
+
+ 100  continue
+      np=np+iadd
+      if(np.lt.1 .or. np.gt.nmax )then
+        if(np.lt.1) np=1
+        if(np.gt.nmax) np=nmax
+        iflag=1
+        return
+      end if      
+
+      if(t(np:np).ne.c) go to 100
+
+      return
+      end
+
+****************************************************************
+*
+*                 INSUBST
+*
+*   skifter ut foerste forekomst av en gitt karakter med et tall
+*   parametere:
+*            t - tekst som behandles, maa avsluttes med # el !
+*            nmax - max tillat lengde av t
+*            np - input: punkt der sok starter, output:
+*                 forste posisjon etter insatt tal
+*            c - karakter som skal byttes
+*            ival - heltall som skal settes inn
+*            iflag - feilparameter
+*                    =0 subst. gjennomfort
+*                    =1 ingen forekomst av c
+*                    =2 np for stor
+*                    =3 resulterende tekst for lang - intet gjort
+****************************************************************
+      subroutine insubst(t,nmax,np,c,ival,iflag)
+      integer nmax,np,ival,iflag
+      character c
+      character*80 t
+*----------------------------------------------------------------
+      integer kf,kt,irest,i,np1
+      logical hiv
+      character*20 ctall
+  
+
+      call xstrip(t,kf,hiv)
+
+      call gsok(t,kf,np,c,1,iflag)
+      if(iflag.ne.0) return
+
+      irest=kf-np
+      call itconv(ival,kt,ctall)
+
+      if( (kf+kt-1).ge.nmax) then
+        iflag=3
+        return
+      end if
+
+      np1=np+1
+
+c     avsl merke maa med, derfor kf+1 som lokke-grense
+
+      do 100 i=kf+1,np1,-1
+      t(i+kt-1:i+kt-1)=t(i:i)
+100   continue
+
+      t(np:np+kt-1)=ctall(1:kt)
+      np=np+kt
+
+      return
+      end
+      
+
+****************************************************************
+*                  
+*                  GSOK
+*
+*     Leter fra gitt poisjon i en tekst til n{rmeste forekomst av
+*     en gitt karakter. Forskjellig fra fsok ved betyd av inp.par np
+*
+*     parametere:
+*           t(1:nmax) - tekst det s|kes i                              I
+*           np - ved input:  sIket starter fom. denne posisjon i t     I/O
+*                ved output: posisjon der karakter er funnet.
+*                      Dersom ingen forekomst finnes returneres med
+*                      np=1 eller np=nmax, avh. av ivis, og iflag=1
+*                dersom ingen forekomst finnes returneres med np uendret
+*           c - karakter som s|kes                                     I
+*           ivis - =1 : forover s|k  , ellers bakover s|k              I
+*           iflag - feilparameter                                      O
+*                   =0 alt ok
+*                    1  se ovenfor
+*                    2  np er ulovlig ved input
+*********************************************************************
+      subroutine gsok(t,nmax,np,c,ivis,iflag)
+      integer np,nmax,ivis,iflag
+      character c
+      character*120 t
+*------------------------------------------
+      integer iadd,np0
+
+
+      np0=np
+      iflag=0
+
+      if(np.lt.1 .or. np.gt.nmax ) then
+        iflag=2
+        return
+      end if
+
+      if(ivis.eq.1) then
+        iadd=1
+      else
+        iadd=-1
+      end if
+
+      np=np-iadd
+
+ 100  continue
+      np=np+iadd
+
+      if(np.lt.1 .or. np.gt.nmax )then
+        np=np0
+        iflag=1
+        return
+      end if      
+
+      if(t(np:np).ne.c) go to 100
+
+      return
+      end
+
+
+
+***************************************************************************
+*           K O M P R E S S
+*
+*     Alle blanke i t(n1:n2) som befinner seg ved siden av karakteren 
+*     gitt ved c fjernes og den komprimerte teksten venstrestilles og 
+*     returneres med oppdatert verdi for n2.
+***************************************************************************
+      subroutine kompress(t,c,n1,n2)
+      integer n1,n2
+      character c
+      character*80 t
+*-----------------------------------------------------------------------
+      integer ipos,i1,iblankl,iblankr,k,i,iskip
+      logical eks 
+
+
+      i1=n1
+
+ 100  continue
+
+      call lokchar(t,c,i1,n2,k,eks)
+      
+      if(.not.eks) return
+    
+
+      iblankl=0
+ 40   continue
+      if(k-iblankl.eq.n1) go to 45
+      if(t(k-iblankl-1:k-iblankl-1).ne.' ') go to 45
+      iblankl=iblankl+1
+      go to 40
+
+ 45   continue
+
+      iblankr=0
+ 50   continue
+      if(k+iblankr.eq.n2) go to 55
+      if(t(k+iblankr+1:k+iblankr+1).ne.' ') go to 55
+      iblankr=iblankr+1
+      go to 50
+
+ 55   continue
+
+      ipos= k-iblankl
+      t(k:k)=' '
+      t(ipos:ipos)=c
+
+      i1=ipos+1
+      iskip=iblankl+iblankr
+      ipos=ipos+iskip+1
+      do 70 i=ipos,n2
+      t(i-iskip:i-iskip)=t(i:i)
+ 70   continue
+
+      n2=n2-iskip
+
+      go to 100
+
+      end
+
+
+******************************************************************
+*     
+*      Naar karakteren lik cjok forekommer, har dette samme virkning
+*      som om tallet jokver sto der i stedet. Ellers virker rutinen
+*      p} samme vis som geti. Det s|kes i strengen t(ia:ib)
+*******************************************************************
+      subroutine GETIJOK(t,cjok,jokver,ia,ib,I0,I1,ires,kFLAG)
+      integer jokver,ia,ib,I0,I1,ires,kFLAG
+      character cjok
+      character*80 t
+*----------------------------------------------------------------------
+
+      call GETI(t,ia,ib,I0,I1,ires,kFLAG)
+
+      if(kflag.eq.4) then
+        if(t(i0:i0).eq.cjok) then
+          ires=jokver
+c         posisjonsparametere ma na justeres og kflag maa
+c        gis verdi som om det sto jokver i stedet for cjok
+          i1=i0
+          if(i1.eq.ib) then
+            kflag=1
+          else
+            if(t(i1+1:i1+1).eq.' ')then
+              kflag=1
+            else
+              kflag=2
+            end if
+          end if
+        end if
+      end if
+
+      return
+      end
+
+
+************************************************************************
+*
+*     Markerer tall i intervallet 1:nmax, gitt ved sekvenser i t(n1:n2). 
+*     Eksempler p} sekvenser
+*
+*           5     -  posisjon 5 markeres
+*           2:5   -  posisjoner 2,3,4 og 5 markeres. Dersom 5 er st|rre
+*                    enn nmax markeres bare tom. nmax
+*           2:11;2 - posisjoner 2,4,6,8 og 10 markeres, igjen bare tom. nmax
+*
+*     Det kan gis et vilk}rlig antall sekvenser og blanke omkring : og ; 
+*     neglisjeres. Karakteren * betyr nmax og kan benyttes i alle sammen-
+*     stillinger.
+*     Parametere:
+*            t(n1:n2) - tekst med sekvenser                              I
+*            nmax    - ovre grense for tall                              I
+*            med   -  Dersom med(j) er sann er j markert                 O
+*            iflag -  feilparameter                                      O
+*                   =0   alt i orden
+*                    1   funn av sekvens som begynner ulovlig
+*                    2   karakteren ':' er ikke funnet som forventet
+*                    3   karakteren ':' er ikke fulgt av heltall ( eller *)
+*                    6   karakteren ';' er ikke funnet som forventet
+*                    7   karakteren ';' er ikke fulgt av heltall ( eller *)
+******************************************************************************
+
+      subroutine konvert(t,n1,n2,nmax,med,iflag)
+      integer n1,n2,nmax,iflag
+      character*80 t
+      logical med(nmax)
+*------------------------------------------------------------------------
+      integer l(2,20),iant,ia,ib,khigh,kstep,knum,k
+      integer j,i0,i1,kflag
+
+      iflag=0
+
+      call kompress(t,':',n1,n2)
+      call kompress(t,';',n1,n2)
+
+      call deltek(t,n1,n2,l,iant)
+
+      if(iant.eq.0) then
+        do 50 k=1,nmax
+        med(k)=.true.
+ 50     continue
+        return
+      else
+        do 60 k=1,nmax
+        med(k)=.false.
+ 60     continue
+      end if
+
+      do 100 j=1,iant
+      ia=l(1,j)
+      ib=l(2,j)
+      call GETIJOK(t,'*',nmax,ia,ib,I0,I1,knum,kFLAG)
+
+      if(kflag.gt.2) then
+        iflag=1
+        return
+      end if
+
+      if(kflag.eq.1)  then
+        if(knum.le.nmax) med(knum)=.true.
+      else
+        if(t(i1+1:i1+1).ne.':') then
+          iflag=2
+          return
+        end if
+        ia=i1+2
+        call GETIJOK(t,'*',nmax,ia,ib,I0,I1,khigh,kFLAG)
+        if(kflag.eq.0 .or.kflag.eq.3) then
+           iflag=3
+           return
+        end if
+
+
+        if(kflag.eq.1) then
+          kstep=1
+        else
+          if(t(i1+1:i1+1).ne.';') then
+            iflag=6
+            return
+          end if
+  
+          ia=i1+2
+          call GETI(t,ia,ib,I0,I1,kstep,kFLAG)
+          if(kflag.ne.1) then
+            iflag=7
+            return
+          end if
+ 
+        end if
+
+        if(khigh.gt.nmax) khigh=nmax
+
+        do 70 k=knum,khigh,kstep
+        med(k)=.true.
+ 70     continue
+
+      end if
+ 100  continue
+
+      return
+      end
+          
+
+
+************************************************************************
+*
+*     Markerer tall i intervallet n0:nmax, gitt ved sekvenser i t(n1:n2). 
+*     Eksempler p} sekvenser
+*
+*           5     -  posisjon 5 markeres
+*           2:5   -  posisjoner 2,3,4 og 5 markeres. Dersom 5 er st|rre
+*                    enn nmax markeres bare tom. nmax
+*           2:11;2 - posisjoner 2,4,6,8 og 10 markeres, igjen bare tom. nmax
+*
+*     Det kan gis et vilk}rlig antall sekvenser og blanke omkring : og ; 
+*     neglisjeres. Karakteren * betyr nmax og kan benyttes i alle sammen-
+*     stillinger.
+*     Parametere:
+*            t(n1:n2) - tekst med sekvenser                              I
+*            nmax    - ovre grense for tall                              I
+*            med   -  Dersom med(j) er sann er j markert                 O
+*            iflag -  feilparameter                                      O
+*                   =0   alt i orden
+*                    1   funn av sekvens som begynner ulovlig
+*                    2   karakteren ':' er ikke funnet som forventet
+*                    3   karakteren ':' er ikke fulgt av heltall ( eller *)
+*                    6   karakteren ';' er ikke funnet som forventet
+*                    7   karakteren ';' er ikke fulgt av heltall ( eller *)
+******************************************************************************
+
+      subroutine gkonvert(t,n1,n2,n0,nmax,med,iflag)
+      integer n1,n2,n0,nmax,iflag
+      character*80 t
+      logical med(n0:nmax)
+*------------------------------------------------------------------------
+      integer l(2,20),iant,ia,ib,khigh,kstep,knum,k
+      integer j,i0,i1,kflag
+
+      iflag=0
+
+      call kompress(t,':',n1,n2)
+      call kompress(t,';',n1,n2)
+
+      call deltek(t,n1,n2,l,iant)
+
+      if(iant.eq.0) then
+        do 50 k=n0,nmax
+        med(k)=.true.
+ 50     continue
+        return
+      else
+        do 60 k=n0,nmax
+        med(k)=.false.
+ 60     continue
+      end if
+
+      do 100 j=1,iant
+      ia=l(1,j)
+      ib=l(2,j)
+      call GETIJOK(t,'*',nmax,ia,ib,I0,I1,knum,kFLAG)
+
+      if(kflag.gt.2) then
+        iflag=1
+        return
+      end if
+
+      if(kflag.eq.1)  then
+        if(knum.le.nmax .and. knum.ge.n0) med(knum)=.true.
+      else
+        if(t(i1+1:i1+1).ne.':') then
+          iflag=2
+          return
+        end if
+        ia=i1+2
+        call GETIJOK(t,'*',nmax,ia,ib,I0,I1,khigh,kFLAG)
+        if(kflag.eq.0 .or.kflag.eq.3) then
+           iflag=3
+           return
+        end if
+
+
+        if(kflag.eq.1) then
+          kstep=1
+        else
+          if(t(i1+1:i1+1).ne.';') then
+            iflag=6
+            return
+          end if
+  
+          ia=i1+2
+          call GETI(t,ia,ib,I0,I1,kstep,kFLAG)
+          if(kflag.ne.1) then
+            iflag=7
+            return
+          end if
+ 
+        end if
+
+        if(khigh.gt.nmax) khigh=nmax
+
+        do 70 k=knum,khigh,kstep
+        if(k.ge.n0)med(k)=.true.
+ 70     continue
+
+      end if
+ 100  continue
+
+      return
+      end
+          
+
+
+***************************************************************************
+*
+*                SKIPKOM
+*
+*    Rutinen skipper alle linjer som ikke starter med tall.
+*    Den er ment for innlesning av filer i gkurv-format, og bruker
+*    "getr" for aa gjenkjenne tall. 
+*
+*    parametere:
+*             n - antall forbigaatte records                        O
+*             itape - unitnummer                                    I
+*             ierr -  feilparameter                                 O
+*                  =0   alt klart for lesning av tallkolonner
+*                  =1   EOF funnet under skipping                   
+*                  =2   feil i innlesning under skipping
+*                  =3   linje funnet som har feil format, men som
+*                       ville blitt godkjent av gkurv
+**************************************************************************
+      subroutine skipkom(n,itape,ierr)
+      integer n,itape,ierr
+*-------------------------------------------------------------------------
+      integer iflag,i0,i1
+      real r
+      character*80 t
+
+      n=0
+
+ 100  continue
+      read(itape,'(a80)',err=400,end=300) t(1:80)
+
+      call getr(t,1,80,i0,i1,r,iflag)
+
+      if(iflag.eq.1) then
+        ierr=0
+        backspace itape
+        return   
+      end if
+
+      if(iflag.eq.2 .or. iflag.eq.6) then
+        ierr=3
+        backspace itape
+        return
+      end if
+
+      n=n+1
+      go to 100
+
+
+ 300  continue
+
+      ierr=1
+      return
+
+ 400  continue
+      ierr=2
+
+      return
+
+      end
+
+***************************************************************************
+*
+*                SLOPSKIP
+*
+*    Rutinen skipper alle linjer som ikke starter med tall.
+*    Den er ment for innlesning av filer i gkurv-format, og bruker
+*    lokint for aa gjenkjenne tall. Mer sloppy en skipkom. 
+*
+*    parametere:
+*             n - antall forbigaatte records                        O
+*             itape - unitnummer                                    I
+*             ierr -  feilparameter                                 O
+*                  =0   alt klart for lesning av tallkolonner
+*                  =1   EOF funnet under skipping                   
+*                  =2   feil i innlesning under skipping
+**************************************************************************
+      subroutine slopskip(n,itape,ierr)
+      integer n,itape,ierr
+*-------------------------------------------------------------------------
+      integer iflag,i0,i1
+      real r
+      character*80 t
+
+      n=0
+
+ 100  continue
+      read(itape,'(a80)',err=400,end=300) t(1:80)
+
+      call lokint(t,1,80,i0,i1,iflag)
+
+      if(iflag.eq.1 .or. iflag.eq.2) then
+        ierr=0
+        backspace itape
+        return   
+      end if
+
+
+      n=n+1
+      go to 100
+
+
+ 300  continue
+
+      ierr=1
+      return
+
+ 400  continue
+      ierr=2
+
+      return
+
+      end
+
+*********************************************************************
+*
+*             WRIBCHAR
+*
+*    Rutinen representerer tegnene i teksten t ved sine ascinummer som
+*    saa skrives ut uformattert som 32 bits heltall. Hensikten er kunne
+*    bringe tekster helskinnet gjennom byte-swap operasjoner.
+*    parametere: 
+*            t(1:n) - tekst som skal skrives ut                I
+*            itape - unitnummer for utskrift                   I
+*            iflag - feilparameter                             O
+*                  = 0 alt ok.
+*                  = 1 for stor n
+*                  = 2 feil unders skrivning
+**********************************************************************
+      subroutine wribchar(t,n,itape,iflag)
+      integer n,itape,iflag
+      character*200 t
+*----------------------------------------------------------------------
+      integer i,nr(200),ichar
+
+      if(n.gt.200) then
+        iflag=1
+        return
+      end if
+
+
+      do 100 i=1,n
+      nr(i)=ichar(t(i:i))
+ 100  continue
+
+      write(itape,err=200)(nr(i) , i=1,n)
+
+      iflag=0
+      return
+
+ 200  iflag=2
+      return
+
+      end
+
+*********************************************************************
+*
+*             REABCHAR
+*
+*    Rutinen leser inn uformatterte 32 bits heltall som saa konverteres til
+*    tegn i hht. til ascii-nummeret. Rutinen er beregnet for aa lese det som
+*    wribchar skriver.
+*    parametere: 
+*            t    - tekst for plassering av kar.                  O
+*            n - antall tegn                                      I
+*            itape - unitnummer for lesning                       I
+*            iflag - feilparameter                                O
+*                  = 0 alt ok.
+*                  = 1 for stor n
+*                  = 2 feil under lesning
+*                  = 3 slutt paa fil itape
+*                  = 4 funnet ascii.nr. utenfor 0...127. Det tilhorende 
+*                      tegn settes da til char(0)
+**********************************************************************
+      subroutine reabchar(t,n,itape,iflag)
+      integer n,itape,iflag
+      character*200 t
+*----------------------------------------------------------------------
+      integer i,nr(200),nc
+      character char
+
+      if(n.gt.200) then
+        iflag=1
+        return
+      end if
+
+      iflag=0
+
+      read(itape,err=200,end=300)(nr(i) , i=1,n)
+
+
+      do 100 i=1,n
+      nc=nr(i)
+      if(nc.lt.0 .or. nc.gt.127) then
+        iflag=4
+        nc=0
+      end if
+      t(i:i)=char(nc)
+ 100  continue
+
+
+      return
+
+ 200  iflag=2
+      return
+
+ 300  iflag=3
+      return
+
+      end
+
+
+
+
+
+
+
+
+
+
+
+
+EOF dia1.f
+------------------------------
+fil dia2n.f
+Thu Oct  4 16:11:53 CEST 2012
+-rw-r--r-- 1 geirkp mn 23386 2010-10-14 14:48 dia2n.f
+*******************************************************************************
+*
+*                   I T A L L 
+*
+*    Leser svar paa spoersmaal i teksten spor. Avsluttes dette med '#' tilbys
+*    standardverdi idef som oppnaes ved returnering av tom linje. Avslutting
+*    med '!' foerer til ignorering av standardverdi idef. Inngaar verken
+*    '#' eller '!' i spor antas det aa ha lengde 80 og standardverdi tilbys.
+*
+*    kaller 'primles','xstrip' og 'geti'.
+*******************************************************************************
+      function itall(idef,spor)
+      integer itall,idef
+      character*80 spor
+      include 'styr.inc'
+*---------------------------------------------------------
+      character*80 svar
+      integer k,i1,i2,iflag,ib,ires,iverdi
+      logical def        
+
+      call xstrip(spor,k,def)
+      if(k.eq.0) k=1                           
+
+  200 continue
+    
+      if(def) then
+        write(iustrr,*) spor(1:k) ,'/', idef ,'/'
+        if(aktlog.eq.1 .and. aktkom.eq.1)
+     %  write(ltape,*) charkom,spor(1:k) ,'/', idef ,'/'
+      else
+        write(iustrr,*) spor(1:k)
+        if(aktlog.eq.1 .and. aktkom.eq.1)
+     %     write(ltape,*) charkom,spor(1:k) 
+      end if
+
+      call primles(svar,iflag)
+
+      if(iflag.eq.2) stop
+      if(iflag.ne.0) go to 200
+
+      call geti(svar,1,80,i1,i2,ires,iflag)
+      if(iflag.eq.0) then
+        if(def) then
+          iverdi=idef
+          go to 500
+        else
+          call primvri('No default value#')
+          go to 200
+        end if
+      end if
+      
+      if(iflag.gt.1) then
+        call primvri('illegal input#')
+        go to 200
+      else
+        iverdi=ires
+        ib=i2+1
+        call geti(svar,ib,80,i1,i2,ires,iflag)
+        if(iflag.ne.0) then
+          call primvri('Please give a single integer#')
+          go to 200
+        end if
+      end if
+
+ 500  continue
+
+      itall=iverdi
+      dispens=0
+
+      return
+      end
+
+
+
+**************************************************************************
+*
+*              SETPA
+*    Fyller homedir, defdir og hosttype inn i commonomraadet direk og setter
+*    iustrr i com. komstyr
+********************************************************************
+      subroutine setpa
+      include 'styr.inc'
+*-------------------------------------------------------
+      integer kf
+      open(unit=20,file='scrp.xx',status='unknown')
+      write(20,'(a)')'#!/bin/sh'
+      write(20,'(a)')'echo $HOME > qrw.zzz'
+      write(20,'(a)')'pwd >> qrw.zzz'
+      write(20,'(a)')'hosttype >> qrw.zzz'
+      close(20)
+      call system('chmod +x scrp.xx ; ./scrp.xx ')
+      open(unit=20,file='qrw.zzz',status='unknown')
+      call blank(homedir,120)
+      read(20,'(a120)') homedir(1:120)
+      call strip(homedir,120,nhd)
+      nhd=nhd+1
+      homedir(nhd:nhd)='/'
+      call blank(defdir,120)
+      read(20,'(a120)') defdir(1:120)
+      call strip(defdir,120,ndd)
+      ndd=ndd+1
+      defdir(ndd:ndd)='/'
+      read(20,'(a20)') hostt(1:20)
+      call strip(hostt,20,kf)
+      if(hostt(1:kf).eq.'hp') then
+        iustrr=7
+      else
+        iustrr=0
+      end if
+
+      call system('rm -f scrp.xx qrw.zzz ')
+
+      return
+      end
+
+
+
+**************************************************************************
+*
+*              SETPANY
+*    Fyller homedir, defdir, lognavn, prosessnummer, host og hosttype 
+*    inn i commonomraadet direk og setter
+*    iustrr i com. komstyr. Benytter bla .a. getenv
+********************************************************************
+      subroutine setpany
+      include 'styr.inc'
+*-------------------------------------------------------
+      integer kf,ierr,getcwd,getpid
+
+      call blank(hostt,40)
+      call getenv('HOSTTYPE',hostt)
+      call strip(hostt,40,kf)
+      if(hostt(1:2).eq.'hp') then
+        iustrr=7
+      else
+        iustrr=0
+      end if
+
+
+      call blank(homedir,120)
+      call getenv('HOME',homedir)
+      call strip(homedir,120,nhd)
+      if(nhd.gt.0) then
+        nhd=nhd+1
+        homedir(nhd:nhd)='/'
+      else
+        write(iustrr,'(a)')'$HOME ikke satt'
+      end if
+      
+
+      call blank(vert,40)
+      call getenv('HOST',vert)
+      
+      call blank(lognav,40)
+      call getlog(lognav)
+
+      pronum=getpid()
+
+      call blank(defdir,120)
+      ierr=getcwd(defdir)
+      if(ierr.eq.0.or.hostt(1:2).ne.'ds') then
+        call strip(defdir,120,ndd)
+        ndd=ndd+1
+        defdir(ndd:ndd)='/'
+      else
+        write(iustrr,'(a)')'finner ikke def-dir'
+      end if
+        
+
+      return
+      end
+
+
+**********************************************************************
+*             FULLPATH
+*
+*       Gjor om lokalt navn til fullt pathnavn.
+*           t - tekst med filnavn                      I/O
+*           n - maks lengde av t                       I
+*               dersom nodvendig trunkeres fremste part av pathnavn
+**********************************************************************
+      subroutine fullpath(t,n)
+      integer n
+      character*200 t
+      include 'styr.inc'
+*-------------------------------------------------------------- 
+      integer kf,kadd
+
+      call frontstrip(t,n,kf)
+
+      if(t(1:1).eq.'/') return
+
+      call strip(t,n,kf)
+
+      kadd=min(ndd,n-kf)
+
+      t(kadd+1:kadd+kf)=t(1:kf)
+
+      t(1:kadd)=defdir(ndd-kadd+1:ndd)
+
+      return
+      end
+
+      
+
+***********************************************************************
+*
+*              FETCHENV
+*
+*   Henter ut opplysninger i en character*80 array.
+*                cinf(1) - inneholder lognavn og pid (fra pos hhv. 1 og 41)
+*                     2  -            host
+*                     3  -            working dir. ( trunkeres evt. forfra)
+*********************************************************************
+      subroutine fetchenv(cinf)
+      character*80 cinf(3)
+      include 'styr.inc'
+*------------------------------------------------------------------------
+      integer kf,i
+      character*20 cpid
+
+      do 100 i=1,3
+        call blank(cinf(i),80)
+ 100  continue  
+
+      call itconv(pronum,kf,cpid)
+      cinf(1)(1:40)=lognav(1:40)
+      cinf(1)(41:40+kf)=cpid(1:kf)
+ 
+      cinf(2)(1:40)=vert(1:40)
+      
+      if(ndd.gt.80) then
+        cinf(3)(1:80)=defdir(ndd-79:ndd)
+      else
+        cinf(3)(1:ndd)=defdir(1:ndd)
+      end if
+
+      return
+      end
+
+
+**************************************************************************
+*
+*              SKRIVENV
+*    Skriver ut homedir, defdir og hosttype fra commonomraadet direk.
+********************************************************************
+      subroutine skrivenv(itape)
+      integer itape
+      include 'styr.inc'
+*-------------------------------------------------------
+      integer kf,ierr
+
+      write(itape,'(a,a)')'HOSTTYPE=',hostt(1:20)
+      write(itape,'(a,a)')'HOME=',homedir(1:nhd)
+      write(itape,'(a,a)')'wdir:',defdir(1:ndd)
+
+      return
+      end
+
+
+
+**********************************************************************
+      subroutine initkom
+      include 'styr.inc'
+*----------------------------------------------------------------------
+
+      aktlog=0
+      sattlog=0
+
+      aktkom=0
+      sattkom=0
+      dispens=0
+
+      intape=5
+c     lese-enhet  settes til standard  input
+
+      call setpany
+c     def og home dir leses inn.
+      return
+      end
+
+************************************************************************
+*     setter lese-uniten til itape
+********************************************************************
+      subroutine setinp(itape)
+      integer itape
+      include 'styr.inc'
+*------------------------------------------------------------------
+      
+      if(itape.le.0 .or. itape .eq.6)then
+        write(iustrr,*)'ulovlig enhet for innlesning:',itape
+        return
+      end if
+
+      intape=itape
+
+      return
+      end
+
+************************************************************************
+*     returnerer lese-enheten i infast
+********************************************************************
+      subroutine inpenh(infast)
+      integer infast
+      include 'styr.inc'
+*------------------------------------------------------------------
+      infast=intape
+
+      return
+      end
+
+
+************************************************************************
+*     returnerer unitnummer for standard error i iero
+********************************************************************
+      subroutine stdrror(iero)
+      integer iero
+      include 'styr.inc'
+*------------------------------------------------------------------
+      iero=iustrr
+
+      return
+      end
+
+
+************************************************************************
+*
+*     Dersom fnavn inneholder navnet p} en mulig input fil, }pnes denne
+*     med unit intape og innum settes som lesenhet. dersom fila ikke
+*     finnes returneres uten noen endring.
+**********************************************************************
+      subroutine inpfil(fnavn,innum)
+      integer innum
+      character*80 fnavn
+*-----------------------------------------------------------------------
+      integer kf
+      logical hiv
+      integer iustrr
+
+      call stdrror(iustrr)
+
+
+      call xstrip(fnavn,kf,hiv)
+
+
+      open(unit=innum,file=fnavn(1:kf),status='old',err=200)
+      write(iustrr,*)'fil: ',fnavn(1:kf),' }pnet for input'
+      call setinp(innum)
+      return
+
+ 200  continue
+
+      write(iustrr,*)'fil: ',fnavn(1:kf),' kan ikke }pnes'
+      return
+      end
+      
+************************************************************************
+      subroutine setkomm(c)
+      character c
+      include 'styr.inc'
+*----------------------------------------------------------------------
+
+      sattkom=1
+      aktkom=1
+      charkom=c
+
+      return
+      end
+
+************************************************************************
+      subroutine stoppkomm
+      include 'styr.inc'
+*----------------------------------------------------------------------
+
+
+      aktkom=0
+
+      return
+      end
+
+
+************************************************************************
+      subroutine startkomm
+      include 'styr.inc'
+*----------------------------------------------------------------------
+
+      if(sattkom.eq.1) then
+        aktkom=1
+      else
+        write(iustrr,*)'comments attempted chosen without enabling'
+      end if
+
+      return
+      end
+
+
+************************************************************************
+      subroutine setlog(itape)
+      integer itape
+      include 'styr.inc'
+*----------------------------------------------------------------------
+
+      sattlog=1
+      aktlog=1
+      ltape=itape
+
+      return
+      end
+
+************************************************************************
+      subroutine stopplog
+      include 'styr.inc'
+*----------------------------------------------------------------------
+
+
+      aktlog=0
+
+      return
+      end
+
+
+************************************************************************
+      subroutine startlog
+      include 'styr.inc'
+*----------------------------------------------------------------------
+
+
+      if(sattlog.eq.1) then
+        aktlog=1
+      else
+        write(iustrr,*)'logging set without enabling'
+      end if
+
+      return
+      end
+
+
+**************************************************************************
+      subroutine primvri(t)
+      character*80 t
+      include 'styr.inc'
+
+*----------------------------------------------------------------------
+      integer k
+      logical def        
+
+      call xstrip(t,k,def)
+      if(k.ge.78) k=78
+      if(k.gt.0) then                           
+        write(iustrr,*) t(1:k)
+        if(aktlog.eq.1 .and. aktkom.eq.1 )
+     %  write(ltape,*) charkom,t(1:k)
+      else
+        write(iustrr,*)' '
+        if(aktlog.eq.1 .and. aktkom.eq.1)
+     %  write(ltape,*) charkom
+      end if
+
+      return
+      end
+
+
+***************************************************************************
+      subroutine primles(t,iflag)
+      integer iflag
+      character*80 t
+      include 'styr.inc'
+
+*----------------------------------------------------------------------
+      integer i0,i1,kflag
+
+      iflag=0
+
+ 100  continue
+
+      if(dispens.eq.1) then
+        read(5,20,end=50) t
+      else
+        read(intape,20,end=50) t
+      end if
+ 20   format(a80)
+ 25   format(a78)
+
+      call lokord(t,1,80,i0,i1,kflag)
+
+      if(intape.ne.5 .and.
+     %     t(i0:i0+3).eq.'????' .and.(dispens.eq.0)) then
+        dispens=1
+        write(iustrr,*)'input fra standard'
+        read(5,20,end=50) t
+      end if
+
+      if(kflag.ne.0 .and. aktkom.eq.1) then
+        if(t(i0:i0).eq.charkom) then
+          if(aktlog.eq.1) write(ltape,25) t(1:78)
+          go to 100
+        end if
+      end if
+
+      if(aktlog.eq.1) write(ltape,25) t(1:78) 
+      if(intape.ne.5 .and.(dispens.eq.0)) write(iustrr,25) t(1:78) 
+
+      return
+
+ 50   continue
+      if(dispens.eq.1 .or. intape.eq.5) then
+         write(iustrr,*)'end of file funnet p} standard input'
+         iflag=2
+         return
+      end if
+      write(iustrr,*)'slutt p} input fra enhet=',intape
+      intape=5
+      iflag=1
+      return
+      
+      end
+
+
+
+
+*******************************************************************************
+*
+*                    R T A L L
+*
+*     Real-utgaven av itall.
+*
+*     kaller 'xstrip' og 'getr'
+******************************************************************************
+      function rtall(rdef,spor)
+      real rtall,rdef
+      character*80 spor
+      include 'styr.inc'
+*---------------------------------------------------------
+      character*80 svar
+      integer k,i,i1,i2,iflag,ib,kflag
+      real rres,rverdi
+      logical def        
+
+      call xstrip(spor,k,def)                           
+      if(k.eq.0) k=1
+
+  200 continue
+   
+      if(def) then
+        write(iustrr,*) spor(1:k) ,'/', rdef ,'/'
+        if(aktlog.eq.1 .and. aktkom.eq.1)
+     %  write(ltape,*) charkom,spor(1:k) ,'/', rdef ,'/'
+      else
+        write(iustrr,*) spor(1:k)
+        if(aktlog.eq.1 .and. aktkom.eq.1)
+     %     write(ltape,*) charkom,spor(1:k) 
+      end if
+
+      call primles(svar,kflag)
+
+      if(kflag.eq.2) stop
+      if(kflag.ne.0) go to 200
+
+      call getr(svar,1,80,i1,i2,rres,iflag)
+      if(iflag.eq.0) then
+        if(def) then
+          rverdi=rdef
+          go to 500
+        else
+          call primvri('No default value available#')
+          go to 200
+        end if
+      end if
+      
+      if(iflag.gt.1) then
+        call primvri('illegal input#')
+        go to 200
+      else
+        rverdi=rres
+        ib=i2+1
+        call getr(svar,ib,80,i1,i2,rres,iflag)
+        if(iflag.ne.0) then
+          call primvri('Please, give a single real#')
+          go to 200
+        end if
+      end if
+
+ 500  continue
+
+      rtall=rverdi
+      dispens=0
+
+      return
+      end                 
+
+
+*******************************************************************************
+*           
+*                     L E S T E K
+*
+*    stiller sporsmal spor og leser svaret som teksten 'tekst'. spor angis
+*    som for 'itall', standardverdien tdef avsluttes med # eller '!'(disse
+*    blir ikke med i svar). Svar antas aa vaere 80 lang og etterfylles med
+*    blanke. En tom tekst kan ikke vare standardverdi.                                                                 
+*
+*    kaller 'xstrip' og 'lokord'
+*******************************************************************************
+      subroutine lestek(tdef,spor,svar)
+      character*80 tdef,svar, spor
+      include 'styr.inc'
+*---------------------------------------------------------
+      integer k,i,i1,i2,k1,iflag,kflag
+      logical def,daf        
+
+      do 70 i=1,80
+   70 svar(i:i)=' '
+
+      call xstrip(spor,k,def)
+      if(k.eq.0) k=1                           
+
+      if(def) then
+        call xstrip(tdef,k1,daf)
+        if(k1.eq.0) def=.false.
+      end if
+
+  200 continue
+
+      if(def) then
+        write(iustrr,*) spor(1:k) ,'/', tdef(1:k1) ,'/'
+        if(aktlog.eq.1 .and. aktkom.eq.1)
+     %  write(ltape,*) charkom,spor(1:k) ,'/', tdef(1:k1) ,'/'
+      else
+        call primvri(spor)
+      end if
+
+      call primles(svar,kflag)
+      if(kflag.eq.2) stop
+      if(kflag.ne.0) go to 200
+
+      call lokord(svar,1,80,i1,i2,iflag)
+      if(iflag.eq.0) then
+        if(def) then
+          svar(1:k1)=tdef(1:k1)
+          go to 500
+        else
+          call primvri('No default value available#')
+          go to 200
+        end if
+      end if
+      
+ 500  continue
+
+      dispens=0
+      
+      return
+      end
+
+
+
+***********************************************************************
+*
+*                      L S J E K K
+*
+*    stiller spoersmal spor ,standardverdi tdef faaes eller ignoreres
+*    paa samme vis som i 'itall'. I svaret (teksten svar) lokaliseres
+*    sekvensene til l(1,k):l(2,k) k=1..iant. Som lovlig svar godtas
+*    bare de hvis foerste sekvens er en entydig forkortelse til et ord
+*    i menyen liste(nl); lnum angir hvilket ord. 
+*
+*    kaller 'alacart','deltek','red' ,'lestek' og 'upchar'.
+*****************************************************************************
+      subroutine lsjekk(tdef,spor,svar,l,iant,liste,nl,lnum)
+      integer iant,lnum,l(2,20),nl
+      character*80 tdef,spor,svar,liste(nl)
+      include 'styr.inc'
+*----------------------------------------------------------------------
+      integer ltall,men(20),i
+
+
+
+  100 continue
+      call lestek(tdef,spor,svar)
+      call red(svar,80)
+      call deltek(svar,1,80,l,iant)
+      i=l(2,iant)
+      if(svar(i:i).eq.'#') l(2,iant)=i-1
+      call alacart(liste,nl,svar,l(1,1),l(2,1),men,ltall)
+
+      if(ltall.eq.0) then
+        write(iustrr,*) 'illegal command: /',svar(l(1,1):l(2,1)),'/'
+        if(aktlog.eq.1 .and. aktkom.eq.1) 
+     %   write(ltape,*) charkom,'illegal command: /'
+        if(aktlog.eq.1 .and. aktkom.eq.1) 
+     %   write(ltape,*) charkom,svar(l(1,1):l(2,1)),'/' 
+        go to 100
+      end if
+      if(ltall.gt.1) then
+        write(iustrr,*) 'ambiguous abbreviation: /',svar(1:l(2,1)),'/'
+        if(aktlog.eq.1 .and. aktkom.eq.1) 
+     %   write(ltape,*) charkom,'ambiguous abbreviation: /'
+        if(aktlog.eq.1 .and. aktkom.eq.1) 
+     %  write(ltape,*) charkom,svar(1:l(2,1)),'/'
+        go to 100
+      end if
+
+      lnum=men(1)
+
+      return
+      end
+
+
+************************************************************************* 
+*
+*                     J A
+*    leser ja/nei svar(returnerer med true dersom svar er 'ja').
+*    Spoersmal spor gis som for 'itall'. Svarene 'ja','nei','yes','no'
+*    og deres forkortelser godtas.
+*
+*    kaller: 'lestek','lokord','fork'
+**************************************************************************
+      function ja(def,spor)
+      logical def,ja
+      character*80 spor
+      include 'styr.inc'
+*-------------------------------------------------------------------
+      character*80 cdef,svar
+      integer i1,i2,i3,i4,iflag,n0      
+      logical fork,lik
+
+      if(def) then
+        cdef='yes#'
+      else
+        cdef='no#'   
+      end if
+  100 continue
+            
+      call lestek(cdef,spor,svar)      
+      call lokord(svar,1,80,i1,i2,iflag)
+      n0=i2+1
+      call lokord(svar,n0,80,i3,i4,iflag)
+      if(iflag.ne.0) then
+        call primvri(' Answer yes or no#')
+        go to 100
+      end if
+
+      if( fork('ja#',svar,i1,i2) ) then
+        ja=.TRUE.
+        return
+      end if
+
+      if( fork('nei#',svar,i1,i2) ) then
+        ja=.false.
+        return
+      end if
+      if( fork('yes#',svar,i1,i2) ) then   
+        ja=.true.
+        return
+      end if
+      if( fork('oui#',svar,i1,i2) ) then   
+        ja=.true.
+        return
+      end if
+      if( fork('no#',svar,i1,i2) ) then 
+        ja=.false.
+        return
+      end if
+     
+      call primvri('Answer yes or no#')
+      go to 100
+      end
+
+
+
+
+*************************************************************************     *  
+*
+*             L E S O R D 
+*
+*     spoer om og leser et enkelt ord. Stopptegnene '#' og '!' brukes
+*     paa vanlig maate. svaret ligger i svar(1:il).
+*
+*    kaller: 'lestek','lokord'.
+**************************************************************************
+      subroutine lesord(wdef,spor,svar,il)
+      character*80 wdef,spor,svar 
+      integer il
+      include 'styr.inc'
+*--------------------------------------------------------------------
+      integer i,kb,k1,k2,k3,k4,iflag
+      character*80 resp
+
+  100 continue
+      call lestek(wdef,spor,resp) 
+      call lokord(resp,1,80,k1,k2,iflag) 
+      kb=k2+1
+      call lokord(resp,kb,80,k3,k4,iflag)
+      if(iflag.ne.0) then
+        call primvri('Give a single word, please#')
+        go to 100
+      end if
+      
+      il=k2-k1+1
+      svar(1:il)=resp(k1:k2)   
+      return
+      end
+
+
+
+**********************************************************************
+*          LESFRAREG
+*
+*    Leser ett valg fra en liste av ord, forkortelser aksepteres
+*    paa vanlig vis.
+*        spor - sporsmaal                                    I
+*        idef - nummer paa default valg                      I
+*        reg - liste av alternativer                         I
+*        n  - antall alternativer                            I
+*        ires - nummer paa svar                              O
+**********************************************************************
+      subroutine lesfrareg(spor,idef,reg,n,ires)
+      integer n,ires,idef
+      character*80 reg(n),spor
+*-----------------------------------------------------------------
+      character*80 wdef,svar,mess
+      integer il,kf,l(50),i,iant,ig
+      logical kast,fork
+
+      if(idef.gt.n .or. n.gt.50) then
+        call primvri('Error in lesfrareg#')
+        return
+      end if
+
+      call xstrip(reg(idef),kf,kast)
+      wdef(1:kf)=reg(idef)(1:kf)
+      wdef(kf+1:kf+1)='#'
+
+ 100  continue
+      call lesord(wdef,spor,svar,il)
+      
+
+
+      call velgcart(reg,n,svar,1,il,l,iant)
+
+      if(iant.gt.1) then
+        call primvri('ambiguous abbreviation#')
+        go to 100
+      end if
+
+      if(iant.eq.0) then
+        if(fork('hjelp#',svar,1,il) .or. fork('help#',svar,1,il)) then
+          call primvri('Available alternatives:#')
+          do 50 i=1,n
+          call xstrip(reg(i),kf,kast)
+          mess(1:kf+1)=reg(i)(1:kf+1)
+          call primvri(mess)
+ 50       continue
+        else
+          mess(1:14)='illegal answer:'
+          ig=min(il,64)
+          mess(15:15+ig)=svar(1:ig)
+          mess(16+ig:16+ig)='#'
+          call primvri(mess)
+        end if
+        go to 100
+      end if
+
+      ires=l(1)
+
+      end
+
+
+
+
+
+
+
+
+************************************************************************
+*
+*              LESNRS
+***********************************************************************
+      subroutine lesnrs(def,spor,svar,med,irad)
+      integer irad
+      logical med(irad)
+      character*80 def,spor,svar
+*----------------------------------------------------------------------
+      integer iflag,i2,kf
+      character*80 mess
+
+      mess(1:14)='antall rader: '
+      call itconv(irad,kf,svar)
+      mess(15:15+kf)=svar(1:kf)
+      mess(16+kf:16+kf)='#'
+
+ 100  call primvri(mess)
+      call blank(svar,80)
+      call lestek(def,spor,svar)
+      call strip(svar,80,i2)
+      if(i2.lt.80) svar(i2+1:i2+1)='#'
+      call konvert(svar,1,i2,irad,med,iflag)
+      if(iflag.gt.0) then
+        call primvri('ulovlig nummerangivelse#')
+        go to 100
+      end if
+
+      return
+      end
+
+
+EOF dia2n.f
+------------------------------
+fil diadd.f
+Thu Oct  4 16:11:53 CEST 2012
+-rw-r--r-- 1 geirkp mn 22293 2010-10-14 14:48 diadd.f
+**************************************************************************
+      subroutine lokchar(t,c,i1,i2,k,eks)
+      integer i1,i2,k
+      character*80 t
+      character c
+      logical eks
+*------------------------------------------------------------------------
+      integer i
+
+      if(i1.gt.i2) then
+        eks=.false.
+        return
+      end if
+
+      i=i1-1
+
+ 100  continue
+      i=i+1
+
+      if(t(i:i).eq.c) then
+        k=i
+        eks=.true.
+        return
+      end if
+
+      if(i.eq.i2) then
+        eks=.false.
+        return
+      end if
+
+      go to 100
+
+      end
+
+
+
+***************************************************************************
+*
+*          t - i1:i2 inneholder ett ord.
+*************************************************************************
+      subroutine extension(t,i1,i2,ten,kf)
+      integer i1,i2,kf
+      character*80 t,ten
+*-------------------------------------------------------------------------
+      integer k,nmax,np,iflag
+      logical eks
+      character*80 tt
+
+       nmax=i2-i1+1
+       tt(1:nmax)=t(i1:i2)
+c      call lokchar(t,'.',i1,i2,k,eks)
+       np=nmax
+       iflag=0
+      if(tt(nmax:nmax).ne.'.') call fsok(tt,nmax,np,'.',-1,iflag)
+      eks=iflag.eq.0 
+      if(eks) then
+        kf=nmax-np
+        if(kf.gt.0) then
+          ten(1:kf)=tt(np+1:nmax)
+        end if
+      else
+        kf=-1
+      end if
+
+      return
+      end
+
+
+
+*************************************************************************
+*
+*                 FILGEN
+*
+*  Stiller sporsmaal paa standard error og leser filangivelse som spesifisert i
+*  beskrivelse av rutinen 'ordfile'. Filnavn ekspanderes som beskrevet i
+*   expand.
+*  'Initkom' m} v{re kalt f|r f|rste kall p} filgen. I traad med vanlig 
+*   praksis i dia rutiner ender inputstrenger med ! eller #.
+*   parametere:
+*        ITAPE - unitnummer                                        I/O
+*                dersom noe gaar galt settes itape < 0
+*        spor  - sporsmaal                                         I
+*        defn  - standard filnavn, derom spor ender med ! neglisjeres
+*                denne og svar maa gis.                            I
+*        NAVN(1:kf) - filnavn                                       O
+*        kf - se ovenfor                                            O
+*        asc - = .true. angir asci, = .false. binaer               O
+*        inp - = .true. angir inputfil, = .false. outputfil        I
+*************************************************************************
+      SUBROUTINE FILgen(ITAPE,SPOR,DEFN,NAVN,KF,asc,inp)
+      INTEGER ITAPE,KF
+      CHARACTER*80 SPOR,DEFN,NAVN
+      logical asc,inp
+      include 'styr.inc'
+*-----------------------------------------------------------------------
+      CHARACTER*120 HNAVN,FNA
+      character*11 fmat
+      LOGICAL FORK
+      INTEGER KF0,iflag,kfex
+                 
+      kf0=kf
+ 100  continue
+      CALL BLANK(HNAVN,120)
+      CALL BLANK(FNA,120)
+      CALL LESTEK(DEFN,SPOR,HNAVN)
+      call ordfile(hnavn,1,80,fna,kf,asc,iflag)
+
+      if(iflag.gt.0) then
+        write(0,*)'iflag=',iflag
+        call primvri('ulovlig eller ufullstendig fil-spes.#')
+        go to 100
+      end if
+
+      IF(KF.GT.KF0) THEN
+        WRITE(IUSTRR,11) ' ',KF,KF0
+        if(aktlog.eq.1 .and. aktkom.eq.1)
+     %     WRITE(ltape,11) charkom,KF,KF0
+  11    FORMAT(1X,a1,'LENGDE:',I4,'  MAX. LENGDE:',I4)
+        call primvri('GI NYTT OG KORTERE NAVN#')
+        GO TO 100
+      ELSE       
+        CALL BLANK(NAVN,KF0)
+        NAVN(1:KF)=fna(1:KF)
+      END IF
+
+      IF(FORK('STOPP#',NAVN,1,KF) .or. 
+     %     fork('INGEN#',navn,1,kf) ) THEN
+        ITAPE=-1
+        RETURN
+      END IF
+
+
+      if(asc) then
+        IF(FORK('TTY#',NAVN,1,KF) .OR. 
+     %       FORK('TERMINAL#',NAVN,1,KF) ) THEN
+          if(inp) then
+            ITAPE=5
+          else
+            itape=iustrr
+          end if
+          RETURN
+        END IF
+
+
+        if(inp) then
+          IF(FORK('STANDARD#',NAVN,1,KF) .or. 
+     %        fork('input#',navn,1,kf) ) THEN
+            ITAPE=5
+            RETURN
+          END IF  
+        else
+         IF(FORK('ERROR#',NAVN,1,KF)) THEN
+           ITAPE=iustrr
+           RETURN
+         END IF   
+
+         IF(FORK('OUTPUT#',NAVN,1,KF)) THEN
+           ITAPE=6
+           RETURN
+          END IF   
+       end if
+          
+      end if 
+
+      if(asc) then
+        fmat='formatted  '
+      else
+        fmat='unformatted'
+      end if
+
+      call expand(navn,kf,fna,kfex,iflag)
+      if(iflag.gt.0) then
+        call primvri('ulovlig filnavn#')
+        go to 100
+      end if
+
+      if(kfex.le.kf0) then
+        kf=kfex
+        navn(1:kf)=fna(1:kf)
+      end if
+
+      if(inp) then
+       open(UNIT=itape,file=fna(1:kfex),ERR=117,status='old',
+     % form=fmat)
+
+        return
+  117   call primvri('fil ikke funnet#')
+      else
+       open(UNIT=itape,file=fna(1:kfex),ERR=119,status='unknown'
+     %      ,form=fmat)
+       return
+ 119   call primvri('fil kan ikke }pnes#')
+      end if
+      call primvri('gi nytt navn ("stopp" dersom du gir opp)#')
+      go to 100
+
+      end
+
+
+
+
+***********************************************************************
+*
+*     Rutinen unders|ker en streng for } finne en filbskrivelse som
+*     best}r av navn og type-angivelse. Type angivelse er en forkortelse,
+*     minst 3 tegn lang, av 'ascii' eller 'binary'. Store og sm} bokstaver
+*     behandles likt. 
+*          Dersom to ord finnes i strengen tolkes det ene som
+*     type, det andre som filnavn uavhengig av rekkef|lge. Dette betyr
+*     at filnavn som er mulige typeangivelser vanligvis ikke kan benyttes.
+*          Hvis strengen inneholder bare ett ord, tolkes dette som filnavn.
+*     Type settes da som ascii med ett unntak: filnavn inneholder et og
+*     bare ett punktum etterfulgt av type angivelse for bin{r fil.
+*          eksempler
+*   
+*               streng              filnavn           type
+*          
+*             bin  a.dat             a.dat            bin{r
+*             a.dat ascii            a.dat            ascii
+*             bin asc                    ulovlig streng
+*             a.dat                  a.dat            ascii
+*             a.binary               a.binary         bin{r
+*             a.bin.dat              a.bin.dat        ascii
+*             .bin                    .bin            bin{r
+*             asci a.bin             a.bin            ascii
+*             ascii                      ulovlig streng
+*
+*     parametere:
+*             t(i1:i2) - streng med filangivelse                     I
+*               i1,i2  - angir del av tekst t som skal unders|kes    I
+*             name(1:kf) - tekst som angir funnet filnavn            O
+*             kf        - lengde av filnavn                          O
+*             asc       - verdi .true. angir ascii, .false. bin{r    O
+*             iflag     - feilparameter                              O
+*                        =0  lovlig og fullstendig informasjon i streng
+*                        =1  streng er tom
+*                        =2  streng inneholder to ord, ingen kan tolkes 
+*                            som type-betegnelse
+*                        =3  streng inneholder 2 ord som begge er
+*                            type-betegnelser
+*                        =4,5  streng inneholder bare ett ord som er en
+*                            betegnelse  for hhv ascii og bin{r.
+*******************************************************************************
+      subroutine ordfile(t,i1,i2,name,kf,asc,iflag)
+      integer i1,i2,kf,iflag
+      character*80 t,name
+      logical asc
+*-----------------------------------------------------------------------
+      integer l(2,20),iant,j,itreff(2),m,nfil,ntyp
+      character*80 ten
+      logical fork
+
+      iflag=0
+      call deltek(t,i1,i2,l,iant)
+
+      if(iant.eq.0) then
+        iflag=1
+        return
+      end if
+
+      if(iant.gt.2) then
+        iflag=2
+        return
+      end if
+
+      if(iant.eq.1) then
+        kf=l(2,1)-l(1,1)+1
+        name(1:kf)=t(l(1,1):l(2,1))
+        call extension(name,1,kf,ten,j)
+        if(j.gt.0) then
+          asc =.not.(fork('binary#',ten,1,j) .and. j.ge.3)
+        else
+          asc=.true.
+          if(kf.ge.3) then
+            if(fork('ascii#',name,1,kf)) iflag=4
+            if(fork('binary#',name,1,kf)) iflag=5
+          end if
+        end if
+        return
+      end if
+
+      do 100 m=1,2
+      if(l(2,m)-l(1,m).lt.2) then
+        itreff(m)=0
+      else
+        if(fork('ascii#',t,l(1,m),l(2,m)) ) then
+          itreff(m)=1
+        else
+          if(fork('binary#',t,l(1,m),l(2,m)) ) then
+            itreff(m)=2
+          else
+            itreff(m)=0
+          end if
+        end if
+      end if
+
+ 100  continue
+
+      if( itreff(1).eq.0 .and. itreff(2).eq.0) then
+        iflag=2
+        return
+      end if
+
+      if( itreff(1).gt.0 .and. itreff(2).gt.0) then
+        iflag=3
+        return
+      end if
+
+      if(itreff(1).gt.0) then
+        ntyp=1
+        nfil=2
+      else
+        ntyp=2
+        nfil=1
+      end if
+
+      asc=itreff(ntyp).eq.1
+      kf=l(2,nfil)-l(1,nfil)+1
+      name(1:kf)=t(l(1,nfil):l(2,nfil))
+    
+      return
+      end
+
+
+
+*************************************************************************
+*
+*                 FILOPN
+*
+*  AApner fil fra gitt filangivelse som beskrevet i expand og ordfile.
+*  'Initkom' m} v{re kalt f|r f|rste kall p} filopn dersom expandering
+*   skal virke.
+*   parametere:
+*        ITAPE - unitnummer                                        I
+*        NAVN - filangivelse                                       I
+*               eksempe paa lov. ang:  bin ~/hh.jj 
+*        fulln(1:kf) -filnavn, dersom det er ekspandert inneholder   O
+*                     fulln hele pathen.
+*        kf - se ovenfor                                            O
+*        asc - = .true. angir asci, = .false. binaer               O
+*        inp - = .true. angir inputfil, = .false. outputfil        I
+*        ierr - feilparameter                                      O
+*              = 0          alt ok
+*                1          gal angivelse av type ( bin/asc etc.)
+*                2          feil under expandering
+*                3          fil kan ikke aapnes
+***********************************************************************
+      SUBROUTINE FILopn(ITAPE,NAVN,fulln,kf,asc,inp,ierr)
+      INTEGER ITAPE,kf,ierr
+      CHARACTER*80 NAVN
+      character*120 fulln
+      logical asc,inp
+      include 'styr.inc'
+*-----------------------------------------------------------------------
+      CHARACTER*120 FNA
+      character*11 fmat
+      character*7 fstat
+      INTEGER iflag,kfa,kfn
+      logical paelm
+                 
+      ierr=0
+
+      call xstrip(navn,kfn,paelm)
+      CALL BLANK(FNA,120)
+      call ordfile(navn,1,kfn,fna,kfa,asc,iflag)
+
+      if(iflag.gt.0) then
+        ierr=1
+        return
+      end if
+
+
+
+      if(asc) then
+        fmat='formatted  '
+      else
+        fmat='unformatted'
+      end if
+
+      if(inp) then
+        fstat='old    '
+      else
+        fstat='unknown'
+      end if
+
+      call expand(fna,kfa,fulln,kf,iflag)
+      if(iflag.gt.0) then
+        ierr=2
+        return
+      end if
+
+      open(UNIT=itape,file=fulln(1:kf),ERR=119,status=fstat
+     %      ,form=fmat)
+      return
+ 119  continue
+      ierr=3
+      return
+    
+
+      end
+
+
+********************************************************************
+*
+*                LEXYFIL
+*                
+*     Reads data from two-column file
+*
+*     fnavn  - Name on file                                            I
+*     kl  -   lengtn of filename. If kl<=0 the name is assumed to be   I
+*             ended by '#' or '!' and the length is calculated
+*     x,y  -  arrays for data                                          O
+*     nmax  - maximum number of data                                   I
+*     n  -    number of data read                                      O
+*     ope  -  set to false if file needs to be opened                  I
+*     itape  - unitnumber                                              I
+*     nskip  -  number of leading comment lines in file                O  
+*     iflag  - error flag                                              O
+*                0     : OK
+*                1     : maximum number of data reached before end of file.
+*                        The data that is read is returned in x and y
+*                3     : error in comment processing ( no data ?)
+*                30    : inappropriate filename 
+*                50    : cannot open file
+********************************************************************
+      subroutine lexyfil(fnavn,kl,x,y,nmax,n,ope,itape,nskip,iflag)
+      integer kl,nmax,n,itape,nskip,iflag
+      real x(nmax),y(nmax)
+      character*80 fnavn
+      logical ope
+*------------------------------------------------------------------
+      integer kf,ierr
+      real a,b
+      logical def
+ 
+      iflag=0
+
+      if(kl.le.0) then
+      call xstrip(fnavn,kf,def)
+         if(kf.le.0) then
+           iflag=30
+           return
+         end if         
+      else
+         kf=kl
+      end if
+
+
+      if( .not.ope) then
+       open(unit=itape,file=fnavn(1:kf),err=117,status='old')
+      end if
+
+
+cc      call skipkom(nskip,itape,ierr)
+      call slopskip(nskip,itape,ierr)
+      if(ierr.gt.0) then
+      write(0,*)'skipkom: nskip,ierr=',nskip,ierr
+         iflag=3
+         close(itape)
+         return
+      end if
+
+      n=0
+
+ 100  continue
+
+      read(itape,*,end=200)a,b
+      n=n+1
+      if(n.gt.nmax) then
+        iflag=1
+        close(itape)
+        return
+      end if
+      x(n)=a
+      y(n)=b
+
+      go to 100
+
+ 200  continue
+      close(itape)
+      return
+
+ 117  continue
+      iflag=50
+      return
+
+      end
+
+
+********************************************************************
+*
+*                LEXFIL
+*                
+*     Reads data from one-column file
+*
+*     fnavn  - Name on file                                            I
+*     kl  -   lengtn of filename. If kl<=0 the name is assumed to be   I
+*             ended by '#' or '!' and the length is calculated
+*     x  -  array for data                                          O
+*     nmax  - maximum number of data                                   I
+*     n  -    number of data read                                      O
+*     ope  -  set to false if file needs to be opened                  I
+*     itape  - unitnumber                                              I
+*     nskip  -  number of leading comment lines in file                O  
+*     iflag  - error flag                                              O
+*                0     : OK
+*                1     : maximum number of data reached before end of file.
+*                        The data that is read is returned in x and y
+*                3     : error in comment processing ( no data ?)
+*                30    : inappropriate filename 
+*                50    : cannot open file
+********************************************************************
+      subroutine lexfil(fnavn,kl,x,nmax,n,ope,itape,nskip,iflag)
+      integer kl,nmax,n,itape,nskip,iflag
+      real x(nmax)
+      character*80 fnavn
+      logical ope
+*------------------------------------------------------------------
+      integer kf,ierr
+      real a
+      logical def
+ 
+      iflag=0
+
+      if(kl.le.0) then
+      call xstrip(fnavn,kf,def)
+         if(kf.le.0) then
+           iflag=30
+           return
+         end if         
+      else
+         kf=kl
+      end if
+
+
+      if( .not.ope) then
+       open(unit=itape,file=fnavn(1:kf),err=117,status='old')
+      end if
+
+
+cc      call skipkom(nskip,itape,ierr)
+      call slopskip(nskip,itape,ierr)
+      if(ierr.gt.0) then
+      write(0,*)'skipkom: nskip,ierr=',nskip,ierr
+         iflag=3
+         close(itape)
+         return
+      end if
+
+      n=0
+
+ 100  continue
+
+      read(itape,*,end=200)a
+      n=n+1
+      if(n.gt.nmax) then
+        iflag=1
+        close(itape)
+        return
+      end if
+      x(n)=a
+
+      go to 100
+
+ 200  continue
+      close(itape)
+      return
+
+ 117  continue
+      iflag=50
+      return
+
+      end
+
+
+********************************************************************
+*
+*                LENMFIL
+*                
+*     Reads data from two-column file
+*
+*     fnavn  - Name on file                                            I
+*     kl  -   lengtn of filename. If kl<=0 the name is assumed to be   I
+*             ended by '#' or '!' and the length is calculated
+*     nx,ny  -  arrays for data                                        O
+*     nmax  - maximum number of data                                   I
+*     n  -    number of data read                                      O
+*     ope  -  set to false if file needs to be opened                  I
+*     itape  - unitnumber                                              I
+*     nskip  -  number of leading comment lines in file                O  
+*     iflag  - error flag                                              O
+*                0     : OK
+*                1     : maximum number of data reached before end of file.
+*                        The data that is read is returned in x and y
+*                3     : error in comment processing ( no data ?)
+*                30    : inappropriate filename 
+*                50    : cannot open file
+********************************************************************
+      subroutine lenmfil(fnavn,kl,nx,ny,nmax,n,ope,itape,nskip,iflag)
+      integer kl,nmax,n,itape,nskip,iflag,nx(nmax),ny(nmax)
+      character*80 fnavn
+      logical ope
+*------------------------------------------------------------------
+      integer kf,ierr,na,nb
+      logical def
+ 
+      iflag=0
+
+      if(kl.le.0) then
+      call xstrip(fnavn,kf,def)
+         if(kf.le.0) then
+           iflag=30
+           return
+         end if         
+      else
+         kf=kl
+      end if
+
+
+      if( .not.ope) then
+       open(unit=itape,file=fnavn(1:kf),err=117,status='old')
+      end if
+
+
+      call skipkom(nskip,itape,ierr)
+      if(ierr.gt.0) then
+      write(0,*)'skipkom: nskip,ierr=',nskip,ierr
+         iflag=3
+         close(itape)
+         return
+      end if
+
+      n=0
+
+ 100  continue
+
+      read(itape,*,end=200)na,nb
+      n=n+1
+      if(n.gt.nmax) then
+        iflag=1
+        close(itape)
+        return
+      end if
+      nx(n)=na
+      ny(n)=nb
+ 
+      go to 100
+
+ 200  continue
+      close(itape)
+      return
+
+ 117  continue
+      iflag=50
+      return
+
+      end
+
+
+
+
+
+********************************************************************
+*
+*                PROMPTFIL
+*                
+*     Prompts for name and reads data from two-column file
+*
+*     spor   - question                                                I
+*     fnavn,defn  - Name on file and def value                         O
+*     kl  -   lengtn of filename. If kl<=0 the name is assumed to be   O
+*             ended by '#' or '!' and the length is calculated
+*     x,y  -  arrays for data                                          O
+*     nmax  - maximum number of data                                   I
+*     n  -    number of data read                                      O
+*     nskip  -  number of leading comment lines in file                O  
+*     iflag  - error flag                                              O
+*                0     : OK
+*                1     : maximum number of data reached before end of file.
+*                        The data that is read is returned in x and y
+*               11     : file not opened
+*                3     : error in comment processing ( no data ?)
+*                30    : inappropriate filename 
+*                50    : cannot open file
+********************************************************************
+      subroutine promptfil(spor,fnavn,defn,kl,x,y,nmax,n,nskip,iflag)
+      integer kl,nmax,n,nskip,iflag
+      real x(nmax),y(nmax)
+      character*80 spor,fnavn,defn
+*------------------------------------------------------------------
+      integer itape
+      logical asc
+
+      itape=55
+      iflag=0
+   
+      kl=79
+      call filgen(itape,spor,defn,fnavn,kl,asc,.true.)
+      if(itape.le.0 .or.(.not.asc)) then
+          iflag=11
+          return
+      end if
+
+      call lexyfil(fnavn,kl,x,y,nmax,n,.true.,itape,nskip,iflag)
+ 
+      return
+      end
+
+********************************************************************
+*
+*                PROMPTFIL
+*                
+*     Prompts for name and reads data from one ore two-column file
+*
+*     spor   - question                                                I
+*     fnavn,defn  - Name on file and def value                         O
+*     kl  -   lengtn of filename. If kl<=0 the name is assumed to be   O
+*             ended by '#' or '!' and the length is calculated
+*     x,y  -  arrays for data                                          O
+*     nmax  - maximum number of data                                   I
+*     ic  - number of columns
+*     n  -    number of data read                                      O
+*     nskip  -  number of leading comment lines in file                O  
+*     iflag  - error flag                                              O
+*                0     : OK
+*                1     : maximum number of data reached before end of file.
+*                        The data that is read is returned in x and y
+*               11     : file not opened
+*                3     : error in comment processing ( no data ?)
+*                30    : inappropriate filename 
+*                50    : cannot open file
+********************************************************************
+      subroutine gpromptf(spor,fnavn,defn,kl,x,y,nmax,ic,n,nskip,iflag)
+      integer kl,nmax,ic,n,nskip,iflag
+      real x(nmax),y(nmax)
+      character*80 spor,fnavn,defn
+*------------------------------------------------------------------
+      integer itape
+      logical asc
+
+      itape=55
+      iflag=0
+   
+      kl=79
+      call filgen(itape,spor,defn,fnavn,kl,asc,.true.)
+      if(itape.le.0 .or.(.not.asc)) then
+          iflag=11
+          return
+      end if
+
+      if(ic.eq.2) then
+       call lexyfil(fnavn,kl,x,y,nmax,n,.true.,itape,nskip,iflag)
+      else
+       call lexfil(fnavn,kl,x,nmax,n,.true.,itape,nskip,iflag)
+      end if
+
+      return
+      end
+EOF diadd.f
+------------------------------
+fil diafn.f
+Thu Oct  4 16:11:53 CEST 2012
+-rw-r--r-- 1 geirkp mn 12348 2010-10-14 14:48 diafn.f
+*************************************************************************
+      subroutine beglog(blogg,ilogg)
+      integer ilogg
+      logical blogg
+*--------------------------------------------------------
+      integer kf
+      character*20 lnavn
+      logical ja
+
+      call initkom
+      call setkomm('!')
+      blogg=ja(blogg,'skal dialogen protokolleres?#')
+      if(blogg) then
+        kf=20
+        call utfil(ilogg,'gi log-fil#','indat#',lnavn,kf)
+        if(ilogg.gt.0) then
+          write(ilogg,*) 'nei'
+          call setlog(ilogg)
+        else
+          if(ilogg.eq.0) then          
+             call setlog(ilogg)
+          end if
+        end if
+      else
+        ilogg=-2
+      end if
+
+      return
+      end 
+
+
+
+*************************************************************************
+      subroutine beglogv(blogg,ilogg,defn)
+      integer ilogg
+      logical blogg
+      character*80 defn
+*--------------------------------------------------------
+      integer kf
+      character*20 lnavn
+      logical ja
+
+      call initkom
+      call setkomm('!')
+      blogg=ja(blogg,'skal dialogen protokolleres?#')
+      if(blogg) then
+        kf=20
+        call utfil(ilogg,'gi log-fil#',defn,lnavn,kf)
+        if(ilogg.gt.0) then
+          write(ilogg,*) 'nei'
+          call setlog(ilogg)
+        else
+          if(ilogg.eq.0) then          
+             call setlog(ilogg)
+          end if
+        end if
+      else
+        ilogg=-2
+      end if
+
+      return
+      end 
+
+
+*************************************************************************
+*
+*       Denne gj|r det samme som beglog men skriver intet p} fila og
+*       kaller heller ikke initkom. Rutinen er beregnet for bruk
+*       etter at dialogen er startet.
+************************************************************************
+      subroutine openlog(blogg,ilogg)
+      integer ilogg
+      logical blogg
+*--------------------------------------------------------
+      integer kf
+      character*20 lnavn
+      logical ja
+
+      call setkomm('!')
+      blogg=ja(blogg,'skal dialogen protokolleres?#')
+      if(blogg) then
+        kf=20
+        call utfil(ilogg,'gi log-fil#','indat#',lnavn,kf)
+        if(ilogg.gt.0) then
+          call setlog(ilogg)
+        else
+          if(ilogg.eq.0) then          
+             call setlog(ilogg)
+          end if
+        end if
+      else
+        ilogg=-2
+      end if
+
+      return
+      end 
+
+
+************************************************************************
+      subroutine openlogv(blogg,ilogg,defn)
+      integer ilogg
+      logical blogg
+      character*80 defn
+*--------------------------------------------------------
+      integer kf
+      character*20 lnavn
+      logical ja
+
+      call setkomm('!')
+      blogg=ja(blogg,'skal dialogen protokolleres?#')
+      if(blogg) then
+        kf=20
+        call utfil(ilogg,'gi log-fil#',defn,lnavn,kf)
+        if(ilogg.gt.0) then
+          call setlog(ilogg)
+        else
+          if(ilogg.eq.0) then          
+             call setlog(ilogg)
+          end if
+        end if
+      else
+        ilogg=-2
+      end if
+
+      return
+      end 
+
+
+
+****************************************************************************
+*      E X P A N D
+*
+*   Expanderer filnavn pa c-shell vis dvs. at feks:
+*
+*        ~/h.dat      gir  $HOME/h.dat
+*        ~rupert/foo  gir  /mn/kastor/home/u1/rupert/foo dersom home-dir
+*                      er /mn/kastor/home/u1/meg
+*        ../kla.bla   gir kla.bla ett direktori opp i forhold til default
+*
+*  'Initkom' m} v{re kalt f|r f|rste kall p} 'expand'
+*  parametere:
+*       t(1:nt)  - tekst som skal expanderes                          I
+*       tut(1:nut) - expandert tekst                                  O
+*       iflag - feilparameter, iflag >0 betyr ulovlig innhold i t     O
+*
+**************************************************************************
+      subroutine expand(t,nt,tut,nut,iflag)
+      integer nt,nut,iflag
+      character*120 t,tut
+      include 'styr.inc'
+*--------------------------------------
+      integer mg,nb,kflag
+
+      iflag=0
+
+      if(t(1:1).ne.'.' .and. t(1:1).ne.'~') then
+        nut=nt
+        tut(1:nt)=t(1:nt)
+        return
+      end if
+
+      if(t(1:1).eq.'~') then
+        mg=nhd
+        if(t(2:2).eq.'/') then
+          nb=3
+          if(nt.le.2) then
+            iflag=1
+            return
+          end if
+        else
+          nb=2
+          call fsok(homedir,nhd,mg,'/',-1,kflag)
+        end if
+
+        nut=mg+nt+1-nb       
+        tut(1:mg)=homedir(1:mg)
+        tut(mg+1:nut)=t(nb:nt)
+        return
+      end if
+
+c  naa er . foerste tegn
+
+
+      mg=ndd
+      nb=1
+
+ 100  continue
+
+      if(t(nb:nb).ne.'.' .or. nb.eq.nt) go to 200
+      if(t(nb+1:nb+1).eq.'/') then
+        nb=nb+2
+        if(nb.gt.nt) then
+          iflag=2
+          return
+        end if
+        go to 100
+      end if
+    
+      if(t(nb+1:nb+1).ne.'.') then
+        go to 200
+      else
+        if(nb+1.eq.nt) then
+          iflag=3
+          return
+        end if
+        if(t(nb+2:nb+2).eq.'/') then
+          if(nb+2.eq.nt) then
+            iflag=4
+            return
+          end if
+          call  fsok(defdir,ndd,mg,'/',-1,kflag)
+          nb=nb+3
+        else
+          go to 200
+        end if
+      end if
+ 
+      go to 100
+
+ 200  continue
+
+      nut=mg+nt+1-nb
+      tut(1:mg)=defdir(1:mg)
+      tut(mg+1:nut)=t(nb:nt)
+      return
+      end
+
+
+
+
+*************************************************************************
+      SUBROUTINE INNFILNY(ITAPE,SPOR,DEFN,NAVN,KF,asc)
+      INTEGER ITAPE,KF
+      CHARACTER*80 SPOR,DEFN,NAVN
+      logical asc
+      include 'styr.inc'
+*-----------------------------------------------------------------------
+      CHARACTER*80 HNAVN
+      LOGICAL FORK
+      INTEGER KF0,kfex,iflag
+                 
+      KF0=KF
+ 100  continue
+      CALL BLANK(HNAVN,KF0)
+      CALL LESORD(DEFN,SPOR,HNAVN,KF)
+
+      IF(KF.GT.KF0) THEN
+        WRITE(IUSTRR,11) ' ',KF,KF0
+        if(aktlog.eq.1 .and. aktkom.eq.1)
+     %    WRITE(ltape,11) charkom,KF,KF0
+  11    FORMAT(1X,a1,'LENGDE:',I4,'  MAX. LENGDE:',I4)
+        call primvri('GI NYTT OG KORTERE NAVN#')
+        GO TO 100
+      ELSE       
+        CALL BLANK(NAVN,KF0)
+        NAVN(1:KF)=HNAVN(1:KF)
+      END IF
+
+      IF(FORK('STOPP#',NAVN,1,KF)) THEN
+        ITAPE=-1
+        RETURN
+      END IF
+
+
+      IF(FORK('TTY#',NAVN,1,KF).and. asc) THEN
+        ITAPE=5
+        RETURN
+      END IF
+
+      IF(FORK('TERMINAL#',NAVN,1,KF) .and. asc) THEN
+        ITAPE=5
+        RETURN
+      END IF   
+
+      IF(FORK('STANDARD#',NAVN,1,KF) .and. asc) THEN
+        ITAPE=5
+        RETURN
+      END IF   
+
+      call expand(navn,kf,hnavn,kfex,iflag)
+      if(iflag.gt.0) then
+        call primvri('ulovlig filnavn#')
+        go to 100
+      end if
+
+      if(kfex.le.kf0) then
+        kf=kfex
+        navn(1:kf)=hnavn(1:kf)
+      end if
+
+
+
+      if(asc) then
+        open(UNIT=itape,file=navn(1:kf),ERR=117,status='old',
+     %  form='formatted')
+      else
+        open(UNIT=itape,file=navn(1:kf),ERR=117,status='old',
+     %  form='unformatted')
+      end if
+      return
+  117 call primvri('fil ikke funnet#')
+      call primvri('gi nytt navn ("stopp" dersom du gir opp)#')
+      go to 100
+
+      end
+
+
+*************************************************************************
+      SUBROUTINE INNFIL(ITAPE,SPOR,DEFN,NAVN,KF)
+      INTEGER ITAPE,KF
+      CHARACTER*80 SPOR,DEFN,NAVN
+      include 'styr.inc'
+*-----------------------------------------------------------------------
+      CHARACTER*80 HNAVN
+      LOGICAL FORK
+      INTEGER KF0
+                 
+      KF0=KF
+ 100  continue
+      CALL BLANK(HNAVN,KF0)
+      CALL LESORD(DEFN,SPOR,HNAVN,KF)
+
+      IF(KF.GT.KF0) THEN
+        WRITE(IUSTRR,11) ' ',KF,KF0
+        if(aktlog.eq.1 .and. aktkom.eq.1)
+     %   WRITE(ltape,11) charkom,KF,KF0
+  11    FORMAT(1X,a1,'LENGDE:',I4,'  MAX. LENGDE:',I4)
+        call primvri('GI NYTT OG KORTERE NAVN#')
+        GO TO 100
+      ELSE       
+        CALL BLANK(NAVN,KF0)
+        NAVN(1:KF)=HNAVN(1:KF)
+      END IF
+
+      IF(FORK('STOPP#',NAVN,1,KF)) THEN
+        ITAPE=-1
+        RETURN
+      END IF
+
+
+      IF(FORK('TTY#',NAVN,1,KF)) THEN
+        ITAPE=5
+        RETURN
+      END IF
+
+      IF(FORK('TERMINAL#',NAVN,1,KF)) THEN
+        ITAPE=5
+        RETURN
+      END IF   
+
+      IF(FORK('STANDARD#',NAVN,1,KF)) THEN
+        ITAPE=5
+        RETURN
+      END IF   
+
+
+      open(UNIT=itape,file=navn(1:kf0),ERR=117,status='old')
+      return
+  117 call primvri('fil ikke funnet#')
+      call primvri('gi nytt navn ("stopp" dersom du gir opp)#')
+      go to 100
+
+      end
+
+
+*************************************************************************
+      SUBROUTINE UTFIL(ITAPE,SPOR,DEFN,NAVN,KF)
+      INTEGER ITAPE,KF
+      CHARACTER*80 SPOR,DEFN,NAVN
+      include 'styr.inc'
+*-----------------------------------------------------------------------
+      CHARACTER*80 HNAVN
+      LOGICAL FORK
+      INTEGER KF0
+                 
+      KF0=KF
+
+  100 CONTINUE               
+
+      CALL BLANK(HNAVN,80)                         
+      CALL LESORD(DEFN,SPOR,HNAVN,KF)
+
+      IF(KF.GT.KF0) THEN
+        WRITE(IUSTRR,11) ' ',KF,KF0
+        if(aktlog.eq.1 . and. aktkom.eq.1)
+     %        WRITE(ltape,11)charkom,KF,KF0
+  11    FORMAT(1X,a1,'LENGDE:',I4,'  MAX. LENGDE:',I4)
+        call primvri('GI NYTT OG KORTERE NAVN#')
+        GO TO 100
+      ELSE       
+        CALL BLANK(NAVN,KF0)
+        NAVN(1:KF)=HNAVN(1:KF)
+      END IF
+
+      IF(FORK('INGEN#',NAVN,1,KF)) THEN
+        ITAPE=-1
+        RETURN
+      END IF
+
+      IF(FORK('TTY#',NAVN,1,KF)) THEN
+        ITAPE=iustrr
+        RETURN
+      END IF
+
+      IF(FORK('TERMINAL#',NAVN,1,KF)) THEN
+        ITAPE=iustrr
+        RETURN
+      END IF   
+
+      IF(FORK('ERROR#',NAVN,1,KF)) THEN
+        ITAPE=iustrr
+        RETURN
+      END IF   
+
+      IF(FORK('OUTPUT#',NAVN,1,KF)) THEN
+        ITAPE=6
+        RETURN
+      END IF   
+
+      open(UNIT=itape,file=navn(1:kf),status='unknown')
+      return
+
+      end
+
+
+************************************************************
+      subroutine lukk(itape)
+      integer itape
+      include 'styr.inc'
+
+      if(itape.ge.0 .and. itape.ne.5 .and. itape.ne.6 
+     %    .and. itape.ne.iustrr) then
+        close(itape)
+        itape=-1
+      end if
+      return
+      end
+
+
+
+***********************************************************
+*   
+*        NUMOPP
+*  
+*   Aapner fil med navn avledet av stamme pluss nummer.
+*   feks. vil nummopp('gagga#',17,23) aapne fil med navn
+*   gagga17 og enhet 23.
+*   Parametere:
+*    stem - navnestamme, avsluttet med # eller !    I
+*    isyk - nummer                                    I   
+*    itape - unitnummer                              I
+********************************************************
+      subroutine nummop(stem,isyk,itape)
+      integer isyk,itape
+      character*80 stem
+*--------------------------------------------------------
+      integer kf,kf2
+      character*80 tall,utfil
+      logical def
+
+      call itconv(isyk,kf,tall)
+      call xstrip(stem,kf2,def)
+      utfil(1:kf2)=stem(1:kf2)
+      utfil(kf2+1:kf2+kf)=tall(1:kf)
+      kf=kf2+kf
+
+      open(unit=itape,file=utfil(1:kf),status='unknown')
+      return
+      end
+
+***********************************************************
+*   
+*        NUMMOPG
+*  
+*   Aapner fil med navn avledet av stamme pluss nummer.
+*   feks. vil nummopp('gagga#',17,23,.true.) aapne ascii fil med navn
+*   gagga17 og enhet 23.
+*   Parametere:
+*    stem - navnestamme, avsluttet med # eller !    I
+*    isyk - nummer                                    I   
+*    itape - unitnummer                              I
+*    asc - true gir asci, false binaert
+********************************************************
+      subroutine nummopg(stem,isyk,itape,asc)
+      integer isyk,itape
+      character*80 stem
+      logical asc
+*--------------------------------------------------------
+      integer kf,kf2
+      character*80 tall,utfil
+      logical def
+
+      call itconv(isyk,kf,tall)
+      call xstrip(stem,kf2,def)
+      utfil(1:kf2)=stem(1:kf2)
+      utfil(kf2+1:kf2+kf)=tall(1:kf)
+      kf=kf2+kf
+
+      if(asc) then
+        open(unit=itape,file=utfil(1:kf),status='unknown')
+      else
+        open(unit=itape,file=utfil(1:kf),status='unknown',
+     %       form='unformatted')
+      end if
+      return
+      end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EOF diafn.f
+------------------------------
+fil gpri.f
+Thu Oct  4 16:11:53 CEST 2012
+-rw-r--r-- 1 geirkp mn 4796 2010-10-14 14:48 gpri.f
+***************************************************************************
+*
+*     GPRI
+*
+* printer array i plotxy-format p} fil
+* parametere:
+*         y(n)  - array                   I
+*         n  - array-grense                  I
+*         dx - gitterinkrement (betydning bare nar noun=.false.)          I
+*         x - posisjoner  av y -verdier, naar noun=.false.                  I
+*             benyttes bare x(1) som er pos av y(1)
+*         noun - .false. angir uniformt gitter             I
+*         isyk - nummer paa fil              I
+*         stem - navnestamme, feks stem='eta#', isyk=11 gir datafil eta11 I
+*                hvis stem ender paa ! ignoreres nummer
+*         fak - skaleringsfaktor for y, slik at y/skal skrives ut     I
+*         fakx - skaleringsfaktor for x, slik at x/fakx skrives ut    I
+****************************************************************************
+      subroutine gpri(y,n,dx,x,noun,isyk,stem,fak,fakx)
+      integer isyk,n
+      real y(n),dx,x(n),fak,fakx
+      logical noun
+      character*80 stem
+*--------------------------------------------------------
+      integer i,kf,kf2
+      real xver,yver,faki,faxi
+      character*80 tall,utfil
+      logical def
+
+      faki=1.0/fak
+      faxi=1.0/fakx
+
+      call xstrip(stem,kf2,def)
+      utfil(1:kf2)=stem(1:kf2)
+
+      if(def) then
+        call itconv(isyk,kf,tall)
+        utfil(kf2+1:kf2+kf)=tall(1:kf)
+        kf=kf2+kf
+      else
+         kf=kf2
+      end if
+
+      open(unit=30,file=utfil(1:kf))
+
+
+      do 100 i=1,n
+      if(noun) then
+        xver=faxi*x(i)
+      else
+        xver=faxi*(x(1)+(i-1)*dx)
+      end if
+      yver=faki*y(i)
+      write(30,*)xver,yver
+ 100  continue
+
+      close(30)
+
+      return
+      end
+
+
+
+***************************************************************************
+*
+*     CPRI
+*
+* printer complex array i plotxy-format p} fil.
+*       Kolonner:  x Re Im abs arg
+* parametere:
+*         y(n)  - array                   I
+*         n  - array-grense                  I
+*         dx - gitterinkrement (betydning bare nar noun=.false.)          I
+*         x - posisjoner  av y -verdier, naar noun=.false.                  I
+*             benyttes bare x(1) som er pos av y(1)
+*         noun - .false. angir uniformt gitter             I
+*         isyk - nummer paa fil              I
+*         stem - navnestamme, feks stem='eta#', isyk=11 gir datafil eta11 I
+*                hvis stem ender paa ! ignoreres nummer
+*         fak - skaleringsfaktor for y, slik at y/skal skrives ut     I
+*         fakx - skaleringsfaktor for x, slik at x/fakx skrives ut    I
+****************************************************************************
+      subroutine cpri(y,n,dx,x,noun,isyk,stem,fak,fakx)
+      integer isyk,n
+      real dx,x(n),fak,fakx
+      complex y(n)
+      logical noun
+      character*80 stem
+*--------------------------------------------------------
+      integer i,kf,kf2
+      real xver,faki,faxi,rdel,imdel,abver,arg
+      complex yver
+      character*80 tall,utfil
+      logical def
+
+      faki=1.0/fak
+      faxi=1.0/fakx
+
+      call xstrip(stem,kf2,def)
+      utfil(1:kf2)=stem(1:kf2)
+
+      if(def) then
+        call itconv(isyk,kf,tall)
+        utfil(kf2+1:kf2+kf)=tall(1:kf)
+        kf=kf2+kf
+      else
+         kf=kf2
+      end if
+
+      open(unit=30,file=utfil(1:kf))
+
+
+      do 100 i=1,n
+      if(noun) then
+        xver=faxi*x(i)
+      else
+        xver=faxi*(x(1)+(i-1)*dx)
+      end if
+      yver=faki*y(i)
+      rdel=real(yver)
+      imdel=aimag(yver)
+      abver=cabs(yver)
+      arg=aimag(log(yver))
+      write(30,'(5e16.6)')xver,rdel,imdel,abver,arg
+ 100  continue
+
+      close(30)
+
+      return
+      end
+
+
+
+ 
+***************************************************************************
+*
+*     IPRI
+*
+* printer integer array i plotxy-format p} fil
+* parametere:
+*         ny(n0:n)  - array                   I
+*         n0,n  - array-grenser                  I
+*         noun - .false. angir uniformt gitter             I
+*         isyk - nummer paa fil              I
+*         stem - navnestamme, feks stem='eta#', isyk=11 gir datafil eta11 I
+****************************************************************************
+      subroutine ipri(ny,n0,n,isyk,stem)
+      integer isyk,n0,n,ny(n0:n)
+      character*80 stem
+*--------------------------------------------------------
+      integer i,kf,kf2
+      character*80 tall,utfil
+      logical def
+
+
+      call xstrip(stem,kf2,def)
+      utfil(1:kf2)=stem(1:kf2)
+
+      if(def) then
+        call itconv(isyk,kf,tall)
+        utfil(kf2+1:kf2+kf)=tall(1:kf)
+        kf=kf2+kf
+      else
+         kf=kf2
+      end if
+
+      open(unit=30,file=utfil(1:kf))
+
+
+      do 100 i=n0,n
+
+      write(30,'(2i10)')i,ny(i)
+ 100  continue
+
+      close(30)
+
+      return
+      end
+ 
+EOF gpri.f

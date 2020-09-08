@@ -1,0 +1,14 @@
+ftn = f77 -O1 -g  -Wimplicit   -c
+dirl = ../bibl
+dira =../dia
+obj=  bouss.o  $(dirl)/bibl.a $(dira)/dia.a
+sbouss: $(obj) 
+	f77  -static -o sbouss  $(obj)
+bouss.o: ../bouss.f 
+	cd ..; $(ftn)  -o i386/bouss.o bouss.f
+
+
+
+
+
+

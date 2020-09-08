@@ -1,0 +1,14 @@
+ftn = gfortran  -O  -fdefault-real-8 -fimplicit-none
+dirl = /hom/geirkp/lib/i386
+obj=  boussGF8.o $(dirl)/biblGF8.a $(dirl)/diaGF8.a 
+sbouss: $(obj) 
+	$(ftn)  -o sbouss  $(obj)
+boussGF8.o: ../bouss.f 
+	cd ..; $(ftn) -c  -o i386/boussGF8.o bouss.f
+
+
+
+
+
+
+

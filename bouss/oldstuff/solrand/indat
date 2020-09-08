@@ -1,0 +1,25 @@
+!give bathimetry option/readfromfile/
+flat
+ !give total length/   100.00000000000000      /
+
+ !Give number of grid points/         100 /
+400
+ !give equation type/LSW/
+bouss
+! Employ discrete correction term?/yes/
+n
+ !give generation condition/readfromfile/
+boun
+! Number of cycles/           0 /
+10
+ dt_default=  0.50251256281407031     
+ !give time interval /   1.0000000000000000      /
+5
+! give reduction factor for dt/dx/   1.0000000000000000      /
+
+! times for printing/alle/
+all
+ !give u boundary file/urnd.dat/
+
+ !give ex boundary file/exrnd.dat/
+
